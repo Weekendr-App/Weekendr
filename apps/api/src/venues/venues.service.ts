@@ -8,11 +8,18 @@ export class VenuesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<Venue> {
-    return this.prisma.venue.findUnique({ where: { id } });
+    const venue = await this.prisma.venue.findUnique({ where: { id } });
+    if (venue.deletedAt) {
+      return null;
+    }
+
+    return venue;
   }
 
   async findAll(): Promise<Venue[]> {
-    return this.prisma.venue.findMany();
+    return this.prisma.venue.findMany({
+      where: { deletedAt: null },
+    });
   }
 
   async create(data: Prisma.VenueCreateInput): Promise<Venue> {
@@ -27,6 +34,9 @@ export class VenuesService {
   }
 
   async delete(id: number): Promise<Venue> {
-    return this.prisma.venue.delete({ where: { id } });
+    return this.prisma.venue.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
   }
 }

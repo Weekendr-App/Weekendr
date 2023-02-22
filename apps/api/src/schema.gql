@@ -28,6 +28,7 @@ input UpdateVenueInput {
 """Venue"""
 type Venue {
   createdAt: Date!
+  deletedAt: Date
   id: ID!
   name: String!
   updatedAt: Date!
