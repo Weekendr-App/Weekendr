@@ -5,7 +5,9 @@
   "description": "Diplomski - Uros Jeknic",
   "scripts": {
     "build": "pnpm --parallel build",
-    "dev": "pnpm --parallel dev"
+    "dev": "pnpm --parallel dev",
+    "start": "pnpm --parallel start",
+    "migrate": "pnpm --filter api migrate"
   },
   "keywords": ["diplomski", "nextjs", "react", "typescript", "prisma", "graphql"],
   "author": "Uros Jeknic <urosjeknic@gmail.com>",
