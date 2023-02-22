@@ -1,8 +1,12 @@
 import Head from "next/head";
-import styles from "@diplomski/styles/Home.module.css";
 import { useQuery } from "urql";
 import { graphql } from "@diplomski/gql";
 import { AllVenuesQueryQuery } from "@diplomski/gql/graphql";
+import { lazy, Suspense } from "react";
+import clsx from "clsx";
+
+const Header = lazy(() => import("@diplomski/components/Header"));
+const Venue = lazy(() => import("@diplomski/components/Venue"));
 
 const VenuesQuery = graphql(`
   query allVenuesQuery {
@@ -28,9 +32,16 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>{JSON.stringify(data)}</div>
-      </main>
+      <Suspense>
+        <Header />
+      </Suspense>
+      <Suspense>
+        <div className={clsx(["p-4", "flex", "gap-1"])}>
+          {data?.venues.map((venue) => (
+            <Venue key={venue.id} venue={venue} />
+          ))}
+        </div>
+      </Suspense>
     </>
   );
 }

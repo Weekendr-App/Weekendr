@@ -9,7 +9,7 @@ const client = createClient({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider value={client}>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </Provider>
   );
 }
