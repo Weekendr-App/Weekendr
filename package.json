@@ -1,0 +1,12 @@
+{
+  "name": "diplomski",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Diplomski - Uros Jeknic",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["diplomski", "nextjs", "react", "typescript", "prisma", "graphql"],
+  "author": "Uros Jeknic <urosjeknic@gmail.com>",
+  "license": "ISC"
+}
