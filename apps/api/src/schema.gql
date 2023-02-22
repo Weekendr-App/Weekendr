@@ -1,0 +1,18 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""Date custom scalar type"""
+scalar Date
+
+type Query {
+  venues: [Venue!]!
+}
+
+"""Venue"""
+type Venue {
+  createdAt: Date!
+  id: ID!
+  name: String!
+  updatedAt: Date!
+}

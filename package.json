@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Diplomski - Uros Jeknic",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm --parallel dev"
   },
   "keywords": ["diplomski", "nextjs", "react", "typescript", "prisma", "graphql"],
   "author": "Uros Jeknic <urosjeknic@gmail.com>",
