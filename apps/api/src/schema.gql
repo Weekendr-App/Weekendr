@@ -2,11 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateVenueInput {
+  name: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
+type Mutation {
+  createVenue(fields: CreateVenueInput!): Venue!
+  deleteVenue(id: Float!): Venue!
+  updateVenue(fields: UpdateVenueInput!): Venue!
+}
+
 type Query {
+  venue(id: Float!): Venue!
   venues: [Venue!]!
+}
+
+input UpdateVenueInput {
+  id: Float!
+  name: String!
 }
 
 """Venue"""
