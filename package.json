@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Diplomski - Uros Jeknic",
   "scripts": {
+    "build": "pnpm --parallel build",
     "dev": "pnpm --parallel dev"
   },
   "keywords": ["diplomski", "nextjs", "react", "typescript", "prisma", "graphql"],
