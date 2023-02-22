@@ -94,6 +94,7 @@ importers:
     specifiers:
       '@graphql-codegen/cli': ^3.2.0
       '@graphql-codegen/client-preset': ^2.1.0
+      '@graphql-typed-document-node/core': ^3.1.1
       '@next/font': 13.1.6
       '@types/node': 18.14.0
       '@types/react': 18.0.28
@@ -111,6 +112,7 @@ importers:
       typescript: 4.9.5
       urql: ^3.0.3
     dependencies:
+      '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
       '@next/font': 13.1.6
       '@types/node': 18.14.0
       '@types/react': 18.0.28
