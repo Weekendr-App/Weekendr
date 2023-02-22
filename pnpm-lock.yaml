@@ -2,6 +2,9 @@ lockfileVersion: 5.4
 
 importers:
 
+  .:
+    specifiers: {}
+
   apps/webapp:
     specifiers:
       '@next/font': 13.1.6

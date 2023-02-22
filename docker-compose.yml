@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:14.2-alpine
+    container_name: "diplomski_postgres"
+    environment:
+      - POSTGRES_USER=diplomski
+      - POSTGRES_PASSWORD=diplomski
+      - POSTGRES_DB=diplomski
+    ports:
+      - "5432:5432"
