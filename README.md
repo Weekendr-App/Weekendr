@@ -10,5 +10,7 @@
 3. Run `pnpm codegen` in `apps/webapp`
 4. Run `pnpm dev` in root
 
+NOTE: After changing urql queries/mutations don't forget to run codegen
+
 GraphQL server is on: http://localhost:4000/graphql
 Webapp is on: http://localhost:3000
