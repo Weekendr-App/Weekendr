@@ -1,18 +1,14 @@
 import { AuthProvider } from "@diplomski/hooks/useAuth";
 import "@diplomski/styles/globals.css";
+import { UrqlProvider } from "@diplomski/utils/urql";
 import type { AppProps } from "next/app";
-import { createClient, Provider } from "urql";
-
-const client = createClient({
-  url: "http://localhost:4000/graphql",
-});
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Provider value={client}>
-      <AuthProvider>
+    <AuthProvider>
+      <UrqlProvider>
         <Component {...pageProps} />
-      </AuthProvider>
-    </Provider>
+      </UrqlProvider>
+    </AuthProvider>
   );
 }

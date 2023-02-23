@@ -18,6 +18,7 @@ import {
 interface FirebaseUser {
   email: string;
   id: string;
+  token: string;
 }
 
 interface Props {
@@ -63,8 +64,17 @@ export const AuthProvider: FC<Props> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user ? { email: user.email!, id: user.uid } : null);
+    onAuthStateChanged(auth, async (user) => {
+      if (!user || !user.email) {
+        setUser(null);
+      } else {
+        const token = await user.getIdToken();
+        setUser({
+          email: user.email,
+          id: user.uid,
+          token,
+        });
+      }
     });
   }, []);
 

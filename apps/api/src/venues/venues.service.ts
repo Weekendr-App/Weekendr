@@ -23,7 +23,9 @@ export class VenuesService {
   }
 
   async create(data: Prisma.VenueCreateInput): Promise<Venue> {
-    return this.prisma.venue.create({ data });
+    return this.prisma.venue.create({
+      data,
+    });
   }
 
   async update(id: number, data: Prisma.VenueUpdateInput): Promise<Venue> {
