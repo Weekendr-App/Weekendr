@@ -7,10 +7,12 @@ import { VenuesModule } from './venues/venues.module';
 import { FirebaseMiddleware } from './common/firebase/firebase.middleware';
 import { FirebaseGuard } from './common/firebase/firebase.guard';
 import { FirebaseService } from './common/firebase/firebase.service';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    UserModule,
     VenuesModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
