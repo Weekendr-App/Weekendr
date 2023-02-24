@@ -1,16 +1,35 @@
+import { Spinner } from "@diplomski/components/Spinner";
 import { useAuth } from "@diplomski/hooks/useAuth";
+import { useFormik } from "formik";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense } from "react";
+import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email("Email is not valid").required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});
 
 const Header = lazy(() => import("@diplomski/components/Header"));
+const Input = lazy(() => import("@diplomski/components/Form/Input"));
+const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
 export default function Auth() {
   const { user, login } = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { values, errors, handleChange, handleSubmit, isValid, isSubmitting } =
+    useFormik({
+      initialValues: {
+        email: "",
+        password: "",
+      },
+      validationSchema,
+      onSubmit: async (values) => {
+        await login(values.email, values.password);
+      },
+    });
 
   if (user) {
     router.push("/");
@@ -24,24 +43,38 @@ export default function Auth() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Suspense>
+      <Suspense fallback={<Spinner />}>
         <Header />
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 w-1/2 mx-auto mt-10 border border-gray-300 p-4 rounded-md shadow-md"
+        >
+          <Input
+            label="Email"
+            name="email"
+            value={values.email}
+            onChange={handleChange}
+            error={errors.email}
+            placeholder="Email"
+          />
+          <Input
+            label="Password"
+            name="password"
+            value={values.password}
+            onChange={handleChange}
+            error={errors.password}
+            placeholder="Password"
+            type="password"
+          />
+          <Button
+            disabled={!isValid || isSubmitting}
+            loading={isSubmitting || !!user}
+            onClick={handleSubmit}
+          >
+            Login
+          </Button>
+        </form>
       </Suspense>
-      <div>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" onClick={() => login(email, password)}>
-          Login
-        </button>
-      </div>
     </>
   );
 }
