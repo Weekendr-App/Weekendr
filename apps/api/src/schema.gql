@@ -16,6 +16,7 @@ type Mutation {
 }
 
 type Query {
+  me: User!
   venue(id: Float!): Venue!
   venues: [Venue!]!
 }
@@ -23,6 +24,12 @@ type Query {
 input UpdateVenueInput {
   id: Float!
   name: String!
+}
+
+"""User"""
+type User {
+  email: String!
+  id: ID!
 }
 
 """Venue"""
