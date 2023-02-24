@@ -1,29 +1,10 @@
 import Head from "next/head";
-import { useQuery } from "urql";
-import { graphql } from "@diplomski/gql";
-import { AllVenuesQueryQuery } from "@diplomski/gql/graphql";
 import { lazy, Suspense } from "react";
-import clsx from "clsx";
+import Map from "@diplomski/components/Map";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
-const Venue = lazy(() => import("@diplomski/components/Venue"));
-
-const VenuesQuery = graphql(`
-  query allVenuesQuery {
-    venues {
-      id
-      name
-      createdAt
-      updatedAt
-    }
-  }
-`);
 
 export default function Home() {
-  const [{ data }] = useQuery<AllVenuesQueryQuery>({
-    query: VenuesQuery,
-  });
-
   return (
     <>
       <Head>
@@ -36,10 +17,9 @@ export default function Home() {
         <Header />
       </Suspense>
       <Suspense>
-        <div className={clsx(["p-4", "flex", "gap-1"])}>
-          {data?.venues.map((venue) => (
-            <Venue key={venue.id} venue={venue} />
-          ))}
+        <div className="flex">
+          <div className="w-1/2">Venues currently visible on map</div>
+          <div className="w-1/2"><Map /></div>
         </div>
       </Suspense>
     </>
