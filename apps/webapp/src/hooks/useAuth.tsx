@@ -1,3 +1,4 @@
+import { Spinner } from "@diplomski/components/Spinner";
 import { auth } from "@diplomski/utils/firebase";
 import {
   signInWithEmailAndPassword,
@@ -5,6 +6,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "@firebase/auth";
+import { useRouter } from "next/router";
 import {
   createContext,
   useState,
@@ -39,8 +41,12 @@ const AuthContext = createContext<AuthContextProps>({
   logout: () => Promise.resolve(),
 });
 
+const PROTECTED_ROUTES = ["/venues/add"];
+
 export const AuthProvider: FC<Props> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const router = useRouter();
 
   const login = useCallback(async (email: string, password: string) => {
     try {
@@ -63,6 +69,15 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     }
   }, []);
 
+  const checkUrl = useCallback(() => {
+    setIsLoading(true);
+    if (PROTECTED_ROUTES.includes(router.pathname) && !user) {
+      router.push("/auth");
+    } else {
+      setIsLoading(false);
+    }
+  }, [router.pathname, user]);
+
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (!user || !user.email) {
@@ -78,6 +93,18 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     });
   }, []);
 
+  useEffect(() => {
+    checkUrl();
+  }, [user]);
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", checkUrl);
+
+    return () => {
+      router.events.off("routeChangeComplete", checkUrl);
+    };
+  }, [router, checkUrl]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -87,7 +114,13 @@ export const AuthProvider: FC<Props> = ({ children }) => {
         logout,
       }}
     >
-      {children}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Spinner />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
