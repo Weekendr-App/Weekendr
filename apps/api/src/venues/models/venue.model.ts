@@ -8,6 +8,11 @@ export class Venue {
   @Field()
   name: string;
 
+  firebaseUserId: string;
+
+  @Field({ nullable: true })
+  picture?: string;
+
   @Field()
   createdAt: Date;
 

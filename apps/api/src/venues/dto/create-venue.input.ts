@@ -6,4 +6,7 @@ export class CreateVenueInput {
   @Field()
   @MaxLength(30)
   name: string;
+
+  @Field({ nullable: true })
+  picture?: string;
 }

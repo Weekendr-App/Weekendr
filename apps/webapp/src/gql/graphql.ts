@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -44,6 +43,7 @@ export type MutationUpdateVenueArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  me: User;
   venue: Venue;
   venues: Array<Venue>;
 };
@@ -58,19 +58,19 @@ export type UpdateVenueInput = {
   name: Scalars['String'];
 };
 
+/** User */
+export type User = {
+  __typename?: 'User';
+  email: Scalars['String'];
+  id: Scalars['ID'];
+};
+
 /** Venue */
 export type Venue = {
   __typename?: 'Venue';
   createdAt: Scalars['Date'];
+  deletedAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
   name: Scalars['String'];
   updatedAt: Scalars['Date'];
 };
-
-export type AllVenuesQueryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type AllVenuesQueryQuery = { __typename?: 'Query', venues: Array<{ __typename?: 'Venue', id: string, name: string, createdAt: any, updatedAt: any }> };
-
-
-export const AllVenuesQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"allVenuesQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"venues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<AllVenuesQueryQuery, AllVenuesQueryQueryVariables>;
