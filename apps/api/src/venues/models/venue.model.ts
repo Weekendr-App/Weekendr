@@ -10,6 +10,12 @@ export class Venue {
 
   firebaseUserId: string;
 
+  @Field()
+  latitude: number;
+
+  @Field()
+  longitude: number;
+
   @Field({ nullable: true })
   picture?: string;
 
