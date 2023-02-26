@@ -3,17 +3,21 @@ import useAddVenue from "@diplomski/hooks/useAddVenue";
 import { useFormik } from "formik";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback } from "react";
 import * as Yup from "yup";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
+const SearchBox = lazy(() => import("@diplomski/components/SearchBox"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   picture: Yup.string().required("Picture is required"),
+  address: Yup.string().required("Address is required"),
+  latitude: Yup.number().min(-90).max(90).required("Latitude is required"),
+  longitude: Yup.number().min(-180).max(180).required("Longitude is required"),
 });
 
 export default function AddVenuePage() {
@@ -25,6 +29,7 @@ export default function AddVenuePage() {
     errors,
     handleChange,
     handleSubmit,
+    setFieldValue,
     isValid,
     isSubmitting,
     setFieldError,
@@ -32,12 +37,24 @@ export default function AddVenuePage() {
     initialValues: {
       name: "",
       picture: "",
+      address: "",
+      latitude: 0,
+      longitude: 0,
     },
     validationSchema,
     onSubmit: async (values) => {
       await addVenue(values);
     },
   });
+
+  const onSelectAddress = useCallback(
+    (address: string, latitude: number | null, longitude: number | null) => {
+      setFieldValue("address", address);
+      setFieldValue("latitude", latitude);
+      setFieldValue("longitude", longitude);
+    },
+    [setFieldValue]
+  );
 
   if (result.data?.createVenue?.id) {
     router.push(`/venues/${result.data.createVenue.id}`);
@@ -70,6 +87,12 @@ export default function AddVenuePage() {
             onChange={handleChange}
             onError={setFieldError}
             error={errors.picture}
+          />
+          <SearchBox
+            name="address"
+            label="Address"
+            error={errors.address || errors.latitude || errors.longitude}
+            onSelectAddress={onSelectAddress}
           />
           <Button
             disabled={!isValid || isSubmitting}

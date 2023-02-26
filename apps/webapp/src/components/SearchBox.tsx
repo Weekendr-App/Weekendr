@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useCallback } from "react";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -12,8 +12,10 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
+import { Props } from "./Form/Input";
+import clsx from "clsx";
 
-interface SearchBoxProps {
+interface SearchBoxProps extends Omit<Props, "value" | "type" | "onChange"> {
   onSelectAddress: (
     address: string,
     latitude: number | null,
@@ -23,7 +25,7 @@ interface SearchBoxProps {
 
 const libraries: Libraries = ["places"];
 
-export default function SearchBox({ onSelectAddress }: SearchBoxProps) {
+export default function SearchBox(props: SearchBoxProps) {
   const { isLoaded, loadError } = useGoogleMapsScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY ?? "",
     libraries,
@@ -32,14 +34,16 @@ export default function SearchBox({ onSelectAddress }: SearchBoxProps) {
   if (!isLoaded) return null;
   if (loadError) return <div>Error loading</div>;
 
-  return (
-    <ReadySearchBox
-      onSelectAddress={onSelectAddress}
-    />
-  );
+  return <ReadySearchBox {...props} />;
 }
 
-function ReadySearchBox({ onSelectAddress }: SearchBoxProps) {
+function ReadySearchBox({
+  name,
+  label,
+  error,
+  placeholder,
+  onSelectAddress,
+}: SearchBoxProps) {
   const {
     ready,
     value,
@@ -48,35 +52,51 @@ function ReadySearchBox({ onSelectAddress }: SearchBoxProps) {
     clearSuggestions,
   } = usePlacesAutocomplete({ debounce: 300 });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    if (e.target.value === "") {
-      onSelectAddress("", null, null);
-    }
-  };
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value);
+      if (e.target.value === "") {
+        onSelectAddress("", null, null);
+      }
+    },
+    [onSelectAddress, setValue]
+  );
 
-  const handleSelect = async (address: string) => {
-    setValue(address, false);
-    clearSuggestions();
+  const handleSelect = useCallback(
+    async (address: string) => {
+      setValue(address, false);
+      clearSuggestions();
 
-    try {
-      const results = await getGeocode({ address });
-      const { lat, lng } = getLatLng(results[0]);
-      onSelectAddress(address, lat, lng);
-    } catch (error) {
-      console.error(`😱 Error:`, error);
-    }
-  };
+      try {
+        const results = await getGeocode({ address });
+        const { lat, lng } = getLatLng(results[0]);
+        onSelectAddress(address, lat, lng);
+      } catch (error) {
+        console.error(`😱 Error:`, error);
+      }
+    },
+    [setValue, clearSuggestions, onSelectAddress]
+  );
 
   return (
     <Combobox onSelect={handleSelect}>
+      {label && (
+        <label htmlFor={name} className="font-bold">
+          {label}
+        </label>
+      )}
       <ComboboxInput
-        id="search"
+        id={name}
         value={value}
         onChange={handleChange}
         disabled={!ready}
-        placeholder="Search your location"
-        className="w-full p-2 rounded"
+        placeholder={placeholder}
+        className={clsx(
+          ["w-full", "p-2", "border", "rounded", "border-gray-300"],
+          {
+            "border-red-500": error,
+          }
+        )}
         autoComplete="off"
       />
       <ComboboxPopover>
@@ -87,6 +107,7 @@ function ReadySearchBox({ onSelectAddress }: SearchBoxProps) {
             ))}
         </ComboboxList>
       </ComboboxPopover>
+      {error && <span className="italic text-red-500">{error}</span>}
     </Combobox>
   );
 }

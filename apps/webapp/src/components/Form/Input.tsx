@@ -1,7 +1,7 @@
 import { ChangeEvent, FC } from "react";
 import { clsx } from "clsx";
 
-interface Props {
+export interface Props {
   name: string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
