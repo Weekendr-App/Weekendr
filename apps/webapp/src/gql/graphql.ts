@@ -16,6 +16,9 @@ export type Scalars = {
 };
 
 export type CreateVenueInput = {
+  address: Scalars['String'];
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
   name: Scalars['String'];
   picture?: InputMaybe<Scalars['String']>;
 };
@@ -55,7 +58,10 @@ export type QueryVenueArgs = {
 };
 
 export type UpdateVenueInput = {
+  address: Scalars['String'];
   id: Scalars['Float'];
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
   name: Scalars['String'];
   picture?: InputMaybe<Scalars['String']>;
 };
@@ -73,6 +79,8 @@ export type Venue = {
   createdAt: Scalars['Date'];
   deletedAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
   name: Scalars['String'];
   picture?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Date'];
