@@ -3,11 +3,13 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [postgis]
 }
 
 model Venue {
@@ -15,8 +17,12 @@ model Venue {
   name           String
   picture        String?
   firebaseUserId String
+  location       Unsupported("geography(Point, 4326)")
+  address        String
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
+
+  @@index([location], name: "location_index", type: Gist)
 }
