@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { lazy, Suspense } from "react";
+import Map from "@diplomski/components/Map";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
 
@@ -14,6 +15,12 @@ export default function Home() {
       </Head>
       <Suspense>
         <Header />
+      </Suspense>
+      <Suspense>
+        <div className="flex">
+          <div className="w-1/2">Venues currently visible on map</div>
+          <div className="w-1/2"><Map /></div>
+        </div>
       </Suspense>
     </>
   );
