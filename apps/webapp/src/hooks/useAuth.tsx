@@ -45,7 +45,7 @@ const PROTECTED_ROUTES = ["/venues/add"];
 
 export const AuthProvider: FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<FirebaseUser | null | undefined>(undefined);
   const router = useRouter();
 
   const login = useCallback(async (email: string, password: string) => {
@@ -69,15 +69,6 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     }
   }, []);
 
-  const checkUrl = useCallback(() => {
-    setIsLoading(true);
-    if (PROTECTED_ROUTES.includes(router.pathname) && !user) {
-      router.push("/auth");
-    } else {
-      setIsLoading(false);
-    }
-  }, [router.pathname, user]);
-
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (!user || !user.email) {
@@ -94,21 +85,34 @@ export const AuthProvider: FC<Props> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    checkUrl();
-  }, [user]);
+    const checkAuth = () => {
+      setIsLoading(true);
+      if (user !== undefined) {
+        if (PROTECTED_ROUTES.includes(router.pathname) && !user) {
+          router.push("/auth");
+        } else {
+          setIsLoading(false);
+        }
+      }
+    };
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", checkUrl);
+    const activateLoader = () => setIsLoading(true);
+
+    checkAuth();
+
+    router.events.on("routeChangeStart", activateLoader);
+    router.events.on("routeChangeComplete", checkAuth);
 
     return () => {
-      router.events.off("routeChangeComplete", checkUrl);
+      router.events.off("routeChangeStart", activateLoader);
+      router.events.off("routeChangeComplete", checkAuth);
     };
-  }, [router, checkUrl]);
+  }, [router, user]);
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user: user || null,
         authenticated: !!user,
         login,
         logout,
