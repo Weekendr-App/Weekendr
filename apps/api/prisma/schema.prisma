@@ -17,12 +17,13 @@ model Venue {
   name           String
   picture        String?
   firebaseUserId String
-  location       Unsupported("geography(Point, 4326)")
+  // Prisma does not support PostGIS yet, so we have to use a Float
+  // type. This is not ideal, but it works for now.
+  latitude       Float
+  longitude      Float
   address        String
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
-
-  @@index([location], name: "location_index", type: Gist)
 }
