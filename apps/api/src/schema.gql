@@ -4,6 +4,7 @@
 
 input CreateVenueInput {
   name: String!
+  picture: String
 }
 
 """Date custom scalar type"""
@@ -24,6 +25,7 @@ type Query {
 input UpdateVenueInput {
   id: Float!
   name: String!
+  picture: String
 }
 
 """User"""
@@ -38,5 +40,6 @@ type Venue {
   deletedAt: Date
   id: ID!
   name: String!
+  picture: String
   updatedAt: Date!
 }
