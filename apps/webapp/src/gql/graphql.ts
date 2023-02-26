@@ -17,6 +17,7 @@ export type Scalars = {
 
 export type CreateVenueInput = {
   name: Scalars['String'];
+  picture?: InputMaybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -56,6 +57,7 @@ export type QueryVenueArgs = {
 export type UpdateVenueInput = {
   id: Scalars['Float'];
   name: Scalars['String'];
+  picture?: InputMaybe<Scalars['String']>;
 };
 
 /** User */
@@ -72,5 +74,6 @@ export type Venue = {
   deletedAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
   updatedAt: Scalars['Date'];
 };
