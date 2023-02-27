@@ -46,10 +46,6 @@ export class VenuesService {
   async findAllInRange(data: GetVenuesInRangeInput): Promise<Venue[]> {
     const { latitude, longitude, range } = data;
 
-    console.log('latitude', latitude);
-    console.log('longitude', longitude);
-    console.log('range', range);
-
     return this.prisma.$queryRaw<Venue[]>`
       SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_DWithin(ST_MakePoint(longitude, latitude), ST_MakePoint(${longitude}, ${latitude})::geography, ${range})`;
   }
