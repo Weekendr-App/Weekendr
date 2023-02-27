@@ -8,6 +8,12 @@ import { Venue } from './models/venue.model';
 export class VenuesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
+    return this.prisma.venue.create({
+      data,
+    });
+  }
+
   async findById(id: number): Promise<Venue> {
     const venue = await this.prisma.venue.findUnique({ where: { id } });
     if (venue.deletedAt) {
@@ -17,15 +23,15 @@ export class VenuesService {
     return venue;
   }
 
-  async findAll(): Promise<Venue[]> {
+  async findByOwnerId(firebaseUserId: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
-      where: { deletedAt: null },
+      where: { firebaseUserId, deletedAt: null },
     });
   }
 
-  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
-    return this.prisma.venue.create({
-      data,
+  async findAll(): Promise<Venue[]> {
+    return this.prisma.venue.findMany({
+      where: { deletedAt: null },
     });
   }
 
