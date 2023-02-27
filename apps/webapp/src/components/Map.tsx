@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import ReactMapGl from "react-map-gl";
+import ReactMapGl, { ViewState } from "react-map-gl";
 import SearchBox from "./SearchBox";
 import { useLocalStorage } from "usehooks-ts";
 
 export default function Map() {
-  const [viewport, setViewport] = useLocalStorage("viewport", {
+  const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
     longitude: 19.66244234405549,
     zoom: 10,
