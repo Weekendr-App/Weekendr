@@ -67,7 +67,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
         }));
       }
     },
-    []
+    [setViewport]
   );
 
   const pins = useMemo(() => {
