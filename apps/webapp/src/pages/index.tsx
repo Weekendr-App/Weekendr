@@ -1,15 +1,16 @@
 import Head from "next/head";
 import { lazy, Suspense, useState } from "react";
 import { Venue } from "@diplomski/gql/graphql";
-import Image from "next/image";
-import { useRouter } from "next/router";
+import { Spinner } from "@diplomski/components/Spinner";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
 const Map = lazy(() => import("@diplomski/components/Map"));
+const VenueListItem = lazy(
+  () => import("@diplomski/components/Venue/VenueListItem")
+);
 
 export default function Home() {
   const [visibleVenues, setVisibleVenues] = useState<Venue[]>([]);
-  const router = useRouter();
 
   return (
     <>
@@ -19,7 +20,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Suspense>
+      <Suspense fallback={<Spinner />}>
         <Header />
         <div className="flex">
           <div className="w-1/2 p-2 overflow-y-auto">
@@ -27,29 +28,11 @@ export default function Home() {
               Venues currently visible on map
             </h2>
             <div className="flex flex-col gap-2">
-              {visibleVenues.length > 0 &&
-                // TODO: Extract this into a component
+              {visibleVenues.length > 0 ? (
                 visibleVenues.map((venue) => (
-                  <div
-                    key={venue.id}
-                    className="flex border p-2 rounded shadow gap-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => router.push(`/venues/${venue.id}`)}
-                  >
-                    <Image
-                      className="rounded"
-                      alt={venue.name}
-                      src={venue.picture}
-                      width={100}
-                      height={100}
-                      unoptimized
-                    />
-                    <div className="flex flex-col">
-                      <span className="font-bold">{venue.name}</span>
-                      <span>{venue.address}</span>
-                    </div>
-                  </div>
-                ))}
-              {visibleVenues.length === 0 && (
+                  <VenueListItem key={venue.id} venue={venue} />
+                ))
+              ) : (
                 <span className="text-gray-500">No venues visible</span>
               )}
             </div>
