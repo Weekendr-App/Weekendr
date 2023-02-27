@@ -98,6 +98,7 @@ importers:
     specifiers:
       '@firebase/app': ^0.9.3
       '@firebase/auth': ^0.21.3
+      '@firebase/storage': ^0.11.1
       '@graphql-codegen/cli': ^3.2.0
       '@graphql-codegen/client-preset': ^2.1.0
       '@graphql-typed-document-node/core': ^3.1.1
@@ -130,6 +131,7 @@ importers:
     dependencies:
       '@firebase/app': 0.9.3
       '@firebase/auth': 0.21.3_@firebase+app@0.9.3
+      '@firebase/storage': 0.11.1_@firebase+app@0.9.3
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
       '@next/font': 13.1.6
       '@reach/combobox': 0.18.0_biqbaboplfbrettd7655fr4n2y
@@ -1223,6 +1225,20 @@ packages:
     resolution: {integrity: sha512-eRKSeykumZ5+cJPdxxJRgAC3G5NknY2GwEbKfymdnXtnT0Ucm4pspfR6GT4MUQEDuJwRVbVcSx85kgJulMoFFA==}
     dependencies:
       tslib: 2.5.0
+    dev: false
+
+  /@firebase/storage/0.11.1_@firebase+app@0.9.3:
+    resolution: {integrity: sha512-Xv8EG2j52ugF2xayBz26U9J0VBXHXPMVxSN+ph3R3BSoHxvMLaPu+qUYKHavSt+zbcgPH2GyBhrCdJK6SaDFPA==}
+    peerDependencies:
+      '@firebase/app': 0.x
+    dependencies:
+      '@firebase/app': 0.9.3
+      '@firebase/component': 0.6.3
+      '@firebase/util': 1.9.2
+      node-fetch: 2.6.7
+      tslib: 2.5.0
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /@firebase/util/1.9.2:

@@ -3,6 +3,9 @@
 # ------------------------------------------------------
 
 input CreateVenueInput {
+  address: String!
+  latitude: Float!
+  longitude: Float!
   name: String!
   picture: String
 }
@@ -23,7 +26,10 @@ type Query {
 }
 
 input UpdateVenueInput {
+  address: String!
   id: Float!
+  latitude: Float!
+  longitude: Float!
   name: String!
   picture: String
 }
@@ -39,6 +45,8 @@ type Venue {
   createdAt: Date!
   deletedAt: Date
   id: ID!
+  latitude: Float!
+  longitude: Float!
   name: String!
   picture: String
   updatedAt: Date!

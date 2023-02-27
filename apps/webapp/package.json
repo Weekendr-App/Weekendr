@@ -13,6 +13,7 @@
   "dependencies": {
     "@firebase/app": "^0.9.3",
     "@firebase/auth": "^0.21.3",
+    "@firebase/storage": "^0.11.1",
     "@graphql-typed-document-node/core": "^3.1.1",
     "@next/font": "13.1.6",
     "@reach/combobox": "^0.18.0",
