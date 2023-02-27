@@ -8,6 +8,7 @@ export class Venue {
   @Field()
   name: string;
 
+  @Field()
   firebaseUserId: string;
 
   @Field()

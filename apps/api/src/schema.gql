@@ -52,6 +52,7 @@ type Venue {
   address: String!
   createdAt: Date!
   deletedAt: Date
+  firebaseUserId: String!
   id: ID!
   latitude: Float!
   longitude: Float!
