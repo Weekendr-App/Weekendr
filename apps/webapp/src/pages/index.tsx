@@ -19,7 +19,9 @@ export default function Home() {
       <Suspense>
         <div className="flex">
           <div className="w-1/2">Venues currently visible on map</div>
-          <div className="w-1/2"><Map /></div>
+          <div className="w-1/2 overflow-hidden">
+            <Map />
+          </div>
         </div>
       </Suspense>
     </>
