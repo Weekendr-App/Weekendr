@@ -1,21 +1,19 @@
 import ReactMapGl from "react-map-gl";
 import SearchBox from "./SearchBox";
-import useLocalStorageState from "use-local-storage-state";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function Map() {
-  const [viewport, setViewport] = useLocalStorageState("viewport", {
-    defaultValue: {
-      latitude: 46.09167269144208,
-      longitude: 19.66244234405549,
-      zoom: 10,
-      bearing: 0,
-      pitch: 30,
-      padding: {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-      },
+  const [viewport, setViewport] = useLocalStorage("viewport", {
+    latitude: 46.09167269144208,
+    longitude: 19.66244234405549,
+    zoom: 10,
+    bearing: 0,
+    pitch: 30,
+    padding: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
     },
   });
 
