@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -20,7 +21,13 @@ export type CreateVenueInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
-  picture?: InputMaybe<Scalars['String']>;
+  picture: Scalars['String'];
+};
+
+export type GetVenuesInRangeInput = {
+  latitude: Scalars['Float'];
+  longitude: Scalars['Float'];
+  range: Scalars['Float'];
 };
 
 export type Mutation = {
@@ -50,11 +57,17 @@ export type Query = {
   me: User;
   venue: Venue;
   venues: Array<Venue>;
+  venuesInRange: Array<Venue>;
 };
 
 
 export type QueryVenueArgs = {
   id: Scalars['Float'];
+};
+
+
+export type QueryVenuesInRangeArgs = {
+  fields: GetVenuesInRangeInput;
 };
 
 export type UpdateVenueInput = {
@@ -63,7 +76,7 @@ export type UpdateVenueInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
-  picture?: InputMaybe<Scalars['String']>;
+  picture: Scalars['String'];
 };
 
 /** User */
@@ -76,12 +89,23 @@ export type User = {
 /** Venue */
 export type Venue = {
   __typename?: 'Venue';
+  address: Scalars['String'];
   createdAt: Scalars['Date'];
   deletedAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
-  picture?: Maybe<Scalars['String']>;
+  picture: Scalars['String'];
   updatedAt: Scalars['Date'];
 };
+
+export type VenuesInRangeQueryVariables = Exact<{
+  fields: GetVenuesInRangeInput;
+}>;
+
+
+export type VenuesInRangeQuery = { __typename?: 'Query', venuesInRange: Array<{ __typename?: 'Venue', id: string, name: string, picture: string, address: string, latitude: number, longitude: number }> };
+
+
+export const VenuesInRangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"venuesInRange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fields"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetVenuesInRangeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"venuesInRange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fields"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fields"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"picture"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}}]}}]} as unknown as DocumentNode<VenuesInRangeQuery, VenuesInRangeQueryVariables>;

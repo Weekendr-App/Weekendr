@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { Venue } from './models/venue.model';
 
 @Injectable()
@@ -40,5 +41,16 @@ export class VenuesService {
       where: { id },
       data: { deletedAt: new Date() },
     });
+  }
+
+  async findAllInRange(data: GetVenuesInRangeInput): Promise<Venue[]> {
+    const { latitude, longitude, range } = data;
+
+    console.log('latitude', latitude);
+    console.log('longitude', longitude);
+    console.log('range', range);
+
+    return this.prisma.$queryRaw<Venue[]>`
+      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_DWithin(ST_MakePoint(longitude, latitude), ST_MakePoint(${longitude}, ${latitude})::geography, ${range})`;
   }
 }

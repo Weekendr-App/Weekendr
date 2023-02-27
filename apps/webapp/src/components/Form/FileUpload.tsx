@@ -4,6 +4,7 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "@firebase/storage";
+import Image from "next/image";
 import { FC, useCallback, useRef, useState } from "react";
 import { Spinner } from "../Spinner";
 import Button from "./Button";
@@ -60,7 +61,7 @@ const FileUpload: FC<Props> = ({
         setIsUploading(false);
       }
     },
-    []
+    [name, onChange, onError]
   );
 
   return (
@@ -74,7 +75,14 @@ const FileUpload: FC<Props> = ({
         {isUploading ? (
           <Spinner />
         ) : (
-          <img src={value} alt="Venue" className="w-16 h-16" />
+          <Image
+            src={value}
+            alt="Venue"
+            className="w-16 h-16"
+            width={64}
+            height={64}
+            unoptimized
+          />
         )}
         {error && <span className="mt-2 text-red-500 italic">{error}</span>}
       </div>

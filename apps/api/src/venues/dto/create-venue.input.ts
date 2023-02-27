@@ -23,6 +23,6 @@ export class CreateVenueInput {
   @MaxLength(255)
   address: string;
 
-  @Field({ nullable: true })
-  picture?: string;
+  @Field()
+  picture: string;
 }

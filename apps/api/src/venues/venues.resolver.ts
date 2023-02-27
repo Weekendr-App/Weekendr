@@ -9,6 +9,7 @@ import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { User } from 'src/user/models/user.model';
 import { CreateVenueInput } from './dto/create-venue.input';
+import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
 import { Venue } from './models/venue.model';
 import { VenuesService } from './venues.service';
@@ -31,6 +32,13 @@ export class VenuesResolver {
   @Query(() => [Venue])
   async venues(): Promise<Venue[]> {
     return this.venuesService.findAll();
+  }
+
+  @Query(() => [Venue])
+  async venuesInRange(
+    @Args('fields') data: GetVenuesInRangeInput,
+  ): Promise<Venue[]> {
+    return this.venuesService.findAllInRange(data);
   }
 
   @Mutation(() => Venue)

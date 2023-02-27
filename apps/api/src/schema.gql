@@ -7,11 +7,17 @@ input CreateVenueInput {
   latitude: Float!
   longitude: Float!
   name: String!
-  picture: String
+  picture: String!
 }
 
 """Date custom scalar type"""
 scalar Date
+
+input GetVenuesInRangeInput {
+  latitude: Float!
+  longitude: Float!
+  range: Float!
+}
 
 type Mutation {
   createVenue(fields: CreateVenueInput!): Venue!
@@ -23,6 +29,7 @@ type Query {
   me: User!
   venue(id: Float!): Venue!
   venues: [Venue!]!
+  venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
 input UpdateVenueInput {
@@ -31,7 +38,7 @@ input UpdateVenueInput {
   latitude: Float!
   longitude: Float!
   name: String!
-  picture: String
+  picture: String!
 }
 
 """User"""
@@ -42,12 +49,13 @@ type User {
 
 """Venue"""
 type Venue {
+  address: String!
   createdAt: Date!
   deletedAt: Date
   id: ID!
   latitude: Float!
   longitude: Float!
   name: String!
-  picture: String
+  picture: String!
   updatedAt: Date!
 }
