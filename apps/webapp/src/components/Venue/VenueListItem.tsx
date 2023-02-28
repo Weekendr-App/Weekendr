@@ -5,16 +5,19 @@ import { FC } from "react";
 
 interface Props {
   venue: Venue;
+  setHighlightedId: (id: string | null) => void
 }
 
-const VenueListItem: FC<Props> = ({ venue }) => {
+const VenueListItem: FC<Props> = ({ venue, setHighlightedId }) => {
   const router = useRouter();
 
   return (
     <div
       key={venue.id}
-      className="flex border p-2 rounded shadow gap-2 hover:bg-gray-100 cursor-pointer"
+      className="flex border p-2 rounded shadow gap-2 hover:bg-blue-900 cursor-pointer"
       onClick={() => router.push(`/venues/${venue.id}`)}
+      onMouseEnter={() => setHighlightedId(venue.id)}
+      onMouseLeave={() => setHighlightedId(null)}
     >
       <Image
         className="rounded"

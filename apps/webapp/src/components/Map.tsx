@@ -7,6 +7,8 @@ import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
 import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
+import colorless from "../../public/beer.png";
+import color from "../../public/beer-colored.png";
 
 const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
@@ -26,9 +28,10 @@ const query = gql`
 
 interface Props {
   onChangeVisibleVenues: (venues: Venue[]) => void;
+  highlightedId: string | null;
 }
 
-export default function Map({ onChangeVisibleVenues }: Props) {
+export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
     longitude: 19.66244234405549,
@@ -80,10 +83,10 @@ export default function Map({ onChangeVisibleVenues }: Props) {
         key={venue.id}
         latitude={venue.latitude}
         longitude={venue.longitude}
+        style={{zIndex: venue.id === highlightedId ? 1 : 0}}
       >
         <Image
-          className="rounded"
-          src={venue.picture}
+          src={highlightedId === venue.id ? color : colorless}
           alt={venue.name}
           width={30}
           height={30}
@@ -91,7 +94,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
         />
       </Marker>
     ));
-  }, [data]);
+  }, [data, highlightedId]);
 
   useEffect(() => {
     if (!data) {
