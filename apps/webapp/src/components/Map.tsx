@@ -19,7 +19,6 @@ import { useMapHover } from "@diplomski/hooks/useMapHover";
 import { sync } from "postcss-js";
 import autoprefixer from "autoprefixer";
 
-const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
 
 const query = gql`
@@ -87,12 +86,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
             <div
               aria-label={venue.name}
               className={clsx(
-                [
-                  "w-10",
-                  "h-10",
-                  "hover:bg-red-500",
-                  "hover:cursor-pointer",
-                ],
+                ["w-10", "h-10", "hover:bg-red-500", "hover:cursor-pointer"],
                 {
                   "bg-red-500": isHighlighted(venue.id),
                   "bg-white": !isHighlighted(venue.id),

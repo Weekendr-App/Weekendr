@@ -8,7 +8,6 @@ export class Venue {
   @Field()
   name: string;
 
-  @Field()
   firebaseUserId: string;
 
   @Field()
@@ -16,6 +15,9 @@ export class Venue {
 
   @Field()
   latitude: number;
+
+  @Field({ nullable: true })
+  isOwnedByMe?: boolean;
 
   @Field()
   longitude: number;

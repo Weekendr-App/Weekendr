@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { Venue } from './models/venue.model';
 
@@ -14,24 +15,21 @@ export class VenuesService {
     });
   }
 
-  async findById(id: number): Promise<Venue> {
+  async findById(id: number, user?: User): Promise<Venue> {
     const venue = await this.prisma.venue.findUnique({ where: { id } });
     if (venue.deletedAt) {
       return null;
     }
 
-    return venue;
+    return {
+      ...venue,
+      isOwnedByMe: user?.id === venue.firebaseUserId,
+    };
   }
 
   async findByOwnerId(firebaseUserId: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
       where: { firebaseUserId, deletedAt: null },
-    });
-  }
-
-  async findAll(): Promise<Venue[]> {
-    return this.prisma.venue.findMany({
-      where: { deletedAt: null },
     });
   }
 
@@ -59,6 +57,6 @@ export class VenuesService {
     const ymax = _ne.lat;
 
     return this.prisma.$queryRaw<Venue[]>`
-      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_MakePoint(longitude, latitude), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}))`;
+      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
   }
 }

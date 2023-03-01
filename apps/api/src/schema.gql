@@ -28,7 +28,6 @@ type Mutation {
 type Query {
   me: User!
   venue(id: Float!): Venue!
-  venues: [Venue!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
@@ -53,8 +52,8 @@ type Venue {
   address: String!
   createdAt: Date!
   deletedAt: Date
-  firebaseUserId: String!
   id: ID!
+  isOwnedByMe: Boolean
   latitude: Float!
   longitude: Float!
   name: String!
