@@ -75,14 +75,16 @@ const FileUpload: FC<Props> = ({
         {isUploading ? (
           <Spinner />
         ) : (
-          <Image
-            src={value}
-            alt="Venue"
-            className="w-16 h-16"
-            width={64}
-            height={64}
-            unoptimized
-          />
+          value && (
+            <Image
+              src={value}
+              alt="Venue"
+              className="w-16 h-16"
+              width={64}
+              height={64}
+              unoptimized
+            />
+          )
         )}
         {error && <span className="mt-2 text-red-500 italic">{error}</span>}
       </div>

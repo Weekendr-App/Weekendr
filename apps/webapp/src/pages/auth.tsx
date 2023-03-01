@@ -1,5 +1,6 @@
 import { Spinner } from "@diplomski/components/Spinner";
 import { useAuth } from "@diplomski/hooks/useAuth";
+import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { useFormik } from "formik";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -45,10 +46,7 @@ export default function Auth() {
       </Head>
       <Suspense fallback={<Spinner />}>
         <Header />
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 w-1/2 mx-auto mt-10 border border-gray-300 p-4 rounded-md shadow-md"
-        >
+        <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
           <Input
             label="Email"
             name="email"
