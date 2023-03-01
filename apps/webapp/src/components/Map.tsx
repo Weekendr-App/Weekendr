@@ -90,8 +90,6 @@ export default function Map({ onChangeVisibleVenues }: Props) {
                 [
                   "w-10",
                   "h-10",
-                  "ease-in",
-                  "transition-colors",
                   "hover:bg-red-500",
                   "hover:cursor-pointer",
                 ],
