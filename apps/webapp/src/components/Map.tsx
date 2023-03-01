@@ -1,14 +1,13 @@
 import { useLocalStorage } from "usehooks-ts";
 import { Venue } from "@diplomski/gql/graphql";
-import Image from "next/image";
 import { useCallback, useEffect, useMemo } from "react";
 import ReactMapGl, { ViewState, Marker } from "react-map-gl";
 import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
 import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
-import colorless from "../../public/colorless.svg";
-import color from "../../public/color.svg";
+import Pin from "../../public/pin.png";
+import clsx from "clsx";
 
 const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
@@ -78,22 +77,30 @@ export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
       return null;
     }
 
-    return data.venuesInRange.map((venue: Venue) => (
-      <Marker
-        key={venue.id}
-        latitude={venue.latitude}
-        longitude={venue.longitude}
-        style={{zIndex: venue.id === highlightedId ? 1 : 0}}
-      >
-        <Image
-          src={highlightedId === venue.id ? color : colorless}
-          alt={venue.name}
-          width={40}
-          height={40}
-          unoptimized
-        />
-      </Marker>
-    ));
+    return data.venuesInRange.map((venue: Venue) => {
+      const isHighlighted = venue.id === highlightedId;
+
+      return (
+        <Marker
+          key={venue.id}
+          latitude={venue.latitude}
+          longitude={venue.longitude}
+          style={{ zIndex: venue.id === highlightedId ? 1 : 0 }}
+        >
+          <div
+            aria-label={venue.name}
+            className={clsx(["w-10", "h-10", "ease-in", "transition-colors"], {
+              "bg-red-500": isHighlighted,
+              "bg-white": !isHighlighted,
+            })}
+            style={{
+              maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+              maskMode: "alpha", // Tailwind doesn't support mask-mode
+            }}
+          ></div>
+        </Marker>
+      );
+    });
   }, [data, highlightedId]);
 
   useEffect(() => {
