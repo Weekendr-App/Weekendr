@@ -1,9 +1,49 @@
-import { useCallback } from "react";
-import ReactMapGl, { ViewState } from "react-map-gl";
-import SearchBox from "./SearchBox";
 import { useLocalStorage } from "usehooks-ts";
+import { Venue } from "@diplomski/gql/graphql";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactMapGl, {
+  ViewState,
+  Marker,
+  MapRef,
+  LngLatBounds,
+  ViewStateChangeEvent,
+} from "react-map-gl";
+import { gql, useQuery } from "urql";
+import SearchBox from "./SearchBox";
+import { useDebounce } from "usehooks-ts";
+import "mapbox-gl/dist/mapbox-gl.css";
+import Pin from "../../public/pin.png";
+import clsx from "clsx";
+import { useRouter } from "next/router";
+import { useMapHover } from "@diplomski/hooks/useMapHover";
+import { sync } from "postcss-js";
+import autoprefixer from "autoprefixer";
 
-export default function Map() {
+const DEFAULT_RANGE = 3000;
+const DEFAULT_DEBOUNCE_TIME = 500;
+
+const query = gql`
+  query venuesInRange($fields: GetVenuesInRangeInput!) {
+    venuesInRange(fields: $fields) {
+      id
+      name
+      picture
+      address
+      latitude
+      longitude
+    }
+  }
+`;
+
+const prefixer = sync([autoprefixer]);
+
+interface Props {
+  onChangeVisibleVenues: (venues: Venue[]) => void;
+}
+
+export default function Map({ onChangeVisibleVenues }: Props) {
+  const router = useRouter();
+  const { setHighlightedVenueId, isHighlighted } = useMapHover();
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
     longitude: 19.66244234405549,
@@ -17,6 +57,75 @@ export default function Map() {
       right: 0,
     },
   });
+  const mapRef = useRef<MapRef | null>(null);
+  const [mapBounds, setMapBounds] = useState<LngLatBounds | null>(null);
+
+  const debouncedBounds = useDebounce(mapBounds, DEFAULT_DEBOUNCE_TIME);
+
+  const [{ data }] = useQuery({
+    query,
+    variables: {
+      fields: {
+        bounds: JSON.stringify(debouncedBounds),
+      },
+    },
+  });
+
+  const pins = useMemo(() => {
+    if (!data) {
+      return null;
+    }
+
+    return data.venuesInRange.map((venue: Venue) => {
+      return (
+        <div className="z-10" key={venue.id}>
+          <Marker
+            key={venue.id}
+            latitude={venue.latitude}
+            longitude={venue.longitude}
+          >
+            <div
+              aria-label={venue.name}
+              className={clsx(
+                [
+                  "w-10",
+                  "h-10",
+                  "hover:bg-red-500",
+                  "hover:cursor-pointer",
+                ],
+                {
+                  "bg-red-500": isHighlighted(venue.id),
+                  "bg-white": !isHighlighted(venue.id),
+                }
+              )}
+              style={prefixer({
+                maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+                maskMode: "alpha", // Tailwind doesn't support mask-mode
+              })}
+              onClick={() => router.push(`/venues/${venue.id}`)}
+              onMouseEnter={() => setHighlightedVenueId(venue.id)}
+              onMouseLeave={() => setHighlightedVenueId(null)}
+            ></div>
+          </Marker>
+        </div>
+      );
+    });
+  }, [data, router, setHighlightedVenueId, isHighlighted]);
+
+  const calculateMapBounds = useCallback(() => {
+    if (mapRef.current) {
+      setMapBounds(mapRef.current.getMap().getBounds());
+    }
+  }, [mapRef, setMapBounds]);
+
+  const onMove = useCallback(
+    (e: ViewStateChangeEvent) => {
+      if (e.viewState) {
+        setViewport(e.viewState);
+      }
+    },
+    [setViewport]
+  );
 
   const onSelectAddress = useCallback(
     (_address: string, latitude: number | null, longitude: number | null) => {
@@ -29,24 +138,40 @@ export default function Map() {
         }));
       }
     },
-    []
+    [setViewport]
   );
+
+  useEffect(() => {
+    if (!data) {
+      onChangeVisibleVenues([]);
+      return;
+    }
+
+    onChangeVisibleVenues(data.venuesInRange);
+  }, [data, onChangeVisibleVenues]);
+
+  useEffect(() => {
+    calculateMapBounds();
+  }, [calculateMapBounds, viewport]);
 
   return (
     <div className="text-black relative">
       <ReactMapGl
         {...viewport}
-        style={{ width: "100%", height: `calc(100vh - 64px)`, cursor: "grab" }}
+        style={{ width: "100%", height: "calc(100vh - 64px)", cursor: "grab" }}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
-        onMove={({ viewState }) => setViewport(viewState)}
+        onMove={onMove}
+        onLoad={calculateMapBounds}
         minZoom={10}
         maxZoom={15}
         mapStyle="mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+        ref={mapRef}
       >
-        <div className="absolute top-0 w-full z-10 p-4">
+        {pins}
+        <div className="absolute top-0 w-full z-20 p-4">
           <SearchBox
             name="search"
-            placeholder="Search your address"
+            placeholder={"Search for an address"}
             onSelectAddress={onSelectAddress}
           />
         </div>

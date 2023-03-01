@@ -1,10 +1,17 @@
 import Head from "next/head";
-import { lazy, Suspense } from "react";
-import Map from "@diplomski/components/Map";
+import { lazy, Suspense, useState } from "react";
+import { Venue } from "@diplomski/gql/graphql";
+import { Spinner } from "@diplomski/components/Spinner";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
+const Map = lazy(() => import("@diplomski/components/Map"));
+const VenueListItem = lazy(
+  () => import("@diplomski/components/Venue/VenueListItem")
+);
 
 export default function Home() {
+  const [visibleVenues, setVisibleVenues] = useState<Venue[]>([]);
+
   return (
     <>
       <Head>
@@ -13,14 +20,25 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Suspense>
+      <Suspense fallback={<Spinner />}>
         <Header />
-      </Suspense>
-      <Suspense>
-        <div className="flex">
-          <div className="w-1/2">Venues currently visible on map</div>
-          <div className="w-1/2 overflow-hidden">
-            <Map />
+        <div className="flex text-white">
+          <div className="w-1/2 p-2 overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-2">
+              Venues currently visible on map
+            </h2>
+            <div className="flex flex-col gap-2">
+              {visibleVenues.length > 0 ? (
+                visibleVenues.map((venue) => (
+                  <VenueListItem key={venue.id} venue={venue} />
+                ))
+              ) : (
+                <span className="text-gray-500">No venues visible</span>
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            <Map onChangeVisibleVenues={setVisibleVenues} />
           </div>
         </div>
       </Suspense>
