@@ -107,8 +107,10 @@ importers:
       '@types/eslint': 8.21.1
       '@types/mapbox-gl': ^2.7.10
       '@types/node': 18.14.0
+      '@types/postcss-js': ^4.0.0
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
+      '@types/sharp': ^0.31.1
       autoprefixer: ^10.4.13
       clsx: ^1.2.1
       eslint: 8.34.0
@@ -118,6 +120,7 @@ importers:
       mapbox-gl: ^2.13.0
       next: 13.1.6
       postcss: ^8.4.21
+      postcss-js: ^4.0.1
       react: 18.2.0
       react-dom: 18.2.0
       react-map-gl: ^7.0.21
@@ -148,6 +151,7 @@ importers:
       mapbox-gl: 2.13.0
       next: 13.1.6_biqbaboplfbrettd7655fr4n2y
       postcss: 8.4.21
+      postcss-js: 4.0.1_postcss@8.4.21
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-map-gl: 7.0.21_5wflejxe2geyle4qn254jrdyiy
@@ -163,6 +167,8 @@ importers:
       '@graphql-codegen/client-preset': 2.1.0_graphql@16.6.0
       '@types/eslint': 8.21.1
       '@types/mapbox-gl': 2.7.10
+      '@types/postcss-js': 4.0.0
+      '@types/sharp': 0.31.1
       typescript: 4.9.5
 
 packages:
@@ -3205,6 +3211,12 @@ packages:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: true
 
+  /@types/postcss-js/4.0.0:
+    resolution: {integrity: sha512-ieu0u7T7jnUCFmXcf8JzoJ3/1U5NI3ZYpfX5zW2td0x/BqVQrpCQ6uOY9Ef/0WJuIjc9OCtdfYF/JE7MGax2TA==}
+    dependencies:
+      postcss: 8.4.21
+    dev: true
+
   /@types/prettier/2.7.2:
     resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
     dev: true
@@ -3260,6 +3272,12 @@ packages:
     dependencies:
       '@types/mime': 3.0.1
       '@types/node': 18.14.0
+
+  /@types/sharp/0.31.1:
+    resolution: {integrity: sha512-5nWwamN9ZFHXaYEincMSuza8nNfOof8nmO+mcI+Agx1uMUk4/pQnNIcix+9rLPXzKrm1pS34+6WRDbDV0Jn7ag==}
+    dependencies:
+      '@types/node': 18.14.0
+    dev: true
 
   /@types/stack-utils/2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
@@ -7861,7 +7879,6 @@ packages:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-    dev: false
 
   /napi-build-utils/1.0.2:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
@@ -8409,7 +8426,6 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
-    dev: false
 
   /potpack/2.0.0:
     resolution: {integrity: sha512-Q+/tYsFU9r7xoOJ+y/ZTtdVQwTWfzjbiXBDMM/JKUux3+QPP02iUuIoeBQ+Ot6oEDlC+/PGjB/5A3K7KKb7hcw==}
@@ -9117,7 +9133,6 @@ packages:
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
-    dev: false
 
   /source-map-support/0.5.13:
     resolution: {integrity: sha512-SHSKFHadjVA5oR4PPqhtAVdcBWwRYVd6g6cAXnIbRiIwc2EhPrTuKUBdSLvlEKyIP3GCf89fltvcZiP9MMFA1w==}

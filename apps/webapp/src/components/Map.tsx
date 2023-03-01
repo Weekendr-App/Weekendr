@@ -10,6 +10,8 @@ import Pin from "../../public/pin.png";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { useMapHover } from "@diplomski/hooks/useMapHover";
+import { sync } from "postcss-js";
+import autoprefixer from "autoprefixer";
 
 const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
@@ -26,6 +28,8 @@ const query = gql`
     }
   }
 `;
+
+const prefixer = sync([autoprefixer]);
 
 interface Props {
   onChangeVisibleVenues: (venues: Venue[]) => void;
@@ -105,10 +109,10 @@ export default function Map({ onChangeVisibleVenues }: Props) {
                   "bg-white": !isHighlighted(venue.id),
                 }
               )}
-              style={{
+              style={prefixer({
                 maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
                 maskMode: "alpha", // Tailwind doesn't support mask-mode
-              }}
+              })}
               onClick={() => router.push(`/venues/${venue.id}`)}
               onMouseEnter={() => setHighlightedVenueId(venue.id)}
               onMouseLeave={() => setHighlightedVenueId(null)}
