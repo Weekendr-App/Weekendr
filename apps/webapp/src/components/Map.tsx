@@ -7,8 +7,8 @@ import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
 import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
-import colorless from "../../public/beer.png";
-import color from "../../public/beer-colored.png";
+import colorless from "../../public/colorless.svg";
+import color from "../../public/color.svg";
 
 const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
@@ -88,8 +88,8 @@ export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
         <Image
           src={highlightedId === venue.id ? color : colorless}
           alt={venue.name}
-          width={30}
-          height={30}
+          width={40}
+          height={40}
           unoptimized
         />
       </Marker>
