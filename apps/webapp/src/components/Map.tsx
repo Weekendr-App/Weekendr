@@ -85,7 +85,6 @@ export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
           key={venue.id}
           latitude={venue.latitude}
           longitude={venue.longitude}
-          style={{ zIndex: venue.id === highlightedId ? 1 : 0 }}
         >
           <div
             aria-label={venue.name}
