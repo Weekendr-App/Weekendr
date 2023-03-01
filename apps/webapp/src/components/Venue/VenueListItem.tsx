@@ -1,23 +1,40 @@
 import { Venue } from "@diplomski/gql/graphql";
+import { useMapHover } from "@diplomski/hooks/useMapHover";
+import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 interface Props {
   venue: Venue;
-  setHighlightedId: (id: string | null) => void
 }
 
-const VenueListItem: FC<Props> = ({ venue, setHighlightedId }) => {
+const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
+
+  const { highlightedVenueId, setHighlightedVenueId, isHighlighted } =
+    useMapHover();
 
   return (
     <div
       key={venue.id}
-      className="flex border p-2 rounded shadow gap-2 hover:bg-blue-900 cursor-pointer"
+      className={clsx(
+        [
+          "flex",
+          "border",
+          "p-2",
+          "rounded",
+          "shadow",
+          "gap-2",
+          "cursor-pointer",
+        ],
+        {
+          "bg-blue-900": isHighlighted(venue.id),
+        }
+      )}
       onClick={() => router.push(`/venues/${venue.id}`)}
-      onMouseEnter={() => setHighlightedId(venue.id)}
-      onMouseLeave={() => setHighlightedId(null)}
+      onMouseEnter={() => setHighlightedVenueId(venue.id)}
+      onMouseLeave={() => setHighlightedVenueId(null)}
     >
       <Image
         className="rounded"

@@ -8,6 +8,8 @@ import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../public/pin.png";
 import clsx from "clsx";
+import { useRouter } from "next/router";
+import { useMapHover } from "@diplomski/hooks/useMapHover";
 
 const DEFAULT_RANGE = 3000;
 const DEFAULT_DEBOUNCE_TIME = 500;
@@ -27,10 +29,12 @@ const query = gql`
 
 interface Props {
   onChangeVisibleVenues: (venues: Venue[]) => void;
-  highlightedId: string | null;
 }
 
-export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
+export default function Map({ onChangeVisibleVenues }: Props) {
+  const router = useRouter();
+  const { highlightedVenueId, setHighlightedVenueId, isHighlighted } =
+    useMapHover();
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
     longitude: 19.66244234405549,
@@ -78,29 +82,42 @@ export default function Map({ onChangeVisibleVenues, highlightedId }: Props) {
     }
 
     return data.venuesInRange.map((venue: Venue) => {
-      const isHighlighted = venue.id === highlightedId;
-
       return (
-        <Marker
-          key={venue.id}
-          latitude={venue.latitude}
-          longitude={venue.longitude}
-        >
-          <div
-            aria-label={venue.name}
-            className={clsx(["w-10", "h-10", "ease-in", "transition-colors"], {
-              "bg-red-500": isHighlighted,
-              "bg-white": !isHighlighted,
-            })}
-            style={{
-              maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
-              maskMode: "alpha", // Tailwind doesn't support mask-mode
-            }}
-          ></div>
-        </Marker>
+        <div className="z-10" key={venue.id}>
+          <Marker
+            key={venue.id}
+            latitude={venue.latitude}
+            longitude={venue.longitude}
+          >
+            <div
+              aria-label={venue.name}
+              className={clsx(
+                [
+                  "w-10",
+                  "h-10",
+                  "ease-in",
+                  "transition-colors",
+                  "hover:bg-red-500",
+                  "hover:cursor-pointer",
+                ],
+                {
+                  "bg-red-500": isHighlighted(venue.id),
+                  "bg-white": !isHighlighted(venue.id),
+                }
+              )}
+              style={{
+                maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+                maskMode: "alpha", // Tailwind doesn't support mask-mode
+              }}
+              onClick={() => router.push(`/venues/${venue.id}`)}
+              onMouseEnter={() => setHighlightedVenueId(venue.id)}
+              onMouseLeave={() => setHighlightedVenueId(null)}
+            ></div>
+          </Marker>
+        </div>
       );
     });
-  }, [data, highlightedId]);
+  }, [data, router, setHighlightedVenueId, isHighlighted]);
 
   useEffect(() => {
     if (!data) {

@@ -11,7 +11,6 @@ const VenueListItem = lazy(
 
 export default function Home() {
   const [visibleVenues, setVisibleVenues] = useState<Venue[]>([]);
-  const [highlightedId, setHighlightedId] = useState<string | null>(null);
 
   return (
     <>
@@ -31,11 +30,7 @@ export default function Home() {
             <div className="flex flex-col gap-2">
               {visibleVenues.length > 0 ? (
                 visibleVenues.map((venue) => (
-                  <VenueListItem
-                    key={venue.id}
-                    venue={venue}
-                    setHighlightedId={setHighlightedId}
-                  />
+                  <VenueListItem key={venue.id} venue={venue} />
                 ))
               ) : (
                 <span className="text-gray-500">No venues visible</span>
@@ -43,10 +38,7 @@ export default function Home() {
             </div>
           </div>
           <div className="w-1/2">
-            <Map
-              onChangeVisibleVenues={setVisibleVenues}
-              highlightedId={highlightedId}
-            />
+            <Map onChangeVisibleVenues={setVisibleVenues} />
           </div>
         </div>
       </Suspense>
