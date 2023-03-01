@@ -1,7 +1,13 @@
 import { useLocalStorage } from "usehooks-ts";
 import { Venue } from "@diplomski/gql/graphql";
-import { useCallback, useEffect, useMemo } from "react";
-import ReactMapGl, { ViewState, Marker } from "react-map-gl";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ReactMapGl, {
+  ViewState,
+  Marker,
+  MapRef,
+  LngLatBounds,
+  ViewStateChangeEvent,
+} from "react-map-gl";
 import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
 import { useDebounce } from "usehooks-ts";
@@ -37,8 +43,7 @@ interface Props {
 
 export default function Map({ onChangeVisibleVenues }: Props) {
   const router = useRouter();
-  const { highlightedVenueId, setHighlightedVenueId, isHighlighted } =
-    useMapHover();
+  const { setHighlightedVenueId, isHighlighted } = useMapHover();
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
     longitude: 19.66244234405549,
@@ -52,33 +57,19 @@ export default function Map({ onChangeVisibleVenues }: Props) {
       right: 0,
     },
   });
+  const mapRef = useRef<MapRef | null>(null);
+  const [mapBounds, setMapBounds] = useState<LngLatBounds | null>(null);
 
-  const debouncedViewport = useDebounce(viewport, DEFAULT_DEBOUNCE_TIME);
+  const debouncedBounds = useDebounce(mapBounds, DEFAULT_DEBOUNCE_TIME);
 
   const [{ data }] = useQuery({
     query,
     variables: {
       fields: {
-        latitude: debouncedViewport.latitude,
-        longitude: debouncedViewport.longitude,
-        range: DEFAULT_RANGE,
+        bounds: JSON.stringify(debouncedBounds),
       },
     },
   });
-
-  const onSelectAddress = useCallback(
-    (_address: string, latitude: number | null, longitude: number | null) => {
-      if (latitude && longitude) {
-        setViewport((old) => ({
-          ...old,
-          latitude,
-          longitude,
-          zoom: 15,
-        }));
-      }
-    },
-    [setViewport]
-  );
 
   const pins = useMemo(() => {
     if (!data) {
@@ -123,6 +114,35 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     });
   }, [data, router, setHighlightedVenueId, isHighlighted]);
 
+  const calculateMapBounds = useCallback(() => {
+    if (mapRef.current) {
+      setMapBounds(mapRef.current.getMap().getBounds());
+    }
+  }, [mapRef, setMapBounds]);
+
+  const onMove = useCallback(
+    (e: ViewStateChangeEvent) => {
+      if (e.viewState) {
+        setViewport(e.viewState);
+      }
+    },
+    [setViewport]
+  );
+
+  const onSelectAddress = useCallback(
+    (_address: string, latitude: number | null, longitude: number | null) => {
+      if (latitude && longitude) {
+        setViewport((old) => ({
+          ...old,
+          latitude,
+          longitude,
+          zoom: 15,
+        }));
+      }
+    },
+    [setViewport]
+  );
+
   useEffect(() => {
     if (!data) {
       onChangeVisibleVenues([]);
@@ -132,22 +152,28 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     onChangeVisibleVenues(data.venuesInRange);
   }, [data, onChangeVisibleVenues]);
 
+  useEffect(() => {
+    calculateMapBounds();
+  }, [calculateMapBounds, viewport]);
+
   return (
     <div className="text-black relative">
       <ReactMapGl
         {...viewport}
         style={{ width: "100%", height: "calc(100vh - 64px)", cursor: "grab" }}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
-        onMove={({ viewState }) => setViewport(viewState)}
+        onMove={onMove}
+        onLoad={calculateMapBounds}
         minZoom={10}
         maxZoom={15}
         mapStyle="mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+        ref={mapRef}
       >
         {pins}
-        <div className="absolute top-0 w-full z-10 p-4">
+        <div className="absolute top-0 w-full z-20 p-4">
           <SearchBox
             name="search"
-            placeholder="Search your address"
+            placeholder={"Search for an address"}
             onSelectAddress={onSelectAddress}
           />
         </div>

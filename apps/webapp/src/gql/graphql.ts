@@ -12,6 +12,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Bounds: any;
   /** Date custom scalar type */
   Date: any;
 };
@@ -25,9 +26,7 @@ export type CreateVenueInput = {
 };
 
 export type GetVenuesInRangeInput = {
-  latitude: Scalars['Float'];
-  longitude: Scalars['Float'];
-  range: Scalars['Float'];
+  bounds: Scalars['Bounds'];
 };
 
 export type Mutation = {

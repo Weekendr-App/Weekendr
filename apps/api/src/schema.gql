@@ -2,6 +2,8 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+scalar Bounds
+
 input CreateVenueInput {
   address: String!
   latitude: Float!
@@ -14,9 +16,7 @@ input CreateVenueInput {
 scalar Date
 
 input GetVenuesInRangeInput {
-  latitude: Float!
-  longitude: Float!
-  range: Float!
+  bounds: Bounds!
 }
 
 type Mutation {
