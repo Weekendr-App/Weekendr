@@ -19,8 +19,11 @@ export class VenuesResolver {
   constructor(private readonly venuesService: VenuesService) {}
 
   @Query(() => Venue)
-  async venue(@Args('id') id: number): Promise<Venue> {
-    const venue = this.venuesService.findById(id);
+  async venue(
+    @Args('id') id: number,
+    @FirebaseUser('user') user: User | null,
+  ): Promise<Venue> {
+    const venue = await this.venuesService.findById(id, user);
 
     if (!venue) {
       throw new NotFoundException(id);
@@ -30,15 +33,11 @@ export class VenuesResolver {
   }
 
   @Query(() => [Venue])
-  async venues(): Promise<Venue[]> {
-    return this.venuesService.findAll();
-  }
-
-  @Query(() => [Venue])
   async venuesInRange(
     @Args('fields') data: GetVenuesInRangeInput,
+    @FirebaseUser('user') user: User | null,
   ): Promise<Venue[]> {
-    return this.venuesService.findAllInRange(data);
+    return this.venuesService.findAllInRange(data, user);
   }
 
   @Mutation(() => Venue)

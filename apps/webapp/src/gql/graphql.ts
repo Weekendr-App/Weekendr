@@ -55,7 +55,6 @@ export type Query = {
   __typename?: 'Query';
   me: User;
   venue: Venue;
-  venues: Array<Venue>;
   venuesInRange: Array<Venue>;
 };
 
@@ -83,6 +82,7 @@ export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   id: Scalars['ID'];
+  venues: Array<Venue>;
 };
 
 /** Venue */
@@ -92,6 +92,7 @@ export type Venue = {
   createdAt: Scalars['Date'];
   deletedAt?: Maybe<Scalars['Date']>;
   id: Scalars['ID'];
+  isOwnedByMe?: Maybe<Scalars['Boolean']>;
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
@@ -106,5 +107,13 @@ export type VenuesInRangeQueryVariables = Exact<{
 
 export type VenuesInRangeQuery = { __typename?: 'Query', venuesInRange: Array<{ __typename?: 'Venue', id: string, name: string, picture: string, address: string, latitude: number, longitude: number }> };
 
+export type VenuePageQueryVariables = Exact<{
+  id: Scalars['Float'];
+}>;
+
+
+export type VenuePageQuery = { __typename?: 'Query', venue: { __typename?: 'Venue', id: string, name: string, isOwnedByMe?: boolean | null, picture: string, address: string } };
+
 
 export const VenuesInRangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"venuesInRange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fields"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetVenuesInRangeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"venuesInRange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fields"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fields"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"picture"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}}]}}]}}]} as unknown as DocumentNode<VenuesInRangeQuery, VenuesInRangeQueryVariables>;
+export const VenuePageDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"VenuePage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"venue"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"isOwnedByMe"}},{"kind":"Field","name":{"kind":"Name","value":"picture"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<VenuePageQuery, VenuePageQueryVariables>;

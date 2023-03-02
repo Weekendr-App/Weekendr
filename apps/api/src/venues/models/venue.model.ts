@@ -16,6 +16,9 @@ export class Venue {
   @Field()
   latitude: number;
 
+  @Field({ nullable: true })
+  isOwnedByMe?: boolean;
+
   @Field()
   longitude: number;
 

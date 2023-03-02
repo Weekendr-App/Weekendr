@@ -28,7 +28,6 @@ type Mutation {
 type Query {
   me: User!
   venue(id: Float!): Venue!
-  venues: [Venue!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
@@ -45,6 +44,7 @@ input UpdateVenueInput {
 type User {
   email: String!
   id: ID!
+  venues: [Venue!]!
 }
 
 """Venue"""
@@ -53,6 +53,7 @@ type Venue {
   createdAt: Date!
   deletedAt: Date
   id: ID!
+  isOwnedByMe: Boolean
   latitude: Float!
   longitude: Float!
   name: String!

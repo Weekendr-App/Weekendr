@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { Venue } from './models/venue.model';
 
@@ -8,24 +9,27 @@ import { Venue } from './models/venue.model';
 export class VenuesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findById(id: number): Promise<Venue> {
+  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
+    return this.prisma.venue.create({
+      data,
+    });
+  }
+
+  async findById(id: number, user?: User): Promise<Venue> {
     const venue = await this.prisma.venue.findUnique({ where: { id } });
     if (venue.deletedAt) {
       return null;
     }
 
-    return venue;
+    return {
+      ...venue,
+      isOwnedByMe: user?.id === venue.firebaseUserId,
+    };
   }
 
-  async findAll(): Promise<Venue[]> {
+  async findByOwnerId(firebaseUserId: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
-      where: { deletedAt: null },
-    });
-  }
-
-  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
-    return this.prisma.venue.create({
-      data,
+      where: { firebaseUserId, deletedAt: null },
     });
   }
 
@@ -43,7 +47,10 @@ export class VenuesService {
     });
   }
 
-  async findAllInRange(data: GetVenuesInRangeInput): Promise<Venue[]> {
+  async findAllInRange(
+    data: GetVenuesInRangeInput,
+    user?: User,
+  ): Promise<Venue[]> {
     const { bounds } = data;
     const { _sw, _ne } = bounds;
 
@@ -52,7 +59,12 @@ export class VenuesService {
     const xmax = _ne.lng;
     const ymax = _ne.lat;
 
-    return this.prisma.$queryRaw<Venue[]>`
-      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_MakePoint(longitude, latitude), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}))`;
+    return (
+      await this.prisma.$queryRaw<Venue[]>`
+      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`
+    ).map((venue) => ({
+      ...venue,
+      isOwnedByMe: user?.id === venue.firebaseUserId,
+    }));
   }
 }
