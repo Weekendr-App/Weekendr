@@ -11,6 +11,8 @@ const query = gql`
     venue(id: $id) {
       id
       name
+      latitude
+      longitude
       isOwnedByMe
       picture
       address
@@ -19,6 +21,7 @@ const query = gql`
 `;
 
 const Header = lazy(() => import("@diplomski/components/Header"));
+const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 
 export default function VenuePage() {
   const router = useRouter();
@@ -60,7 +63,27 @@ export default function VenuePage() {
               unoptimized
             />
           </div>
-          <div className="p-3 w-1/2">TODO: Add map with venue location</div>
+          <div className="w-1/2">
+            <Suspense fallback={<Spinner />}>
+              <StaticMap
+                height={500}
+                viewport={{
+                  latitude: venue.latitude,
+                  longitude: venue.longitude,
+                  zoom: 15,
+                  bearing: 0,
+                  pitch: 30,
+                  padding: {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                  },
+                }}
+                venues={[venue]}
+              />
+            </Suspense>
+          </div>
         </div>
         <div className="flex flex-col text-white">TODO: Add venue events</div>
       </Suspense>
