@@ -47,7 +47,10 @@ export class VenuesService {
     });
   }
 
-  async findAllInRange(data: GetVenuesInRangeInput): Promise<Venue[]> {
+  async findAllInRange(
+    data: GetVenuesInRangeInput,
+    user?: User,
+  ): Promise<Venue[]> {
     const { bounds } = data;
     const { _sw, _ne } = bounds;
 
@@ -56,7 +59,12 @@ export class VenuesService {
     const xmax = _ne.lng;
     const ymax = _ne.lat;
 
-    return this.prisma.$queryRaw<Venue[]>`
-      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
+    return (
+      await this.prisma.$queryRaw<Venue[]>`
+      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`
+    ).map((venue) => ({
+      ...venue,
+      isOwnedByMe: user?.id === venue.firebaseUserId,
+    }));
   }
 }

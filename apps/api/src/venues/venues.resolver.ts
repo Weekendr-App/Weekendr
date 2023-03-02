@@ -35,8 +35,9 @@ export class VenuesResolver {
   @Query(() => [Venue])
   async venuesInRange(
     @Args('fields') data: GetVenuesInRangeInput,
+    @FirebaseUser('user') user: User | null,
   ): Promise<Venue[]> {
-    return this.venuesService.findAllInRange(data);
+    return this.venuesService.findAllInRange(data, user);
   }
 
   @Mutation(() => Venue)
