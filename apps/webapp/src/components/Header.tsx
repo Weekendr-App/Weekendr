@@ -14,12 +14,12 @@ const headerItems = [
     href: "/venues/add",
   },
 ].map((item) => (
-  <>
+  <div style={{ display: "flex" }} key={item.title}>
     <Link className="hover:underline" href={item.href}>
       {item.title}
     </Link>
     <p className="mx-2">|</p>
-  </>
+  </div>
 ));
 
 const Header: FC<{}> = () => {

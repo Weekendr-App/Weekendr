@@ -1,4 +1,5 @@
 import { Spinner } from "@diplomski/components/Spinner";
+import VenueNav from "@diplomski/components/VenueNav";
 import { Venue } from "@diplomski/gql/graphql";
 import Head from "next/head";
 import Image from "next/image";
@@ -46,6 +47,7 @@ export default function VenuePage() {
         <Header />
         <div className="flex text-white">
           <div className="p-3 w-1/2">
+            <VenueNav venue={venue} />
             <h1 className="text-4xl font-bold">
               {venue.name}
               {/* TODO: Add edit/delete buttons for venue owner */}
