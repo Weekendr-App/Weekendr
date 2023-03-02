@@ -1,3 +1,4 @@
+import { Venue } from "@diplomski/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const DELETE_VENUE_MUTATION = gql(`
@@ -9,7 +10,12 @@ const DELETE_VENUE_MUTATION = gql(`
 `);
 
 export default function useDeleteVenue() {
-  const [result, execute] = useMutation(DELETE_VENUE_MUTATION);
+  const [result, execute] = useMutation<
+    { deleteVenue: Venue },
+    {
+      id: number;
+    }
+  >(DELETE_VENUE_MUTATION);
 
   return {
     loading: result.fetching,
