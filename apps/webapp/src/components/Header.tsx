@@ -14,7 +14,7 @@ const headerItems = [
     href: "/venues/add",
   },
 ].map((item) => (
-  <div style={{ display: "flex" }} key={item.title}>
+  <div className="flex" key={item.title}>
     <Link className="hover:underline" href={item.href}>
       {item.title}
     </Link>
