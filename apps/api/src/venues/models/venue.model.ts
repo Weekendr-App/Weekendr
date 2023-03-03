@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Event } from 'src/events/models/event.model';
 
 @ObjectType({ description: 'Venue' })
 export class Venue {
@@ -24,6 +25,9 @@ export class Venue {
 
   @Field()
   picture: string;
+
+  @Field(() => [Event], { nullable: true, defaultValue: [] })
+  events?: Event[] = [];
 
   @Field()
   createdAt: Date;

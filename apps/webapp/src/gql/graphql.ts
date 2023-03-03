@@ -25,6 +25,21 @@ export type CreateVenueInput = {
   picture: Scalars['String'];
 };
 
+/** Event */
+export type Event = {
+  __typename?: 'Event';
+  createdAt: Scalars['Date'];
+  deletedAt?: Maybe<Scalars['Date']>;
+  description?: Maybe<Scalars['String']>;
+  endDate: Scalars['Date'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  startDate: Scalars['Date'];
+  status: Scalars['String'];
+  updatedAt: Scalars['Date'];
+  venue: Venue;
+};
+
 export type GetVenuesInRangeInput = {
   bounds: Scalars['Bounds'];
 };
@@ -91,6 +106,7 @@ export type Venue = {
   address: Scalars['String'];
   createdAt: Scalars['Date'];
   deletedAt?: Maybe<Scalars['Date']>;
+  events?: Maybe<Array<Event>>;
   id: Scalars['ID'];
   isOwnedByMe?: Maybe<Scalars['Boolean']>;
   latitude: Scalars['Float'];
