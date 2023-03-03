@@ -27,6 +27,7 @@ const query = gql`
       id
       name
       picture
+      isOwnedByMe
       address
       latitude
       longitude
@@ -85,13 +86,13 @@ export default function Map({ onChangeVisibleVenues }: Props) {
           >
             <div
               aria-label={venue.name}
-              className={clsx(
-                ["w-10", "h-10", "hover:bg-red-500", "hover:cursor-pointer"],
-                {
-                  "bg-red-500": isHighlighted(venue.id),
-                  "bg-white": !isHighlighted(venue.id),
-                }
-              )}
+              className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
+                "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
+                "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
+                "bg-white": !isHighlighted(venue.id),
+                "hover:bg-red-500": !venue.isOwnedByMe,
+                "hover:bg-amber-300": venue.isOwnedByMe,
+              })}
               style={prefixer({
                 maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
                 maskMode: "alpha", // Tailwind doesn't support mask-mode
