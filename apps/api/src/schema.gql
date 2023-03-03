@@ -34,14 +34,17 @@ input GetVenuesInRangeInput {
 }
 
 type Mutation {
+  cancelEvent(eventId: Float!): Event!
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
   updateVenue(fields: UpdateVenueInput!): Venue!
 }
 
 type Query {
+  event(eventId: Float!): Event!
   me: User!
   venue(id: Float!): Venue!
+  venueEvents(venueId: Float!): [Event!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
