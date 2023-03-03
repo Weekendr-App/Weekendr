@@ -12,6 +12,12 @@ datasource db {
   extensions = [postgis]
 }
 
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
 model Venue {
   id             Int      @id @default(autoincrement())
   name           String
@@ -23,9 +29,29 @@ model Venue {
   longitude      Float
   address        String
 
+  events         Event[]
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
 
   @@index([latitude, longitude], name: "venue_location")
+}
+
+model Event {
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String?
+  picture        String?
+
+  venue          Venue    @relation(fields: [venueId], references: [id])
+  venueId        Int
+
+  status         EventStatus @default(DRAFT)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  @@index([venueId], name: "event_venue")
 }
