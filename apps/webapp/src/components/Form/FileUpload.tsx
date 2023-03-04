@@ -67,7 +67,7 @@ const FileUpload: FC<Props> = ({
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="font-bold">
+        <label htmlFor={name} className="text-white font-bold">
           {label}
         </label>
       )}
@@ -79,7 +79,7 @@ const FileUpload: FC<Props> = ({
             <Image
               src={value}
               alt="Venue"
-              className="w-16 h-16"
+              className="w-full"
               width={64}
               height={64}
               unoptimized

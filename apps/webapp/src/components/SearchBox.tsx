@@ -21,6 +21,7 @@ interface SearchBoxProps extends Omit<Props, "value" | "type" | "onChange"> {
     latitude: number | null,
     longitude: number | null
   ) => void;
+  defaultValue?: string;
 }
 
 const libraries: Libraries = ["places"];
@@ -43,6 +44,7 @@ function ReadySearchBox({
   error,
   placeholder,
   onSelectAddress,
+  defaultValue
 }: SearchBoxProps) {
   const {
     ready,
@@ -81,13 +83,13 @@ function ReadySearchBox({
   return (
     <Combobox onSelect={handleSelect}>
       {label && (
-        <label htmlFor={name} className="font-bold">
+        <label htmlFor={name} className="font-bold text-white">
           {label}
         </label>
       )}
       <ComboboxInput
         id={name}
-        value={value}
+        value={value || defaultValue}
         onChange={handleChange}
         disabled={!ready}
         placeholder={placeholder}

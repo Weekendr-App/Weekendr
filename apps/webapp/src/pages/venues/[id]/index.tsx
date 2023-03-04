@@ -17,11 +17,9 @@ const query = gql`
       isOwnedByMe
       picture
       address
-    }
   }
-`;
+}`;
 
-const Header = lazy(() => import("@diplomski/components/Header"));
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 
 export default function VenuePage() {
@@ -44,7 +42,6 @@ export default function VenuePage() {
         <title>{venue.name}</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <Header />
         <div className="flex text-white">
           <div className="p-3 w-1/2">
             <VenueNav venue={venue} />
