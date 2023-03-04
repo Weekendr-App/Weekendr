@@ -3,7 +3,7 @@ import { useMapHover } from "@diplomski/hooks/useMapHover";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC } from "react";
 
 interface Props {
   venue: Venue;
@@ -12,8 +12,7 @@ interface Props {
 const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
 
-  const { highlightedVenueId, setHighlightedVenueId, isHighlighted } =
-    useMapHover();
+  const { setHighlightedVenueId, isHighlighted } = useMapHover();
 
   return (
     <div
@@ -42,7 +41,6 @@ const VenueListItem: FC<Props> = ({ venue }) => {
         src={venue.picture}
         width={100}
         height={100}
-        unoptimized
       />
       <div className="flex flex-col">
         <span className="font-bold">{venue.name}</span>

@@ -78,11 +78,10 @@ const FileUpload: FC<Props> = ({
           value && (
             <Image
               src={value}
+              className="rounded"
               alt="Venue"
-              className="w-full"
-              width={64}
-              height={64}
-              unoptimized
+              width={128}
+              height={128}
             />
           )
         )}

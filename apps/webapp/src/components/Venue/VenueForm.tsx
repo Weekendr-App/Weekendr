@@ -1,5 +1,4 @@
-import { Venue } from "@diplomski/gql/graphql";
-import { lazy, useCallback } from "react";
+import { lazy, useCallback, useEffect, useMemo } from "react";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -9,20 +8,22 @@ const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
 const SearchBox = lazy(() => import("@diplomski/components/SearchBox"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
+const DEFAULT_COORDINATE_MESSAGE =
+  "We could not get coordinates for the following address. Please try again.";
+
+export interface VenueFormValues {
+  name: string;
+  picture: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
 interface Props {
-  venue?: Venue;
   title: string;
-  onSubmit: (values: any) => void
-  initialValues: {
-    id?: number;
-    name: string;
-    address: string;
-    picture: string;
-    latitude: number;
-    longitude: number;
-  },
+  onSubmit: (values: VenueFormValues) => void;
   buttonText: string;
-  defaultValue?: string;
+  initialValues?: VenueFormValues;
 }
 
 const validationSchema = Yup.object().shape({
@@ -35,9 +36,27 @@ const validationSchema = Yup.object().shape({
     ),
   picture: Yup.string().required("Picture is required"),
   address: Yup.string().required("Address is required"),
+  latitude: Yup.number()
+    .min(-90, DEFAULT_COORDINATE_MESSAGE)
+    .max(90, DEFAULT_COORDINATE_MESSAGE)
+    .required(DEFAULT_COORDINATE_MESSAGE),
+  longitude: Yup.number()
+    .min(-180, DEFAULT_COORDINATE_MESSAGE)
+    .max(180, DEFAULT_COORDINATE_MESSAGE)
+    .required(DEFAULT_COORDINATE_MESSAGE),
 });
 
-export default function VenueForm({ title, venue, onSubmit, initialValues, buttonText, defaultValue }: Props) {
+export default function VenueForm({
+  title,
+  onSubmit,
+  initialValues,
+  buttonText,
+}: Props) {
+  const enableReinitialize = useMemo(
+    () => initialValues !== undefined,
+    [initialValues]
+  );
+
   const {
     values,
     handleChange,
@@ -45,16 +64,23 @@ export default function VenueForm({ title, venue, onSubmit, initialValues, butto
     setFieldError,
     handleSubmit,
     isSubmitting,
+    validateField,
     isValid,
     dirty,
   } = useFormik({
-    initialValues: initialValues,
-    onSubmit: onSubmit, 
-    enableReinitialize: venue ? true : false,
-    validationSchema
+    initialValues: initialValues || {
+      name: "",
+      picture: "",
+      address: "",
+      latitude: 0,
+      longitude: 0,
+    },
+    onSubmit,
+    enableReinitialize,
+    validationSchema,
   });
 
-    const onSelectAddress = useCallback(
+  const onSelectAddress = useCallback(
     (address: string, latitude: number | null, longitude: number | null) => {
       handleChange({
         target: {
@@ -80,6 +106,15 @@ export default function VenueForm({ title, venue, onSubmit, initialValues, butto
     [handleChange]
   );
 
+  useEffect(() => {
+    if (dirty) {
+      console.log("dirty");
+      validateField("address");
+      validateField("latitude");
+      validateField("longitude");
+    }
+  }, [values.address, values.latitude, values.longitude, validateField, dirty]);
+
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
       <h1 className="text-2xl font-bold text-white">{title}</h1>
@@ -102,9 +137,9 @@ export default function VenueForm({ title, venue, onSubmit, initialValues, butto
       <SearchBox
         name="address"
         label="Address"
+        value={values.address}
         error={errors.address || errors.latitude || errors.longitude}
         onSelectAddress={onSelectAddress}
-        defaultValue={defaultValue}
       />
       <Button
         loading={isSubmitting}
@@ -115,4 +150,4 @@ export default function VenueForm({ title, venue, onSubmit, initialValues, butto
       </Button>
     </form>
   );
-};
+}

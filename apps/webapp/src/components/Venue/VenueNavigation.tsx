@@ -7,7 +7,7 @@ interface Props {
   venue: Venue;
 }
 
-export default function VenueNav({ venue }: Props) {
+export default function VenueNavigation({ venue }: Props) {
   const router = useRouter();
   const { loading, deleteVenue } = useDeleteVenue();
 
