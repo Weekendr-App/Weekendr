@@ -108,7 +108,6 @@ export default function VenueForm({
 
   useEffect(() => {
     if (dirty) {
-      console.log("dirty");
       validateField("address");
       validateField("latitude");
       validateField("longitude");
