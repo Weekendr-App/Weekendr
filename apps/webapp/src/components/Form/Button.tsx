@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Button: FC<PropsWithChildren<Props>> = ({
-  type = "button",
+  type = "submit",
   children,
   disabled,
   loading,
