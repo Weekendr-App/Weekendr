@@ -87,7 +87,7 @@ const FileUpload: FC<Props> = ({
         )}
         {error && <span className="mt-2 text-red-500 italic">{error}</span>}
       </div>
-      <Button loading={isUploading} onClick={openFileUpload}>
+      <Button type="button" loading={isUploading} onClick={openFileUpload}>
         Upload
       </Button>
       <input
