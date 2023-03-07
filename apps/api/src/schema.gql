@@ -4,6 +4,15 @@
 
 scalar Bounds
 
+input CreateEventInput {
+  description: String
+  endDate: Date!
+  name: String!
+  picture: String
+  startDate: Date!
+  venueId: Float!
+}
+
 input CreateVenueInput {
   address: String!
   latitude: Float!
@@ -23,6 +32,7 @@ type Event {
   endDate: Date!
   id: ID!
   name: String!
+  picture: String
   startDate: Date!
   status: String!
   updatedAt: Date!
@@ -35,6 +45,7 @@ input GetVenuesInRangeInput {
 
 type Mutation {
   cancelEvent(eventId: Float!): Event!
+  createEvent(fields: CreateEventInput!): Event!
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
   updateVenue(fields: UpdateVenueInput!): Venue!

@@ -16,6 +16,7 @@ import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { User } from 'src/user/models/user.model';
 import { Venue } from 'src/venues/models/venue.model';
 import { VenuesService } from 'src/venues/venues.service';
+import { CreateEventInput } from './dto/create-event.input';
 import { EventsService } from './events.service';
 import { Event } from './models/event.model';
 
@@ -39,6 +40,25 @@ export class EventsResolver {
   @Query(() => [Event])
   async venueEvents(@Args('venueId') venueId: number): Promise<Event[]> {
     return this.eventsService.findAllByVenueId(venueId);
+  }
+
+  @Mutation(() => Event)
+  @UseGuards(FirebaseGuard)
+  async createEvent(
+    @Args('fields') data: CreateEventInput,
+    @FirebaseUser() user: User,
+  ): Promise<Event> {
+    const venue = await this.venuesService.findById(data.venueId, user);
+
+    if (!venue) {
+      throw new NotFoundException('Venue not found');
+    }
+
+    if (!venue.isOwnedByMe) {
+      throw new ForbiddenException('You are not the owner of this venue');
+    }
+
+    return this.eventsService.create(data);
   }
 
   @Mutation(() => Event)

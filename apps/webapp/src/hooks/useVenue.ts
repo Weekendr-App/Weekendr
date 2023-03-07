@@ -13,6 +13,14 @@ const query = gql`
       latitude
       longitude
       isOwnedByMe
+      events {
+        id
+        name
+        description
+        picture
+        startDate
+        endDate
+      }
     }
   }
 `;

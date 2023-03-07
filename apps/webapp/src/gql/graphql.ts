@@ -17,6 +17,15 @@ export type Scalars = {
   Date: any;
 };
 
+export type CreateEventInput = {
+  description?: InputMaybe<Scalars['String']>;
+  endDate: Scalars['Date'];
+  name: Scalars['String'];
+  picture?: InputMaybe<Scalars['String']>;
+  startDate: Scalars['Date'];
+  venueId: Scalars['Float'];
+};
+
 export type CreateVenueInput = {
   address: Scalars['String'];
   latitude: Scalars['Float'];
@@ -34,6 +43,7 @@ export type Event = {
   endDate: Scalars['Date'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  picture?: Maybe<Scalars['String']>;
   startDate: Scalars['Date'];
   status: Scalars['String'];
   updatedAt: Scalars['Date'];
@@ -46,9 +56,21 @@ export type GetVenuesInRangeInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  cancelEvent: Event;
+  createEvent: Event;
   createVenue: Venue;
   deleteVenue: Venue;
   updateVenue: Venue;
+};
+
+
+export type MutationCancelEventArgs = {
+  eventId: Scalars['Float'];
+};
+
+
+export type MutationCreateEventArgs = {
+  fields: CreateEventInput;
 };
 
 
@@ -68,14 +90,26 @@ export type MutationUpdateVenueArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  event: Event;
   me: User;
   venue: Venue;
+  venueEvents: Array<Event>;
   venuesInRange: Array<Venue>;
+};
+
+
+export type QueryEventArgs = {
+  eventId: Scalars['Float'];
 };
 
 
 export type QueryVenueArgs = {
   id: Scalars['Float'];
+};
+
+
+export type QueryVenueEventsArgs = {
+  venueId: Scalars['Float'];
 };
 
 

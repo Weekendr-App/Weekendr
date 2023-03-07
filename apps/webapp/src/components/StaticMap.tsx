@@ -7,15 +7,10 @@ import Pin from "../../public/pin.png";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Venue } from "@diplomski/gql/graphql";
 
-interface Location {
-  latitude: number;
-  longitude: number;
-}
-
 interface Props {
   viewport: ViewState;
   venues: Venue[];
-  height?: number;
+  height?: number | string;
 }
 
 const prefixer = sync([autoprefixer]);

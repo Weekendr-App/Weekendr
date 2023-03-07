@@ -13,6 +13,9 @@ export class Event {
   @Field({ nullable: true })
   description?: string;
 
+  @Field({ nullable: true })
+  picture?: string;
+
   venueId: number;
 
   @Field(() => Venue)
