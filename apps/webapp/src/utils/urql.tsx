@@ -1,12 +1,17 @@
 import { useAuth } from "@diplomski/hooks/useAuth";
 import { FC, ReactNode, useMemo } from "react";
+import { toast } from "react-hot-toast";
 import {
   createClient,
   Provider,
   cacheExchange,
   fetchExchange,
   dedupExchange,
+  errorExchange,
 } from "urql";
+// NOTE: This will only import the default Tailwind colors.
+// If we need custom colors we need to use resolveConfig instead.
+import colors from "tailwindcss/colors";
 
 interface Props {
   children: ReactNode;
@@ -19,7 +24,22 @@ export const UrqlProvider: FC<Props> = ({ children }) => {
     () =>
       createClient({
         url: "http://localhost:4000/graphql",
-        exchanges: [dedupExchange, cacheExchange, fetchExchange],
+        exchanges: [
+          dedupExchange,
+          cacheExchange,
+          errorExchange({
+            onError: (error) => {
+              toast.error(error.message, {
+                // Class names were being overwritten by the toast styles
+                style: {
+                  backgroundColor: colors.gray[900],
+                  color: colors.white,
+                },
+              });
+            },
+          }),
+          fetchExchange,
+        ],
         ...(user &&
           user.token && {
             fetchOptions: {
