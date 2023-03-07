@@ -58,6 +58,18 @@ export class EventsResolver {
       throw new ForbiddenException('You are not the owner of this venue');
     }
 
+    const existingEvents = await this.eventsService.findInRange(
+      data.startDate,
+      data.endDate,
+      data.venueId,
+    );
+
+    if (existingEvents.length > 0) {
+      throw new ForbiddenException(
+        'There is already an event in this date range', // TODO: Use ChatGPT to generate a better message
+      );
+    }
+
     return this.eventsService.create(data);
   }
 

@@ -32,6 +32,22 @@ export class EventsService {
     });
   }
 
+  async findInRange(start: Date, end: Date, venueId: number): Promise<Event[]> {
+    // TODO: Generate range from start and end
+    // and use it to query the database
+    return this.prisma.event.findMany({
+      where: {
+        AND: [
+          { startDate: { gte: start } },
+          { endDate: { lte: end } },
+          { venueId },
+          { status: EventStatus.PUBLISHED },
+        ],
+      },
+      include: { venue: true },
+    });
+  }
+
   async cancelEvent(eventId: number): Promise<Event> {
     return this.prisma.event.update({
       where: { id: eventId },
