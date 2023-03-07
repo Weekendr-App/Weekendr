@@ -64,6 +64,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
 
   const [{ data }] = useQuery({
     query,
+    pause: !debouncedBounds,
     variables: {
       fields: {
         bounds: JSON.stringify(debouncedBounds),

@@ -15,7 +15,7 @@ import "@reach/combobox/styles.css";
 import { Props } from "./Form/Input";
 import clsx from "clsx";
 
-interface SearchBoxProps extends Omit<Props, "type" | "onChange"> {
+interface SearchBoxProps extends Partial<Omit<Props, "type" | "onChange">> {
   onSelectAddress: (
     address: string,
     latitude: number | null,

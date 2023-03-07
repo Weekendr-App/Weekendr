@@ -1,24 +1,8 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import { Venue } from "@diplomski/gql/graphql";
+import useVenue from "@diplomski/hooks/useVenue";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { lazy, Suspense, useMemo } from "react";
-import { gql, useQuery } from "urql";
-
-const query = gql`
-  query VenuePage($id: Float!) {
-    venue(id: $id) {
-      id
-      name
-      latitude
-      longitude
-      isOwnedByMe
-      picture
-      address
-    }
-  }
-`;
+import { lazy, Suspense } from "react";
 
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 const VenueNavigation = lazy(
@@ -26,14 +10,7 @@ const VenueNavigation = lazy(
 );
 
 export default function VenuePage() {
-  const router = useRouter();
-  const { id } = router.query;
-  const [{ data, fetching }] = useQuery<{ venue: Venue }>({
-    query,
-    variables: { id: Number(id) },
-  });
-
-  const venue = useMemo(() => data?.venue, [data]);
+  const { venue, fetching } = useVenue();
 
   if (!venue || fetching) {
     return null;
