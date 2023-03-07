@@ -16,12 +16,13 @@ export default function EditVenue() {
   const onSubmit = useCallback(
     async (values: VenueFormValues) => {
       if (venue) {
-        // TODO: Handle errors
-        await updateVenue({
+        const result = await updateVenue({
           ...values,
           id: Number(venue.id),
         });
-        router.push(`/venues/${venue.id}`);
+        if(!result.error) {
+          router.push(`/venues/${venue.id}`);
+        }
       }
     },
     [updateVenue, venue, router]
