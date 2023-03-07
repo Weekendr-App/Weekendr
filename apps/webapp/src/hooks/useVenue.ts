@@ -22,7 +22,7 @@ export default function useVenue() {
   const { id } = router.query;
   const [{ data, fetching }] = useQuery<{ venue: Venue }>({
     query,
-    pause: !isNaN(Number(id)),
+    pause: isNaN(Number(id)),
     variables: { id: Number(id) },
   });
 
