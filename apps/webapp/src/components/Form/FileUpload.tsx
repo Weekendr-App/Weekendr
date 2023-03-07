@@ -67,7 +67,7 @@ const FileUpload: FC<Props> = ({
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="font-bold">
+        <label htmlFor={name} className="text-white font-bold">
           {label}
         </label>
       )}
@@ -78,17 +78,16 @@ const FileUpload: FC<Props> = ({
           value && (
             <Image
               src={value}
+              className="rounded"
               alt="Venue"
-              className="w-16 h-16"
-              width={64}
-              height={64}
-              unoptimized
+              width={128}
+              height={128}
             />
           )
         )}
         {error && <span className="mt-2 text-red-500 italic">{error}</span>}
       </div>
-      <Button loading={isUploading} onClick={openFileUpload}>
+      <Button type="button" loading={isUploading} onClick={openFileUpload}>
         Upload
       </Button>
       <input

@@ -12,7 +12,6 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-const Header = lazy(() => import("@diplomski/components/Header"));
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
@@ -45,7 +44,6 @@ export default function Auth() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Suspense fallback={<Spinner />}>
-        <Header />
         <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
           <Input
             label="Email"

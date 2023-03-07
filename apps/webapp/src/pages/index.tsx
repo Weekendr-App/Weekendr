@@ -3,7 +3,6 @@ import { lazy, Suspense, useState } from "react";
 import { Venue } from "@diplomski/gql/graphql";
 import { Spinner } from "@diplomski/components/Spinner";
 
-const Header = lazy(() => import("@diplomski/components/Header"));
 const Map = lazy(() => import("@diplomski/components/Map"));
 const VenueListItem = lazy(
   () => import("@diplomski/components/Venue/VenueListItem")
@@ -21,7 +20,6 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Suspense fallback={<Spinner />}>
-        <Header />
         <div className="flex text-white">
           <div className="w-1/2 p-2 overflow-y-auto">
             <h2 className="text-2xl font-bold mb-2">

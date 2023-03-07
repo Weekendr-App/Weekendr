@@ -3,12 +3,14 @@ import { FC, PropsWithChildren } from "react";
 import { Spinner } from "../Spinner";
 
 interface Props {
+  type?: "submit" | "button";
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
 }
 
 const Button: FC<PropsWithChildren<Props>> = ({
+  type = "submit",
   children,
   disabled,
   loading,
@@ -30,7 +32,7 @@ const Button: FC<PropsWithChildren<Props>> = ({
           "cursor-not-allowed": disabled || loading,
         },
       ])}
-      type="submit"
+      type={type}
       disabled={disabled || loading}
       onClick={onClick}
     >

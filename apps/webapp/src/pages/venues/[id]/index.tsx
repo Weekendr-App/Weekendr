@@ -1,5 +1,4 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import VenueNav from "@diplomski/components/VenueNav";
 import { Venue } from "@diplomski/gql/graphql";
 import Head from "next/head";
 import Image from "next/image";
@@ -21,8 +20,10 @@ const query = gql`
   }
 `;
 
-const Header = lazy(() => import("@diplomski/components/Header"));
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
+const VenueNavigation = lazy(
+  () => import("@diplomski/components/Venue/VenueNavigation")
+);
 
 export default function VenuePage() {
   const router = useRouter();
@@ -44,13 +45,11 @@ export default function VenuePage() {
         <title>{venue.name}</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <Header />
         <div className="flex text-white">
           <div className="p-3 w-1/2">
-            <VenueNav venue={venue} />
+            <VenueNavigation venue={venue} />
             <h1 className="text-4xl font-bold">
               {venue.name}
-              {/* TODO: Add edit/delete buttons for venue owner */}
               {venue.isOwnedByMe && (
                 <span className="text-xl"> (Your venue)</span>
               )}
@@ -62,7 +61,6 @@ export default function VenuePage() {
               alt={venue.name}
               width={500}
               height={500}
-              unoptimized
             />
           </div>
           <div className="w-1/2">

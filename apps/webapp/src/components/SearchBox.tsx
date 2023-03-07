@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useEffect } from "react";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -15,7 +15,7 @@ import "@reach/combobox/styles.css";
 import { Props } from "./Form/Input";
 import clsx from "clsx";
 
-interface SearchBoxProps extends Omit<Props, "value" | "type" | "onChange"> {
+interface SearchBoxProps extends Omit<Props, "type" | "onChange"> {
   onSelectAddress: (
     address: string,
     latitude: number | null,
@@ -40,17 +40,24 @@ export default function SearchBox(props: SearchBoxProps) {
 function ReadySearchBox({
   name,
   label,
+  value: defaultValue,
   error,
   placeholder,
   onSelectAddress,
 }: SearchBoxProps) {
   const {
-    ready,
     value,
+    ready,
     setValue,
     suggestions: { status, data },
     clearSuggestions,
   } = usePlacesAutocomplete({ debounce: 300 });
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue, false);
+    }
+  }, [defaultValue, setValue]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +88,7 @@ function ReadySearchBox({
   return (
     <Combobox onSelect={handleSelect}>
       {label && (
-        <label htmlFor={name} className="font-bold">
+        <label htmlFor={name} className="font-bold text-white">
           {label}
         </label>
       )}
