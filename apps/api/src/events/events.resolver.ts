@@ -66,7 +66,7 @@ export class EventsResolver {
 
     if (existingEvents.length > 0) {
       throw new ForbiddenException(
-        'There is already an event in this date range', // TODO: Use ChatGPT to generate a better message
+        'Unfortunately, there is already an event taking place within this date range.',
       );
     }
 

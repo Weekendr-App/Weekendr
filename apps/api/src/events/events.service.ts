@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EventStatus, Prisma } from '@prisma/client';
+import { EventStatus } from '@prisma/client';
+import { format } from 'date-fns';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { CreateEventInput } from './dto/create-event.input';
 import { Event } from './models/event.model';
@@ -33,16 +34,24 @@ export class EventsService {
   }
 
   async findInRange(start: Date, end: Date, venueId: number): Promise<Event[]> {
-    // TODO: Generate range from start and end
-    // and use it to query the database
+    console.log(start, end);
+    const startDate = format(start, 'yyyy-MM-dd HH:mm:ss');
+    const endDate = format(end, 'yyyy-MM-dd HH:mm:ss');
+
+    const id = await this.prisma.$queryRaw<{ id: Event['id'] }[]>`
+      SELECT id FROM "Event" WHERE
+      "venueId" = ${venueId} AND
+      tsrange("startDate", "endDate") && tsrange(
+        TO_DATE(${startDate}, 'YYYY-MM-DD HH24:MI:SS'),
+        TO_DATE(${endDate}, 'YYYY-MM-DD HH24:MI:SS')
+      )
+    `;
+
     return this.prisma.event.findMany({
       where: {
-        AND: [
-          { startDate: { gte: start } },
-          { endDate: { lte: end } },
-          { venueId },
-          { status: EventStatus.PUBLISHED },
-        ],
+        id: {
+          in: id.map((i) => i.id),
+        },
       },
       include: { venue: true },
     });
