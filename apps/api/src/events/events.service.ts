@@ -34,13 +34,13 @@ export class EventsService {
   }
 
   async findInRange(start: Date, end: Date, venueId: number): Promise<Event[]> {
-    console.log(start, end);
     const startDate = format(start, 'yyyy-MM-dd HH:mm:ss');
     const endDate = format(end, 'yyyy-MM-dd HH:mm:ss');
 
     const id = await this.prisma.$queryRaw<{ id: Event['id'] }[]>`
       SELECT id FROM "Event" WHERE
       "venueId" = ${venueId} AND
+      "status" = 'PUBLISHED' AND
       tsrange("startDate", "endDate") && tsrange(
         TO_DATE(${startDate}, 'YYYY-MM-DD HH24:MI:SS'),
         TO_DATE(${endDate}, 'YYYY-MM-DD HH24:MI:SS')
