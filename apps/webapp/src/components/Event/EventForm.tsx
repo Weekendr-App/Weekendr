@@ -105,7 +105,7 @@ export default function EventForm({
         error={errors.picture}
       />
 
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-between gap-4 flex-wrap">
         <DatePicker
           name="startDate"
           label="Start date"

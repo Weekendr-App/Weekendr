@@ -13,7 +13,7 @@ interface Props
 
 const DatePicker: FC<Props> = ({ name, value, onChange, error, label }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col sm:w-full lg:w-60">
       {label && (
         <label htmlFor={name} className="font-bold text-white">
           {label}
@@ -28,7 +28,7 @@ const DatePicker: FC<Props> = ({ name, value, onChange, error, label }) => {
         timeIntervals={15}
         timeCaption="time"
         dateFormat="MMMM d, yyyy h:mm aa"
-        className="border border-gray-300 p-2 rounded-md"
+        className="border border-gray-300 p-2 rounded-md w-full"
       />
       {error && <span className="text-red-500 italic">{error as string}</span>}
     </div>
