@@ -138,6 +138,17 @@ export default function Map({ onChangeVisibleVenues }: Props) {
   );
 
   useEffect(() => {
+    if (!localStorage.getItem("viewport")) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { longitude, latitude } }) => {
+          setViewport(e => ({...e, latitude, longitude}));
+        },
+        (err) => console.error(err)
+      )
+    } 
+  }, [setViewport, viewport]);
+
+  useEffect(() => {
     if (!data) {
       onChangeVisibleVenues([]);
       return;
