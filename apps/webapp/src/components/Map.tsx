@@ -141,9 +141,11 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     if (!localStorage.getItem("viewport")) {
       navigator.geolocation.getCurrentPosition(
         ({ coords: { longitude, latitude } }) => {
+          console.log({longitude, latitude})
           setViewport(e => ({...e, latitude, longitude}));
         },
-        (err) => console.error(err)
+        (err) => console.error(err),
+        {enableHighAccuracy: true}
       )
     } 
   }, [setViewport, viewport]);
