@@ -143,11 +143,11 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     if (!localViewport) {
       navigator.geolocation.getCurrentPosition(
         ({ coords: { longitude, latitude } }) => {
-          console.log(`Got current position: ${latitude}, ${longitude}`);
           setViewport((old) => ({
             ...old,
             latitude,
             longitude,
+            zoom: 13
           }));
         },
         (err) => console.error(err),
