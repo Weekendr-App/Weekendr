@@ -1,4 +1,4 @@
-import { useLocalStorage } from "usehooks-ts";
+import { useEffectOnce, useLocalStorage } from "usehooks-ts";
 import { Venue } from "@diplomski/gql/graphql";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
@@ -136,6 +136,25 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     },
     [setViewport]
   );
+
+  useEffectOnce(() => {
+    const localViewport = localStorage.getItem("viewport");
+
+    if (!localViewport) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { longitude, latitude } }) => {
+          setViewport((old) => ({
+            ...old,
+            latitude,
+            longitude,
+            zoom: 13
+          }));
+        },
+        (err) => console.error(err),
+        { enableHighAccuracy: true }
+      );
+    }
+  });
 
   useEffect(() => {
     if (!data) {
