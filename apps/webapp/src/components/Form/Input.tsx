@@ -36,6 +36,7 @@ const Input: FC<Props> = ({
         onChange={onChange}
         type={type}
         placeholder={placeholder}
+        autoComplete="off"
       />
       {error && <span className="text-red-500 italic">{error}</span>}
     </div>

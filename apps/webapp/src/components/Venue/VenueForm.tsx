@@ -17,6 +17,7 @@ export interface VenueFormValues {
   address: string;
   latitude: number;
   longitude: number;
+  phone: string;
 }
 
 interface Props {
@@ -44,6 +45,12 @@ const validationSchema = Yup.object().shape({
     .min(-180, DEFAULT_COORDINATE_MESSAGE)
     .max(180, DEFAULT_COORDINATE_MESSAGE)
     .required(DEFAULT_COORDINATE_MESSAGE),
+  phone: Yup.string()
+    .required("Phone is required")
+    .matches(
+      /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
+      "Phone number is not valid"
+    ),
 });
 
 export default function VenueForm({
@@ -74,6 +81,7 @@ export default function VenueForm({
       address: "",
       latitude: 0,
       longitude: 0,
+      phone: "",
     },
     onSubmit,
     enableReinitialize,
@@ -111,8 +119,16 @@ export default function VenueForm({
       validateField("address");
       validateField("latitude");
       validateField("longitude");
+      validateField("phone");
     }
-  }, [values.address, values.latitude, values.longitude, validateField, dirty]);
+  }, [
+    values.address,
+    values.latitude,
+    values.longitude,
+    validateField,
+    dirty,
+    values.phone,
+  ]);
 
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
@@ -136,9 +152,18 @@ export default function VenueForm({
       <SearchBox
         name="address"
         label="Address"
+        placeholder="New venue address"
         value={values.address}
         error={errors.address || errors.latitude || errors.longitude}
         onSelectAddress={onSelectAddress}
+      />
+      <Input
+        name="phone"
+        label="Phone number"
+        value={values.phone}
+        onChange={handleChange}
+        error={errors.phone}
+        placeholder="New venue phone number"
       />
       <Button
         loading={isSubmitting}

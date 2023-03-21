@@ -31,19 +31,30 @@ export default function VenuePage() {
                 <span className="text-xl"> (Your venue)</span>
               )}
             </h1>
-            <span className="text-xl">{venue.address}</span>
+            <p className="text-xl">
+              Address: <span>{venue.address}</span>
+            </p>
+            <p className="text-xl">
+              Phone number:{" "}
+              <a href={`tel:${venue.phone}`} className="hover:underline">
+                {venue.phone}
+              </a>
+            </p>
             <Image
-              className="rounded"
+              className="rounded-2xl"
               src={venue.picture}
               alt={venue.name}
               width={500}
               height={500}
             />
+            <div className="flex flex-col text-white">
+              TODO: Add venue events and show add event button if the user owns
+              the venue
+            </div>
           </div>
           <div className="w-1/2">
             <Suspense fallback={<Spinner />}>
               <StaticMap
-                height={500}
                 viewport={{
                   latitude: venue.latitude,
                   longitude: venue.longitude,
@@ -62,7 +73,6 @@ export default function VenuePage() {
             </Suspense>
           </div>
         </div>
-        <div className="flex flex-col text-white">TODO: Add venue events</div>
       </Suspense>
     </>
   );

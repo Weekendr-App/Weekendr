@@ -13,6 +13,7 @@ const query = gql`
       latitude
       longitude
       isOwnedByMe
+      phone
     }
   }
 `;

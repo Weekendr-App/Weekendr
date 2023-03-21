@@ -9,6 +9,7 @@ input CreateVenueInput {
   latitude: Float!
   longitude: Float!
   name: String!
+  phone: String!
   picture: String!
 }
 
@@ -37,6 +38,7 @@ input UpdateVenueInput {
   latitude: Float!
   longitude: Float!
   name: String!
+  phone: String!
   picture: String!
 }
 
@@ -57,6 +59,7 @@ type Venue {
   latitude: Float!
   longitude: Float!
   name: String!
+  phone: String!
   picture: String!
   updatedAt: Date!
 }

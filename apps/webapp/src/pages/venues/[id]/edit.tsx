@@ -46,6 +46,7 @@ export default function EditVenue() {
             latitude: venue.latitude,
             longitude: venue.longitude,
             picture: venue.picture,
+            phone: venue.phone
           }}
           buttonText="Update"
           onSubmit={onSubmit}

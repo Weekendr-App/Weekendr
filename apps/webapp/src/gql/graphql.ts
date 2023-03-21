@@ -22,6 +22,7 @@ export type CreateVenueInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
+  phone: Scalars['String'];
   picture: Scalars['String'];
 };
 
@@ -74,6 +75,7 @@ export type UpdateVenueInput = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
+  phone: Scalars['String'];
   picture: Scalars['String'];
 };
 
@@ -96,6 +98,7 @@ export type Venue = {
   latitude: Scalars['Float'];
   longitude: Scalars['Float'];
   name: Scalars['String'];
+  phone: Scalars['String'];
   picture: Scalars['String'];
   updatedAt: Scalars['Date'];
 };
