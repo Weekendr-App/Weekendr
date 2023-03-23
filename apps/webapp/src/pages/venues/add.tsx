@@ -46,7 +46,15 @@ export default function AddVenuePage({
       </Head>
       <Suspense fallback={<Spinner />}>
         <VenueForm
-          country_code={country_code}
+          initialValues={{
+            name: "",
+            address: "",
+            latitude: 0,
+            longitude: 0,
+            picture: "",
+            phone: "",
+            countryCode: country_code
+          }}
           title="Add Venue"
           onSubmit={onSubmit}
           buttonText="Add"

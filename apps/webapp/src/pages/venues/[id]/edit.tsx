@@ -64,10 +64,10 @@ export default function EditVenue({
             longitude: venue.longitude,
             picture: venue.picture,
             phone: venue.phone,
+            countryCode: country_code
           }}
           buttonText="Update"
           onSubmit={onSubmit}
-          country_code={country_code}
         />
       </Suspense>
     </>

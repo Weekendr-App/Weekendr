@@ -1,4 +1,4 @@
-import { lazy, useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, useCallback, useEffect, useMemo } from "react";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -22,6 +22,7 @@ export interface VenueFormValues {
   latitude: number;
   longitude: number;
   phone: string;
+  countryCode: Country | undefined;
 }
 
 interface Props {
@@ -29,7 +30,6 @@ interface Props {
   onSubmit: (values: VenueFormValues) => void;
   buttonText: string;
   initialValues?: VenueFormValues;
-  country_code: Country;
 }
 
 export default function VenueForm({
@@ -37,34 +37,30 @@ export default function VenueForm({
   onSubmit,
   initialValues,
   buttonText,
-  country_code,
 }: Props) {
-  const [countryCode, setCountryCode] = useState<Country>(country_code);
-
-  const validationSchema = useMemo(
-    () =>
-      Yup.object().shape({
-        name: Yup.string()
-          .required("Name is required")
-          .test(
-            "name",
-            "Name must be at least 2 characters long",
-            (value) => value?.length > 1
-          ),
-        picture: Yup.string().required("Picture is required"),
-        address: Yup.string().required("Address is required"),
-        latitude: Yup.number()
-          .min(-90, DEFAULT_COORDINATE_MESSAGE)
-          .max(90, DEFAULT_COORDINATE_MESSAGE)
-          .required(DEFAULT_COORDINATE_MESSAGE),
-        longitude: Yup.number()
-          .min(-180, DEFAULT_COORDINATE_MESSAGE)
-          .max(180, DEFAULT_COORDINATE_MESSAGE)
-          .required(DEFAULT_COORDINATE_MESSAGE),
-        phone: Yup.string().phone(countryCode).required("Phone is required"),
-      }),
-    [countryCode]
-  );
+  const validationSchema = () =>
+    Yup.object().shape({
+      name: Yup.string()
+        .required("Name is required")
+        .test(
+          "name",
+          "Name must be at least 2 characters long",
+          (value) => value?.length > 1
+        ),
+      picture: Yup.string().required("Picture is required"),
+      address: Yup.string().required("Address is required"),
+      latitude: Yup.number()
+        .min(-90, DEFAULT_COORDINATE_MESSAGE)
+        .max(90, DEFAULT_COORDINATE_MESSAGE)
+        .required(DEFAULT_COORDINATE_MESSAGE),
+      longitude: Yup.number()
+        .min(-180, DEFAULT_COORDINATE_MESSAGE)
+        .max(180, DEFAULT_COORDINATE_MESSAGE)
+        .required(DEFAULT_COORDINATE_MESSAGE),
+      phone: Yup.string()
+        .phone(values.countryCode)
+        .required("Phone is required"),
+    });
 
   const enableReinitialize = useMemo(
     () => initialValues !== undefined,
@@ -89,6 +85,7 @@ export default function VenueForm({
       latitude: 0,
       longitude: 0,
       phone: "",
+      countryCode: undefined,
     },
     onSubmit,
     enableReinitialize,
@@ -127,6 +124,18 @@ export default function VenueForm({
         target: {
           name: "phone",
           value: value?.toString(),
+        },
+      });
+    },
+    [handleChange]
+  );
+
+  const onCountryChange = useCallback(
+    (value: Country | undefined) => {
+      handleChange({
+        target: {
+          name: "countryCode",
+          value,
         },
       });
     },
@@ -175,8 +184,8 @@ export default function VenueForm({
         placeholder="Venue phone number"
         value={values.phone}
         onChange={onPhoneChange}
-        defaultCountry={countryCode}
-        onCountryChange={setCountryCode}
+        defaultCountry={values.countryCode}
+        onCountryChange={onCountryChange}
       />
       <Button
         loading={isSubmitting}
