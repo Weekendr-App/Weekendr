@@ -1,13 +1,30 @@
 import { Spinner } from "@diplomski/components/Spinner";
 import { VenueFormValues } from "@diplomski/components/Venue/VenueForm";
 import useAddVenue from "@diplomski/hooks/useAddVenue";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { lazy, Suspense, useCallback } from "react";
+import { Country } from "react-phone-number-input";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
-export default function AddVenuePage() {
+export const getServerSideProps: GetServerSideProps<{
+  country_code: Country;
+}> = async () => {
+  const res = await fetch("https://ipapi.co/json/");
+  const { country_code } = await res.json();
+
+  return {
+    props: {
+      country_code,
+    },
+  };
+};
+
+export default function AddVenuePage({
+  country_code,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { addVenue, result } = useAddVenue();
   const router = useRouter();
 
@@ -28,7 +45,12 @@ export default function AddVenuePage() {
         <title>Add Venue</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <VenueForm title="Add Venue" onSubmit={onSubmit} buttonText="Add" />
+        <VenueForm
+          country_code={country_code}
+          title="Add Venue"
+          onSubmit={onSubmit}
+          buttonText="Add"
+        />
       </Suspense>
     </>
   );

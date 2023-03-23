@@ -1,12 +1,16 @@
-import { lazy, useCallback, useEffect, useMemo } from "react";
+import { lazy, useCallback, useEffect, useMemo, useState } from "react";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Country, Value } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import "yup-phone-lite";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
 const SearchBox = lazy(() => import("@diplomski/components/SearchBox"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const PhoneInput = lazy(() => import("@diplomski/components/Form/PhoneInput"));
 
 const DEFAULT_COORDINATE_MESSAGE =
   "We could not get coordinates for the following address. Please try again.";
@@ -25,40 +29,43 @@ interface Props {
   onSubmit: (values: VenueFormValues) => void;
   buttonText: string;
   initialValues?: VenueFormValues;
+  country_code: Country;
 }
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("Name is required")
-    .test(
-      "name",
-      "Name must be at least 2 characters long",
-      (value) => value?.length > 1
-    ),
-  picture: Yup.string().required("Picture is required"),
-  address: Yup.string().required("Address is required"),
-  latitude: Yup.number()
-    .min(-90, DEFAULT_COORDINATE_MESSAGE)
-    .max(90, DEFAULT_COORDINATE_MESSAGE)
-    .required(DEFAULT_COORDINATE_MESSAGE),
-  longitude: Yup.number()
-    .min(-180, DEFAULT_COORDINATE_MESSAGE)
-    .max(180, DEFAULT_COORDINATE_MESSAGE)
-    .required(DEFAULT_COORDINATE_MESSAGE),
-  phone: Yup.string()
-    .required("Phone is required")
-    .matches(
-      /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
-      "Phone number is not valid"
-    ),
-});
 
 export default function VenueForm({
   title,
   onSubmit,
   initialValues,
   buttonText,
+  country_code,
 }: Props) {
+  const [countryCode, setCountryCode] = useState<Country>(country_code);
+
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string()
+          .required("Name is required")
+          .test(
+            "name",
+            "Name must be at least 2 characters long",
+            (value) => value?.length > 1
+          ),
+        picture: Yup.string().required("Picture is required"),
+        address: Yup.string().required("Address is required"),
+        latitude: Yup.number()
+          .min(-90, DEFAULT_COORDINATE_MESSAGE)
+          .max(90, DEFAULT_COORDINATE_MESSAGE)
+          .required(DEFAULT_COORDINATE_MESSAGE),
+        longitude: Yup.number()
+          .min(-180, DEFAULT_COORDINATE_MESSAGE)
+          .max(180, DEFAULT_COORDINATE_MESSAGE)
+          .required(DEFAULT_COORDINATE_MESSAGE),
+        phone: Yup.string().phone(countryCode).required("Phone is required"),
+      }),
+    [countryCode]
+  );
+
   const enableReinitialize = useMemo(
     () => initialValues !== undefined,
     [initialValues]
@@ -114,21 +121,25 @@ export default function VenueForm({
     [handleChange]
   );
 
+  const onPhoneChange = useCallback(
+    (value: Value | undefined) => {
+      handleChange({
+        target: {
+          name: "phone",
+          value: value?.toString(),
+        },
+      });
+    },
+    [handleChange]
+  );
+
   useEffect(() => {
     if (dirty) {
       validateField("address");
       validateField("latitude");
       validateField("longitude");
-      validateField("phone");
     }
-  }, [
-    values.address,
-    values.latitude,
-    values.longitude,
-    validateField,
-    dirty,
-    values.phone,
-  ]);
+  }, [values.address, values.latitude, values.longitude, validateField, dirty]);
 
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
@@ -139,7 +150,7 @@ export default function VenueForm({
         value={values.name}
         onChange={handleChange}
         error={errors.name}
-        placeholder="New vanue name"
+        placeholder="Venue name"
       />
       <FileUpload
         name="picture"
@@ -152,18 +163,20 @@ export default function VenueForm({
       <SearchBox
         name="address"
         label="Address"
-        placeholder="New venue address"
+        placeholder="Venue address"
         value={values.address}
         error={errors.address || errors.latitude || errors.longitude}
         onSelectAddress={onSelectAddress}
       />
-      <Input
+      <PhoneInput
         name="phone"
-        label="Phone number"
-        value={values.phone}
-        onChange={handleChange}
+        label="Phone Number"
         error={errors.phone}
-        placeholder="New venue phone number"
+        placeholder="Venue phone number"
+        value={values.phone}
+        onChange={onPhoneChange}
+        defaultCountry={countryCode}
+        onCountryChange={setCountryCode}
       />
       <Button
         loading={isSubmitting}
