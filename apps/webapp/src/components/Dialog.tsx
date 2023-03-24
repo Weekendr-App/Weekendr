@@ -1,27 +1,22 @@
-import useDeleteVenue from "@diplomski/hooks/useDeleteVenue";
 import clsx from "clsx";
-import { useRouter } from "next/router";
 
 interface Props {
   openDialog: boolean;
   setOpenDialog: (value: boolean) => void;
-  id: string;
   title: string;
   description: string;
   type?: "warning" | "info";
+  onConfirm: () => Promise<void>;
 }
 
 export default function Dialog({
   setOpenDialog,
   openDialog,
-  id,
   title,
   description,
   type = "info",
+  onConfirm
 }: Props) {
-  const router = useRouter();
-  const { deleteVenue } = useDeleteVenue();
-
   return (
     <dialog
       className="border-gray-800 border-2 rounded-xl z-10 p-5"
@@ -30,10 +25,7 @@ export default function Dialog({
       <p className="font-bold">{title}</p>
       <p>{description}</p>
       <button
-        onClick={async () => {
-          await deleteVenue(Number(id));
-          router.push("/");
-        }}
+        onClick={onConfirm}
         className={clsx([
           "font-medium",
           "px-4",
