@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function VenueNavigation({ venue }: Props) {
-  const [openDialog, setOpenDialog] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { deleteVenue } = useDeleteVenue();
 
@@ -20,7 +20,7 @@ export default function VenueNavigation({ venue }: Props) {
         <>
           <Link href={`/venues/${venue.id}/edit`}>Edit</Link>
           {" | "}
-          <button onClick={() => setOpenDialog(true)}>Delete</button>
+          <button onClick={() => setIsOpen(true)}>Delete</button>
           <Dialog
             onConfirm={async () => {
               await deleteVenue(Number(venue.id));
@@ -28,8 +28,8 @@ export default function VenueNavigation({ venue }: Props) {
             }}
             title="Are you sure you want to proceed?"
             message="Pressing OK will PERMANENTLY delete the venue from the database."
-            openDialog={openDialog}
-            setOpenDialog={setOpenDialog}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
             type="warning"
           />
         </>

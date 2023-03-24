@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
 interface Props {
-  openDialog: boolean;
-  setOpenDialog: (value: boolean) => void;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
   title: string;
   message: string;
   type?: "warning" | "info";
@@ -10,8 +10,8 @@ interface Props {
 }
 
 export default function Dialog({
-  setOpenDialog,
-  openDialog,
+  setIsOpen,
+  isOpen,
   title,
   message,
   type = "info",
@@ -20,7 +20,7 @@ export default function Dialog({
   return (
     <dialog
       className="border-gray-800 border-2 rounded-xl z-10 p-5"
-      open={openDialog}
+      open={isOpen}
     >
       <p className="font-bold">{title}</p>
       <p>{message}</p>
@@ -44,7 +44,7 @@ export default function Dialog({
       </button>
       {" | "}
       <button
-        onClick={() => setOpenDialog(false)}
+        onClick={() => setIsOpen(false)}
         className="font-medium px-4 py-2 rounded-lg hover:bg-gray-100"
       >
         Cancel
