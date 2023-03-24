@@ -1,6 +1,8 @@
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { Venue } from "src/gql/graphql";
+import { useState } from "react";
+import Dialog from "../Dialog";
+import { useRouter } from "next/router";
 import useDeleteVenue from "@diplomski/hooks/useDeleteVenue";
 
 interface Props {
@@ -8,8 +10,9 @@ interface Props {
 }
 
 export default function VenueNavigation({ venue }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { loading, deleteVenue } = useDeleteVenue();
+  const { deleteVenue } = useDeleteVenue();
 
   return (
     <>
@@ -17,18 +20,18 @@ export default function VenueNavigation({ venue }: Props) {
         <>
           <Link href={`/venues/${venue.id}/edit`}>Edit</Link>
           {" | "}
-          <button
-            disabled={loading}
-            type="button"
-            onClick={async () => {
-              if (confirm("Are you sure?")) {
-                await deleteVenue(Number(venue.id));
-                router.push("/");
-              }
+          <button onClick={() => setIsOpen(true)}>Delete</button>
+          <Dialog
+            onConfirm={async () => {
+              await deleteVenue(Number(venue.id));
+              router.push("/");
             }}
-          >
-            Delete
-          </button>
+            title="Are you sure you want to proceed?"
+            message="Pressing OK will PERMANENTLY delete the venue from the database."
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            type="warning"
+          />
         </>
       )}
     </>
