@@ -27,7 +27,7 @@ export default function VenueNavigation({ venue }: Props) {
               router.push("/");
             }}
             title="Are you sure you want to proceed?"
-            description="Pressing OK will PERMANENTLY delete the venue from the database."
+            message="Pressing OK will PERMANENTLY delete the venue from the database."
             openDialog={openDialog}
             setOpenDialog={setOpenDialog}
             type="warning"

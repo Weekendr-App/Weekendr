@@ -4,7 +4,7 @@ interface Props {
   openDialog: boolean;
   setOpenDialog: (value: boolean) => void;
   title: string;
-  description: string;
+  message: string;
   type?: "warning" | "info";
   onConfirm: () => Promise<void>;
 }
@@ -13,7 +13,7 @@ export default function Dialog({
   setOpenDialog,
   openDialog,
   title,
-  description,
+  message,
   type = "info",
   onConfirm
 }: Props) {
@@ -23,7 +23,7 @@ export default function Dialog({
       open={openDialog}
     >
       <p className="font-bold">{title}</p>
-      <p>{description}</p>
+      <p>{message}</p>
       <button
         onClick={onConfirm}
         className={clsx([
