@@ -32,36 +32,40 @@ interface Props {
   initialValues?: VenueFormValues;
 }
 
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Name is required")
+    .test(
+      "name",
+      "Name must be at least 2 characters long",
+      (value) => value?.length > 1
+    ),
+  picture: Yup.string().required("Picture is required"),
+  address: Yup.string().required("Address is required"),
+  latitude: Yup.number()
+    .min(-90, DEFAULT_COORDINATE_MESSAGE)
+    .max(90, DEFAULT_COORDINATE_MESSAGE)
+    .required(DEFAULT_COORDINATE_MESSAGE),
+  longitude: Yup.number()
+    .min(-180, DEFAULT_COORDINATE_MESSAGE)
+    .max(180, DEFAULT_COORDINATE_MESSAGE)
+    .required(DEFAULT_COORDINATE_MESSAGE),
+  countryCode: Yup.string().required("Country code is required"),
+  phone: Yup.string()
+    .test("phone", "Phone is not valid", (value, ctx) => {
+      return value
+        ? Yup.string().phone(ctx.parent.countryCode).isValidSync(value)
+        : true;
+    })
+    .required("Phone is required"),
+});
+
 export default function VenueForm({
   title,
   onSubmit,
   initialValues,
   buttonText,
 }: Props) {
-  const validationSchema = () =>
-    Yup.object().shape({
-      name: Yup.string()
-        .required("Name is required")
-        .test(
-          "name",
-          "Name must be at least 2 characters long",
-          (value) => value?.length > 1
-        ),
-      picture: Yup.string().required("Picture is required"),
-      address: Yup.string().required("Address is required"),
-      latitude: Yup.number()
-        .min(-90, DEFAULT_COORDINATE_MESSAGE)
-        .max(90, DEFAULT_COORDINATE_MESSAGE)
-        .required(DEFAULT_COORDINATE_MESSAGE),
-      longitude: Yup.number()
-        .min(-180, DEFAULT_COORDINATE_MESSAGE)
-        .max(180, DEFAULT_COORDINATE_MESSAGE)
-        .required(DEFAULT_COORDINATE_MESSAGE),
-      phone: Yup.string()
-        .phone(values.countryCode)
-        .required("Phone is required"),
-    });
-
   const enableReinitialize = useMemo(
     () => initialValues !== undefined,
     [initialValues]
@@ -180,7 +184,7 @@ export default function VenueForm({
       <PhoneInput
         name="phone"
         label="Phone Number"
-        error={errors.phone}
+        error={errors.phone || errors.countryCode}
         placeholder="Venue phone number"
         value={values.phone}
         onChange={onPhoneChange}
