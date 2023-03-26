@@ -5,26 +5,32 @@ import useEditVenue from "@diplomski/hooks/useEditVenue";
 import useVenue from "@diplomski/hooks/useVenue";
 import { VenueFormValues } from "@diplomski/components/Venue/VenueForm";
 import { useRouter } from "next/router";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 import { Country } from "react-phone-number-input";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
 export const getServerSideProps: GetServerSideProps<{
-  country_code: Country;
-}> = async () => {
-  const res = await fetch("https://ipapi.co/json/");
+  countryCode: Country;
+}> = async (context: GetServerSidePropsContext) => {
+  const ip =
+    context.req.headers["x-forwarded-for"] || context.req.socket.remoteAddress;
+  const res = await fetch(`https://ipapi.co/${ip}/json/`);
   const { country_code } = await res.json();
 
   return {
     props: {
-      country_code,
+      countryCode: country_code ?? null,
     },
   };
 };
 
 export default function EditVenue({
-  country_code,
+  countryCode,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { venue, fetching } = useVenue();
   const { updateVenue } = useEditVenue();
@@ -64,7 +70,7 @@ export default function EditVenue({
             longitude: venue.longitude,
             picture: venue.picture,
             phone: venue.phone,
-            countryCode: country_code
+            countryCode, // TODO: Can we get this from the phone number?
           }}
           buttonText="Update"
           onSubmit={onSubmit}
