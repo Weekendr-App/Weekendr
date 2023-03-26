@@ -5,7 +5,7 @@ import { Props } from "./Input";
 interface PhoneProps extends Partial<Omit<Props, "onChange" | "type">> {
   onChange: (value: Value | undefined) => void;
   defaultCountry?: Country | undefined;
-  onCountryChange: (value: Country) => void 
+  onCountryChange: (value: Country) => void;
 }
 
 export default function PhoneInput({
@@ -16,7 +16,7 @@ export default function PhoneInput({
   onChange,
   placeholder,
   defaultCountry,
-  onCountryChange
+  onCountryChange,
 }: PhoneProps) {
   return (
     <div className="flex flex-col">
@@ -26,9 +26,12 @@ export default function PhoneInput({
         </label>
       )}
       <Input
-        className={clsx(["border", "border-gray-300", "p-2", "rounded-md"], {
-          "border-red-500": error,
-        })}
+        className={clsx(
+          ["border", "border-gray-300", "bg-white", "p-2", "rounded-md"],
+          {
+            "border-red-500": error,
+          }
+        )}
         id={name}
         autoComplete="off"
         name={name}
