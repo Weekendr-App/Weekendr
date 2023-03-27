@@ -49,7 +49,7 @@ export default function AddVenuePage({
   return (
     <>
       <Head>
-        <title>Add Venue {countryCode} </title>
+        <title>Add Venue</title>
       </Head>
       <Suspense fallback={<Spinner />}>
         <VenueForm
