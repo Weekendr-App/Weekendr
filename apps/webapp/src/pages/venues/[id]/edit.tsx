@@ -5,10 +5,33 @@ import useEditVenue from "@diplomski/hooks/useEditVenue";
 import useVenue from "@diplomski/hooks/useVenue";
 import { VenueFormValues } from "@diplomski/components/Venue/VenueForm";
 import { useRouter } from "next/router";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
+import { Country } from "react-phone-number-input";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
-export default function EditVenue() {
+export const getServerSideProps: GetServerSideProps<{
+  countryCode: Country;
+}> = async (context: GetServerSidePropsContext) => {
+  const ip =
+    context.req.headers["x-forwarded-for"] || context.req.socket.remoteAddress;
+  const res = await fetch(`https://ipapi.co/${ip}/country_code/`);
+  const countryCode = (await res.text()) as Country;
+
+  return {
+    props: {
+      countryCode,
+    },
+  };
+};
+
+export default function EditVenue({
+  countryCode,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { venue, fetching } = useVenue();
   const { updateVenue } = useEditVenue();
   const router = useRouter();
@@ -20,7 +43,7 @@ export default function EditVenue() {
           ...values,
           id: Number(venue.id),
         });
-        if(!result.error) {
+        if (!result.error) {
           router.push(`/venues/${venue.id}`);
         }
       }
@@ -46,6 +69,8 @@ export default function EditVenue() {
             latitude: venue.latitude,
             longitude: venue.longitude,
             picture: venue.picture,
+            phone: venue.phone,
+            countryCode, // TODO: Can we get this from the phone number?
           }}
           buttonText="Update"
           onSubmit={onSubmit}

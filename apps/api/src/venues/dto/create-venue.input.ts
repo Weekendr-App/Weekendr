@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNumber, Max, MaxLength, Min } from 'class-validator';
+import { IsNumber, Max, MaxLength, Min, IsPhoneNumber } from 'class-validator';
 
 @InputType()
 export class CreateVenueInput {
@@ -25,4 +25,8 @@ export class CreateVenueInput {
 
   @Field()
   picture: string;
+
+  @Field()
+  @IsPhoneNumber()
+  phone: string;
 }

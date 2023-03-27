@@ -1,4 +1,5 @@
 import { CreateVenueInput, Venue } from "@diplomski/gql/graphql";
+import { pick } from "ramda";
 import { gql, useMutation } from "urql";
 
 const mutation = gql`
@@ -18,6 +19,12 @@ export default function useAddVenue() {
   return {
     result,
     loading: result.fetching,
-    addVenue: (fields: CreateVenueInput) => execute({ fields }),
+    addVenue: (fields: CreateVenueInput) =>
+      execute({
+        fields: pick(
+          ["name", "address", "latitude", "longitude", "phone", "picture"],
+          fields
+        ),
+      }),
   };
 }

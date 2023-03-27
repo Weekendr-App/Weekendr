@@ -26,6 +26,7 @@ model Venue {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
+  phone          String
 
   @@index([latitude, longitude], name: "venue_location")
 }

@@ -2,11 +2,15 @@ import { lazy, useCallback, useEffect, useMemo } from "react";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { Country, Value } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import "yup-phone-lite";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
 const SearchBox = lazy(() => import("@diplomski/components/SearchBox"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const PhoneInput = lazy(() => import("@diplomski/components/Form/PhoneInput"));
 
 const DEFAULT_COORDINATE_MESSAGE =
   "We could not get coordinates for the following address. Please try again.";
@@ -17,6 +21,8 @@ export interface VenueFormValues {
   address: string;
   latitude: number;
   longitude: number;
+  phone: string;
+  countryCode: Country | undefined;
 }
 
 interface Props {
@@ -44,6 +50,14 @@ const validationSchema = Yup.object().shape({
     .min(-180, DEFAULT_COORDINATE_MESSAGE)
     .max(180, DEFAULT_COORDINATE_MESSAGE)
     .required(DEFAULT_COORDINATE_MESSAGE),
+  countryCode: Yup.string().required("Country code is required"),
+  phone: Yup.string()
+    .test("phone", "Phone is not valid", (value, ctx) => {
+      return value
+        ? Yup.string().phone(ctx.parent.countryCode).isValidSync(value)
+        : true;
+    })
+    .required("Phone is required"),
 });
 
 export default function VenueForm({
@@ -74,6 +88,8 @@ export default function VenueForm({
       address: "",
       latitude: 0,
       longitude: 0,
+      phone: "",
+      countryCode: undefined,
     },
     onSubmit,
     enableReinitialize,
@@ -106,6 +122,30 @@ export default function VenueForm({
     [handleChange]
   );
 
+  const onPhoneChange = useCallback(
+    (value: Value | undefined) => {
+      handleChange({
+        target: {
+          name: "phone",
+          value: value?.toString(),
+        },
+      });
+    },
+    [handleChange]
+  );
+
+  const onCountryChange = useCallback(
+    (value: Country | undefined) => {
+      handleChange({
+        target: {
+          name: "countryCode",
+          value,
+        },
+      });
+    },
+    [handleChange]
+  );
+
   useEffect(() => {
     if (dirty) {
       validateField("address");
@@ -123,7 +163,7 @@ export default function VenueForm({
         value={values.name}
         onChange={handleChange}
         error={errors.name}
-        placeholder="New vanue name"
+        placeholder="Venue name"
       />
       <FileUpload
         name="picture"
@@ -136,9 +176,20 @@ export default function VenueForm({
       <SearchBox
         name="address"
         label="Address"
+        placeholder="Venue address"
         value={values.address}
         error={errors.address || errors.latitude || errors.longitude}
         onSelectAddress={onSelectAddress}
+      />
+      <PhoneInput
+        name="phone"
+        label="Phone Number"
+        error={errors.phone || errors.countryCode}
+        placeholder="Venue phone number"
+        value={values.phone}
+        onChange={onPhoneChange}
+        defaultCountry={values.countryCode}
+        onCountryChange={onCountryChange}
       />
       <Button
         loading={isSubmitting}
