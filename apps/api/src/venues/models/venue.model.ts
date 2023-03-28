@@ -37,4 +37,7 @@ export class Venue {
 
   @Field({ nullable: true })
   deletedAt?: Date;
+
+  @Field()
+  phone: string;
 }

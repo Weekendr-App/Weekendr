@@ -21,6 +21,7 @@ const query = gql`
         startDate
         endDate
       }
+      phone
     }
   }
 `;

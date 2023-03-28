@@ -10,12 +10,11 @@ import { Venue } from "@diplomski/gql/graphql";
 interface Props {
   viewport: ViewState;
   venues: Venue[];
-  height?: number | string;
 }
 
 const prefixer = sync([autoprefixer]);
 
-const StaticMap: FC<Props> = ({ viewport, venues, height }) => {
+const StaticMap: FC<Props> = ({ viewport, venues }) => {
   const pins = useMemo(() => {
     return venues.map((location) => (
       <Marker
@@ -38,7 +37,7 @@ const StaticMap: FC<Props> = ({ viewport, venues, height }) => {
   return (
     <ReactMapGl
       {...viewport}
-      style={{ width: "100%", height }}
+      style={{ width: "100%", height: "calc(100vh - 64px)" }}
       mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
       minZoom={10}
       maxZoom={15}
