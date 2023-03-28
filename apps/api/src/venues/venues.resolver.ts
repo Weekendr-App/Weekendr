@@ -3,10 +3,19 @@ import {
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { omit } from 'ramda';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
+import { EventsService } from 'src/events/events.service';
+import { Event } from 'src/events/models/event.model';
 import { User } from 'src/user/models/user.model';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
@@ -16,7 +25,15 @@ import { VenuesService } from './venues.service';
 
 @Resolver(() => Venue)
 export class VenuesResolver {
-  constructor(private readonly venuesService: VenuesService) {}
+  constructor(
+    private readonly venuesService: VenuesService,
+    private readonly eventsService: EventsService,
+  ) {}
+
+  @ResolveField(() => [Event])
+  async events(@Parent() venue: Venue): Promise<Omit<Event, 'venue'>[]> {
+    return this.eventsService.findAllByVenueId(venue.id);
+  }
 
   @Query(() => Venue)
   async venue(

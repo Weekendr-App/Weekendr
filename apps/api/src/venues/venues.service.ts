@@ -9,13 +9,13 @@ import { Venue } from './models/venue.model';
 export class VenuesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
+  async create(data: Prisma.VenueCreateInput): Promise<Omit<Venue, 'events'>> {
     return this.prisma.venue.create({
       data,
     });
   }
 
-  async findById(id: number, user?: User): Promise<Venue> {
+  async findById(id: number, user?: User): Promise<Omit<Venue, 'events'>> {
     const venue = await this.prisma.venue.findUnique({ where: { id } });
     if (venue.deletedAt) {
       return null;
@@ -27,20 +27,25 @@ export class VenuesService {
     };
   }
 
-  async findByOwnerId(firebaseUserId: string): Promise<Venue[]> {
+  async findByOwnerId(
+    firebaseUserId: string,
+  ): Promise<Omit<Venue, 'events'>[]> {
     return this.prisma.venue.findMany({
       where: { firebaseUserId, deletedAt: null },
     });
   }
 
-  async update(id: number, data: Prisma.VenueUpdateInput): Promise<Venue> {
+  async update(
+    id: number,
+    data: Prisma.VenueUpdateInput,
+  ): Promise<Omit<Venue, 'events'>> {
     return this.prisma.venue.update({
       where: { id },
       data,
     });
   }
 
-  async delete(id: number): Promise<Venue> {
+  async delete(id: number): Promise<Omit<Venue, 'events'>> {
     return this.prisma.venue.update({
       where: { id },
       data: { deletedAt: new Date() },
@@ -50,7 +55,7 @@ export class VenuesService {
   async findAllInRange(
     data: GetVenuesInRangeInput,
     user?: User,
-  ): Promise<Venue[]> {
+  ): Promise<Omit<Venue, 'events'>[]> {
     const { bounds } = data;
     const { _sw, _ne } = bounds;
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BoundsScalar } from 'src/common/scalars/bounds.scalar';
-import { DateScalar } from 'src/common/scalars/date.scalar';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { EventsService } from 'src/events/events.service';
 import { VenuesResolver } from './venues.resolver';
 import { VenuesService } from './venues.service';
 
@@ -10,7 +10,7 @@ import { VenuesService } from './venues.service';
     PrismaService,
     VenuesResolver,
     VenuesService,
-    DateScalar,
+    EventsService,
     BoundsScalar,
   ],
 })

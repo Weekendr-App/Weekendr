@@ -4,6 +4,15 @@
 
 scalar Bounds
 
+input CreateEventInput {
+  description: String
+  endDate: Date!
+  name: String!
+  picture: String
+  startDate: Date!
+  venueId: Float!
+}
+
 input CreateVenueInput {
   address: String!
   latitude: Float!
@@ -16,19 +25,38 @@ input CreateVenueInput {
 """Date custom scalar type"""
 scalar Date
 
+"""Event"""
+type Event {
+  createdAt: Date!
+  deletedAt: Date
+  description: String
+  endDate: Date!
+  id: ID!
+  name: String!
+  picture: String
+  startDate: Date!
+  status: String!
+  updatedAt: Date!
+  venue: Venue!
+}
+
 input GetVenuesInRangeInput {
   bounds: Bounds!
 }
 
 type Mutation {
+  cancelEvent(eventId: Float!): Event!
+  createEvent(fields: CreateEventInput!): Event!
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
   updateVenue(fields: UpdateVenueInput!): Venue!
 }
 
 type Query {
+  event(eventId: Float!): Event!
   me: User!
   venue(id: Float!): Venue!
+  venueEvents(venueId: Float!): [Event!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
@@ -54,6 +82,7 @@ type Venue {
   address: String!
   createdAt: Date!
   deletedAt: Date
+  events: [Event!]
   id: ID!
   isOwnedByMe: Boolean
   latitude: Float!

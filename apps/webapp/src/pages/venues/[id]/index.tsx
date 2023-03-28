@@ -2,15 +2,21 @@ import { Spinner } from "@diplomski/components/Spinner";
 import useVenue from "@diplomski/hooks/useVenue";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { lazy, Suspense } from "react";
 
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 const VenueNavigation = lazy(
   () => import("@diplomski/components/Venue/VenueNavigation")
 );
+const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const EventListItem = lazy(
+  () => import("@diplomski/components/Event/EventListItem")
+);
 
 export default function VenuePage() {
   const { venue, fetching } = useVenue();
+  const router = useRouter();
 
   if (!venue || fetching) {
     return null;
@@ -47,6 +53,26 @@ export default function VenuePage() {
               width={500}
               height={500}
             />
+            <div
+              className="flex flex-col text-white my-3 overflow-y-auto"
+              style={{
+                height: "calc(100vh - 64px - 560px)",
+              }}
+            >
+              {venue.events?.map((event) => (
+                <EventListItem
+                  key={event.id}
+                  event={event}
+                  fallbackPicture={venue.picture}
+                />
+              ))}
+            </div>
+            <Button
+              type="button"
+              onClick={() => router.push(`/venues/${venue.id}/events/add`)}
+            >
+              Add event to this venue
+            </Button>
             <div className="flex flex-col text-white">
               TODO: Add venue events and show add event button if the user owns
               the venue
