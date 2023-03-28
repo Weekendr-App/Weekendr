@@ -32,6 +32,8 @@ const Input: FC<Props> = ({
       onChange,
       type,
       placeholder,
+      id: name,
+      autoComplete: "off"
     }),
     [error, name, onChange, placeholder, type, value]
   );
@@ -43,18 +45,11 @@ const Input: FC<Props> = ({
           {label}
         </label>
       )}
-      {multiline ? <textarea {...props} /> : <input {...props} />}
-      <input
-        className={clsx(["border", "border-gray-300", "p-2", "rounded-md"], {
-          "border-red-500": error,
-        })}
-        name={name}
-        value={value}
-        onChange={onChange}
-        type={type}
-        placeholder={placeholder}
-        autoComplete="off"
-      />
+      {multiline ? (
+        <textarea {...props} />
+      ) : (
+        <input {...props} />
+      )}
       {error && <span className="text-red-500 italic">{error}</span>}
     </div>
   );
