@@ -21,4 +21,7 @@ export class CreateEventInput {
 
   @Field()
   endDate: Date;
+
+  @Field()
+  price: number;
 }

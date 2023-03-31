@@ -3,13 +3,14 @@ import { clsx } from "clsx";
 
 export interface Props {
   name: string;
-  value: string;
+  value: string | number;
   onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   label?: string;
   error?: string;
   type?: string;
   placeholder?: string;
   multiline?: boolean;
+  hidden?: boolean;
 }
 
 const Input: FC<Props> = ({
@@ -21,6 +22,7 @@ const Input: FC<Props> = ({
   type = "text",
   placeholder,
   multiline = false,
+  hidden = false,
 }) => {
   const props = useMemo(
     () => ({
@@ -33,23 +35,20 @@ const Input: FC<Props> = ({
       type,
       placeholder,
       id: name,
-      autoComplete: "off"
+      autoComplete: "off",
+      hidden,
     }),
-    [error, name, onChange, placeholder, type, value]
+    [error, name, onChange, placeholder, type, value, hidden]
   );
 
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="font-bold text-white">
+        <label hidden={hidden} htmlFor={name} className="font-bold text-white">
           {label}
         </label>
       )}
-      {multiline ? (
-        <textarea {...props} />
-      ) : (
-        <input {...props} />
-      )}
+      {multiline ? <textarea {...props} /> : <input {...props} />}
       {error && <span className="text-red-500 italic">{error}</span>}
     </div>
   );

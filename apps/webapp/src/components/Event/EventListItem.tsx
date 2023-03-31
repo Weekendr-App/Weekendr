@@ -1,8 +1,8 @@
 import { Event } from "@diplomski/gql/graphql";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
+import { clsx } from "clsx";
 
 interface Props {
   event: Event;
@@ -14,9 +14,7 @@ const getDate = (date: number) => {
 };
 
 const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
-  const router = useRouter();
-
-  console.log(event.description);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const description = useMemo(() => {
     // TODO: Trim description if too long
@@ -26,29 +24,49 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
   }, [event.description]);
 
   return (
-    <div
-      key={event.id}
-      className="bg-gray-700 p-3 rounded cursor-pointer my-2 flex gap-3"
-      onClick={() => router.push(`/events/${event.id}`)}
-    >
-      <div>
-        <h2 className="text-2xl font-bold text-white">{event.name}</h2>
-        <div className="flex gap-1 text-white text-sm">
-          <span>{getDate(event.startDate)}</span>
-          <span> - </span>
-          <span>{getDate(event.endDate)}</span>
+    <div className="my-2">
+      <div
+        onClick={() => setIsExpanded((prev) => !prev)}
+        className={clsx([
+          "hover:cursor-pointer",
+          "flex",
+          "items-center",
+          "justify-between",
+          "p-4",
+          "bg-gray-700",
+          "select-none",
+        ])}
+      >
+        <div>{event.name}</div>
+        <div>
+          Starts: <strong>{getDate(event.startDate)}</strong>
         </div>
-        <Image
-          className="rounded"
-          width={128}
-          height={128}
-          alt={event.name}
-          src={event.picture ?? fallbackPicture}
-        />
       </div>
-      <div>
-        <h3 className="text-xl font-bold text-white">Description:</h3>
-        <p className="text-lg text-white">{description}</p>
+      <div
+        className={clsx(
+          ["max-h-0", "overflow-hidden", "bg-gray-50", "flex", "bg-gray-600"],
+          {
+            "max-h-screen p-4": isExpanded,
+          }
+        )}
+      >
+        <div className="w-full">{description}</div>
+        <div className="w-1/3 ml-8 flex flex-col">
+          <Image
+            className="rounded"
+            width={128}
+            height={128}
+            alt={event.name}
+            src={event.picture ?? fallbackPicture}
+          />
+          <div>
+            ENTRY FEE:{" "}
+            <strong>{event.price === 0 ? "Free" : `€${event.price}`}</strong>
+          </div>
+          <div>
+            Ends: <strong>{getDate(event.endDate)}</strong>
+          </div>
+        </div>
       </div>
     </div>
   );

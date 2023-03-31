@@ -22,7 +22,7 @@ export default function AddEventPage() {
   );
 
   if (result.data?.createEvent.id) {
-    router.push(`/events/${result.data.createEvent.id}`);
+    router.push(`/venues/${id}`);
   }
 
   return (

@@ -30,6 +30,8 @@ export class EventsService {
     return this.prisma.event.findMany({
       where: { venueId },
       include: { venue: true },
+      orderBy: [{ startDate: 'desc' }],
+      take: 3,
     });
   }
 

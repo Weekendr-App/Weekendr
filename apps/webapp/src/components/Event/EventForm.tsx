@@ -1,7 +1,7 @@
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { isAfter } from "date-fns";
 import { useFormik } from "formik";
-import { lazy, useMemo } from "react";
+import { lazy, useMemo, useState } from "react";
 import * as Yup from "yup";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
@@ -15,6 +15,7 @@ export interface EventFormValues {
   picture?: string;
   startDate: Date;
   endDate: Date;
+  price: number;
 }
 
 interface Props {
@@ -50,6 +51,8 @@ export default function EventForm({
   buttonText,
   initialValues,
 }: Props) {
+  const [hidePriceField, setHidePriceField] = useState(true);
+
   const enableReinitialize = useMemo(
     () => initialValues !== undefined,
     [initialValues]
@@ -70,6 +73,7 @@ export default function EventForm({
       description: "",
       startDate: new Date(),
       endDate: new Date(),
+      price: 0,
     },
     onSubmit,
     enableReinitialize,
@@ -79,6 +83,19 @@ export default function EventForm({
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
       <h1 className="text-2xl font-bold text-white">{title}</h1>
+      <Button hidden={!hidePriceField} onClick={() => setHidePriceField(false)}>
+        Set Price of Admission (optional)
+      </Button>
+      <Input
+        hidden={hidePriceField}
+        name="price"
+        label="Price of admission (€)"
+        value={values.price}
+        onChange={handleChange}
+        type="number"
+        error={errors.price}
+        placeholder="Event price in €"
+      />
       <Input
         name="name"
         label="Name"

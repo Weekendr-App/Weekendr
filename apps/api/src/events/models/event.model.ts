@@ -38,4 +38,7 @@ export class Event {
 
   @Field({ nullable: true })
   deletedAt?: Date;
+
+  @Field()
+  price: number;
 }
