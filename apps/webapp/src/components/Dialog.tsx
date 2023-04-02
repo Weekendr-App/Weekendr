@@ -1,27 +1,23 @@
 import clsx from "clsx";
+import { toast } from "react-hot-toast";
 
 interface Props {
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
   title: string;
   message: string;
   type?: "warning" | "info";
   onConfirm: () => Promise<void>;
+  id: string;
 }
 
 export default function Dialog({
-  setIsOpen,
-  isOpen,
   title,
   message,
   type = "info",
-  onConfirm
+  onConfirm,
+  id,
 }: Props) {
   return (
-    <dialog
-      className="border-gray-800 border-2 rounded-xl z-10 p-5"
-      open={isOpen}
-    >
+    <div>
       <p className="font-bold">{title}</p>
       <p>{message}</p>
       <button
@@ -44,11 +40,11 @@ export default function Dialog({
       </button>
       {" | "}
       <button
-        onClick={() => setIsOpen(false)}
+        onClick={() => toast.dismiss(id)}
         className="font-medium px-4 py-2 rounded-lg hover:bg-gray-100"
       >
         Cancel
       </button>
-    </dialog>
+    </div>
   );
 }

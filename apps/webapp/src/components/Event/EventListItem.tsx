@@ -3,6 +3,11 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { FC, useMemo, useState } from "react";
 import { clsx } from "clsx";
+import Button from "../Form/Button";
+import useCancelEvent from "@diplomski/hooks/useCancelEvent";
+import useVenue from "@diplomski/hooks/useVenue";
+import Dialog from "../Dialog";
+import { toast } from "react-hot-toast";
 
 interface Props {
   event: Event;
@@ -14,6 +19,8 @@ const getDate = (date: number) => {
 };
 
 const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
+  const { cancelEvent, loading } = useCancelEvent();
+  const { venue } = useVenue();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const description = useMemo(() => {
@@ -66,6 +73,27 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
           <div>
             Ends: <strong>{getDate(event.endDate)}</strong>
           </div>
+          {venue?.isOwnedByMe && (
+            <Button
+              disabled={loading}
+              onClick={() =>
+                toast((t) => (
+                  <Dialog
+                    onConfirm={async () => {
+                      await cancelEvent(Number(event.id));
+                      toast.dismiss(t.id);
+                    }}
+                    title="Are you sure you want to proceed with canceling the event?"
+                    message="Pressing OK will cancel the event"
+                    type="warning"
+                    id={t.id}
+                  />
+                ))
+              }
+            >
+              Cancel Event
+            </Button>
+          )}
         </div>
       </div>
     </div>
