@@ -7,7 +7,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
-  hidden?: boolean | undefined;
+  hidden?: boolean;
 }
 
 const Button: FC<PropsWithChildren<Props>> = ({

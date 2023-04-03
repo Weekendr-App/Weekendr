@@ -51,7 +51,7 @@ export default function EventForm({
   buttonText,
   initialValues,
 }: Props) {
-  const [hidePriceField, setHidePriceField] = useState(true);
+  const [isPriceHidden, setIsPriceHidden] = useState(true);
 
   const enableReinitialize = useMemo(
     () => initialValues !== undefined,
@@ -83,11 +83,11 @@ export default function EventForm({
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
       <h1 className="text-2xl font-bold text-white">{title}</h1>
-      <Button hidden={!hidePriceField} onClick={() => setHidePriceField(false)}>
+      <Button hidden={!isPriceHidden} onClick={() => setIsPriceHidden(false)}>
         Set Price of Admission (optional)
       </Button>
       <Input
-        hidden={hidePriceField}
+        hidden={isPriceHidden}
         name="price"
         label="Price of admission (€)"
         value={values.price}

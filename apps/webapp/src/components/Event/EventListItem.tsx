@@ -67,7 +67,7 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
             src={event.picture ?? fallbackPicture}
           />
           <div>
-            ENTRY FEE:{" "}
+            <span className="uppercase">entry fee</span>:{" "}
             <strong>{event.price === 0 ? "Free" : `€${event.price}`}</strong>
           </div>
           <div>
