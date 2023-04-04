@@ -9,29 +9,36 @@ import { Venue } from './models/venue.model';
 export class VenuesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.VenueCreateInput): Promise<Omit<Venue, 'events'>> {
+  async create(data: Prisma.VenueCreateInput): Promise<Venue> {
     return this.prisma.venue.create({
       data,
+      include: {
+        owner: true,
+      },
     });
   }
 
-  async findById(id: number, user?: User): Promise<Omit<Venue, 'events'>> {
-    const venue = await this.prisma.venue.findUnique({ where: { id } });
+  async findById(id: number, user?: User): Promise<Venue> {
+    const venue = await this.prisma.venue.findUnique({
+      where: { id },
+      include: { owner: true },
+    });
     if (venue.deletedAt) {
       return null;
     }
 
     return {
       ...venue,
-      isOwnedByMe: user?.id === venue.firebaseUserId,
+      isOwnedByMe: user?.id === venue.owner.id,
     };
   }
 
-  async findByOwnerId(
-    firebaseUserId: string,
-  ): Promise<Omit<Venue, 'events'>[]> {
+  async findByOwnerId(id: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
-      where: { firebaseUserId, deletedAt: null },
+      where: { deletedAt: null, owner: { id } },
+      include: {
+        owner: true,
+      },
     });
   }
 
@@ -42,10 +49,13 @@ export class VenuesService {
     return this.prisma.venue.update({
       where: { id },
       data,
+      include: {
+        owner: true,
+      },
     });
   }
 
-  async delete(id: number): Promise<Omit<Venue, 'events'>> {
+  async delete(id: number): Promise<Omit<Venue, 'events' | 'owner'>> {
     return this.prisma.venue.update({
       where: { id },
       data: { deletedAt: new Date() },
@@ -69,7 +79,7 @@ export class VenuesService {
       SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`
     ).map((venue) => ({
       ...venue,
-      isOwnedByMe: user?.id === venue.firebaseUserId,
+      isOwnedByMe: user?.id === venue.owner.id,
     }));
   }
 }

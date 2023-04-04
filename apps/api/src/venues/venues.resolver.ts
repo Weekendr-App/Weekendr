@@ -63,7 +63,10 @@ export class VenuesResolver {
     @Args('fields') data: CreateVenueInput,
     @FirebaseUser() user: User,
   ): Promise<Venue> {
-    return this.venuesService.create({ ...data, firebaseUserId: user.id });
+    return this.venuesService.create({
+      ...data,
+      owner: { connect: { id: user.id } },
+    });
   }
 
   @Mutation(() => Venue)
@@ -72,8 +75,8 @@ export class VenuesResolver {
     @Args('fields') data: UpdateVenueInput,
     @FirebaseUser() user: User,
   ): Promise<Venue> {
-    const venue = await this.venuesService.findById(data.id);
-    if (venue?.firebaseUserId !== user.id) {
+    const venue = await this.venuesService.findById(data.id, user);
+    if (!venue?.isOwnedByMe) {
       throw new ForbiddenException(data.id);
     }
 
@@ -83,8 +86,8 @@ export class VenuesResolver {
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard)
   async deleteVenue(@Args('id') id: number, @FirebaseUser() user: User) {
-    const venue = await this.venuesService.findById(id);
-    if (venue?.firebaseUserId !== user.id) {
+    const venue = await this.venuesService.findById(id, user);
+    if (!venue?.isOwnedByMe) {
       throw new ForbiddenException(id);
     }
 

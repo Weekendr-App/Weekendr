@@ -10,6 +10,8 @@ import { FirebaseService } from './common/firebase/firebase.service';
 import { UserModule } from './user/user.module';
 import { EventsModule } from './events/events.module';
 import { DateScalar } from './common/scalars/date.scalar';
+import { UserService } from './user/user.service';
+import { PrismaService } from './common/services/prisma.service';
 
 @Module({
   imports: [
@@ -24,7 +26,13 @@ import { DateScalar } from './common/scalars/date.scalar';
       playground: true,
     }),
   ],
-  providers: [FirebaseService, FirebaseGuard, DateScalar],
+  providers: [
+    FirebaseService,
+    FirebaseGuard,
+    DateScalar,
+    UserService,
+    PrismaService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

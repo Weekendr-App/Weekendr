@@ -83,7 +83,7 @@ export class EventsResolver {
     if (!event) {
       throw new NotFoundException('Event not found');
     }
-    if (event.venue.firebaseUserId !== user.id) {
+    if (event.venue.owner.id !== user.id) {
       throw new ForbiddenException('You are not the owner of this event');
     }
 
