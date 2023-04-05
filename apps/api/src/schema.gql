@@ -9,6 +9,7 @@ input CreateEventInput {
   endDate: Date!
   name: String!
   picture: String
+  price: Float!
   startDate: Date!
   venueId: Float!
 }
@@ -34,6 +35,7 @@ type Event {
   id: ID!
   name: String!
   picture: String
+  price: Float!
   startDate: Date!
   status: String!
   updatedAt: Date!

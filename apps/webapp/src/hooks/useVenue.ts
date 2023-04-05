@@ -20,6 +20,7 @@ const query = gql`
         picture
         startDate
         endDate
+        price
       }
       phone
     }

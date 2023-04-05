@@ -245,33 +245,15 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(yup@1.0.0)
     devDependencies:
-      '@graphql-codegen/cli':
-        specifier: ^3.2.0
-        version: 3.2.0(@babel/core@7.21.0)(@types/node@18.14.0)(graphql@16.6.0)(typescript@4.9.5)
-      '@graphql-codegen/client-preset':
-        specifier: ^2.1.0
-        version: 2.1.0(graphql@16.6.0)
-      '@types/eslint':
-        specifier: 8.21.1
-        version: 8.21.1
-      '@types/mapbox-gl':
-        specifier: ^2.7.10
-        version: 2.7.10
-      '@types/postcss-js':
-        specifier: ^4.0.0
-        version: 4.0.0
-      '@types/ramda':
-        specifier: ^0.28.23
-        version: 0.28.23
-      '@types/react-datepicker':
-        specifier: ^4.10.0
-        version: 4.10.0(react-dom@18.2.0)(react@18.2.0)
-      '@types/sharp':
-        specifier: ^0.31.1
-        version: 0.31.1
-      typescript:
-        specifier: 4.9.5
-        version: 4.9.5
+      '@graphql-codegen/cli': 3.2.0_x7yjxt7iy5xommrhyokbeoglii
+      '@graphql-codegen/client-preset': 2.1.0_graphql@16.6.0
+      '@types/eslint': 8.21.1
+      '@types/mapbox-gl': 2.7.10
+      '@types/postcss-js': 4.0.0
+      '@types/ramda': 0.28.23
+      '@types/react-datepicker': 4.10.0_biqbaboplfbrettd7655fr4n2y
+      '@types/sharp': 0.31.1
+      typescript: 4.9.5
 
 packages:
 
@@ -8798,10 +8780,10 @@ packages:
       react-dom: ^15.5.x || ^16.x || ^17.x || ^18.x
     dependencies:
       react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /react-phone-number-input@3.2.19(react-dom@18.2.0)(react@18.2.0):
+  /react-phone-number-input/3.2.19_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-3peWqyFgJ3+IvkB0GHvhAzQ6LEfJw1/obG8KPvCcac8OKp9Ir+pLdyySgxbD56EYkaAwZbBwOQJaGNqIX0yrtg==}
     peerDependencies:
       react: '>=16.8'

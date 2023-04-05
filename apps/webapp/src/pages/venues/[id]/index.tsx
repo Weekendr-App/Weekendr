@@ -53,12 +53,7 @@ export default function VenuePage() {
               width={500}
               height={500}
             />
-            <div
-              className="flex flex-col text-white my-3 overflow-y-auto"
-              style={{
-                height: "calc(100vh - 64px - 560px)",
-              }}
-            >
+            <div className="flex flex-col text-white my-3 overflow-y-auto">
               {venue.events?.map((event) => (
                 <EventListItem
                   key={event.id}
@@ -68,15 +63,12 @@ export default function VenuePage() {
               ))}
             </div>
             <Button
+              hidden={!venue.isOwnedByMe}
               type="button"
               onClick={() => router.push(`/venues/${venue.id}/events/add`)}
             >
               Add event to this venue
             </Button>
-            <div className="flex flex-col text-white">
-              TODO: Add venue events and show add event button if the user owns
-              the venue
-            </div>
           </div>
           <div className="w-1/2">
             <Suspense fallback={<Spinner />}>
