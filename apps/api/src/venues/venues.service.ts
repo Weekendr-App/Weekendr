@@ -74,7 +74,7 @@ export class VenuesService {
     const xmax = _ne.lng;
     const ymax = _ne.lat;
 
-    const id = await this.prisma.$queryRaw<Venue[]>`
+    const id = await this.prisma.$queryRaw<{ id: Venue['id'] }[]>`
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
     const venues = await this.prisma.venue.findMany({
