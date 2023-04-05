@@ -20,9 +20,11 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
 
   const description = useMemo(() => {
     // TODO: Trim description if too long
-    return (event.description ?? "N/A")
-      .split(/\r|\n/)
-      .map((line) => <p key={line}>{line}</p>);
+    return (event.description ?? "N/A").split(/\r|\n/).map((line) => (
+      <p className="text-lg text-white" key={line}>
+        {line}
+      </p>
+    ));
   }, [event.description]);
 
   return (
@@ -48,7 +50,7 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
       </div>
       <div>
         <h3 className="text-xl font-bold text-white">Description:</h3>
-        <p className="text-lg text-white">{description}</p>
+        {description}
       </div>
     </div>
   );

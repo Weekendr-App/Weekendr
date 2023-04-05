@@ -14,6 +14,7 @@ import {
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { User } from 'src/user/models/user.model';
+import { RoleGuard } from 'src/user/user.role.guard';
 import { Venue } from 'src/venues/models/venue.model';
 import { VenuesService } from 'src/venues/venues.service';
 import { CreateEventInput } from './dto/create-event.input';
@@ -43,7 +44,7 @@ export class EventsResolver {
   }
 
   @Mutation(() => Event)
-  @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async createEvent(
     @Args('fields') data: CreateEventInput,
     @FirebaseUser() user: User,
@@ -74,7 +75,7 @@ export class EventsResolver {
   }
 
   @Mutation(() => Event)
-  @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async cancelEvent(
     @Args('eventId') eventId: number,
     @FirebaseUser() user: User,

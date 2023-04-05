@@ -1,9 +1,15 @@
-import { CanActivate, ExecutionContext, mixin } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  mixin,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { User } from './models/user.model';
 
 export const RoleGuard = (role: Role) => {
+  @Injectable()
   class RoleGuardMixin implements CanActivate {
     canActivate(context: ExecutionContext): boolean {
       const ctx = GqlExecutionContext.create(context);
