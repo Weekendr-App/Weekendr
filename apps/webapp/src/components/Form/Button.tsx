@@ -7,6 +7,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   onClick?: () => void;
+  hidden?: boolean;
 }
 
 const Button: FC<PropsWithChildren<Props>> = ({
@@ -15,9 +16,11 @@ const Button: FC<PropsWithChildren<Props>> = ({
   disabled,
   loading,
   onClick,
+  hidden = false
 }) => {
   return (
     <button
+      hidden={hidden}
       className={clsx([
         "bg-gray-800",
         "text-white",

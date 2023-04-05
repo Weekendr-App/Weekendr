@@ -28,8 +28,10 @@ export class EventsService {
 
   async findAllByVenueId(venueId: number): Promise<Event[]> {
     return this.prisma.event.findMany({
-      where: { venueId },
+      where: { venueId, status: EventStatus.PUBLISHED },
       include: { venue: true },
+      orderBy: [{ startDate: 'desc' }],
+      take: 3,
     });
   }
 
