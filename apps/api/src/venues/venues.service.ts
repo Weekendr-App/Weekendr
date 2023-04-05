@@ -74,10 +74,17 @@ export class VenuesService {
     const xmax = _ne.lng;
     const ymax = _ne.lat;
 
-    return (
-      await this.prisma.$queryRaw<Venue[]>`
-      SELECT * FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`
-    ).map((venue) => ({
+    const id = await this.prisma.$queryRaw<Venue[]>`
+      SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
+
+    const venues = await this.prisma.venue.findMany({
+      where: { id: { in: id.map((v) => v.id) } },
+      include: {
+        owner: true,
+      },
+    });
+
+    return venues.map((venue) => ({
       ...venue,
       isOwnedByMe: user?.id === venue.owner.id,
     }));
