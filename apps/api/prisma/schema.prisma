@@ -2,13 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [postgis]
 }
 
@@ -18,39 +18,45 @@ enum EventStatus {
   CANCELLED
 }
 
+enum Role {
+  OWNER
+  MODERATOR
+}
+
 model Venue {
-  id             Int      @id @default(autoincrement())
-  name           String
-  picture        String?
-  firebaseUserId String
+  id        Int     @id @default(autoincrement())
+  name      String
+  picture   String?
+  owner     User    @relation(fields: [userId], references: [id])
   // Prisma does not support PostGIS yet, so we have to use a Float
   // type. This is not ideal, but it works for now.
-  latitude       Float
-  longitude      Float
-  address        String
+  latitude  Float
+  longitude Float
+  address   String
 
-  events         Event[]
+  events Event[]
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  deletedAt      DateTime?
-  phone          String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  phone     String
+  userId    String
 
   @@index([latitude, longitude], name: "venue_location")
 }
 
 model Event {
-  id             Int      @id @default(autoincrement())
-  name           String
-  description    String?
-  picture        String?
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  picture     String?
 
-  venue          Venue    @relation(fields: [venueId], references: [id])
-  venueId        Int
+  venue   Venue @relation(fields: [venueId], references: [id])
+  venueId Int
 
-  status         EventStatus @default(DRAFT)
-  startDate      DateTime
-  endDate        DateTime
+  status    EventStatus @default(DRAFT)
+  startDate DateTime
+  endDate   DateTime
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -58,4 +64,10 @@ model Event {
   price          Float
 
   @@index([venueId], name: "event_venue")
+}
+
+model User {
+  id     String  @id
+  role   Role    @default(OWNER)
+  venues Venue[]
 }

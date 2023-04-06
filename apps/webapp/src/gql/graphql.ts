@@ -135,6 +135,7 @@ export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   id: Scalars['ID'];
+  role: Scalars['String'];
   venues: Array<Venue>;
 };
 

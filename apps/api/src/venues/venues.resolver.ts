@@ -17,6 +17,7 @@ import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { EventsService } from 'src/events/events.service';
 import { Event } from 'src/events/models/event.model';
 import { User } from 'src/user/models/user.model';
+import { RoleGuard } from 'src/user/user.role.guard';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
@@ -58,22 +59,25 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
   async createVenue(
     @Args('fields') data: CreateVenueInput,
     @FirebaseUser() user: User,
   ): Promise<Venue> {
-    return this.venuesService.create({ ...data, firebaseUserId: user.id });
+    return this.venuesService.create({
+      ...data,
+      owner: { connect: { id: user.id } },
+    });
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async updateVenue(
     @Args('fields') data: UpdateVenueInput,
     @FirebaseUser() user: User,
   ): Promise<Venue> {
-    const venue = await this.venuesService.findById(data.id);
-    if (venue?.firebaseUserId !== user.id) {
+    const venue = await this.venuesService.findById(data.id, user);
+    if (!venue?.isOwnedByMe) {
       throw new ForbiddenException(data.id);
     }
 
@@ -81,10 +85,10 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async deleteVenue(@Args('id') id: number, @FirebaseUser() user: User) {
-    const venue = await this.venuesService.findById(id);
-    if (venue?.firebaseUserId !== user.id) {
+    const venue = await this.venuesService.findById(id, user);
+    if (!venue?.isOwnedByMe) {
       throw new ForbiddenException(id);
     }
 

@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Event } from 'src/events/models/event.model';
+import { User } from 'src/user/models/user.model';
 
 @ObjectType({ description: 'Venue' })
 export class Venue {
@@ -9,7 +10,7 @@ export class Venue {
   @Field()
   name: string;
 
-  firebaseUserId: string;
+  owner: Omit<User, 'email' | 'venues'>;
 
   @Field()
   address: string;

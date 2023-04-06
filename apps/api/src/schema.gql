@@ -76,6 +76,7 @@ input UpdateVenueInput {
 type User {
   email: String!
   id: ID!
+  role: String!
   venues: [Venue!]!
 }
 

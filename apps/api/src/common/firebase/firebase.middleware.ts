@@ -1,10 +1,14 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { UserService } from 'src/user/user.service';
 import { FirebaseService } from './firebase.service';
 
 @Injectable()
 export class FirebaseMiddleware implements NestMiddleware {
-  constructor(private readonly firebaseService: FirebaseService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly userService: UserService,
+  ) {}
 
   async use(request: Request, _response: Response, next: () => void) {
     const { authorization } = request.headers;
@@ -19,10 +23,8 @@ export class FirebaseMiddleware implements NestMiddleware {
           .getAuth()
           .verifyIdToken(token);
 
-        request['user'] = {
-          id: decodedToken.uid,
-          email: decodedToken.email,
-        };
+        request['user'] = await this.userService.ensureUser(decodedToken.uid);
+        request['user']['email'] = decodedToken.email;
       } catch (error) {
         console.log('Error while verifying Firebase ID token:', error);
       }
