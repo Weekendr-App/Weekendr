@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, VenueStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
@@ -23,7 +23,7 @@ export class VenuesService {
       where: { id },
       include: { owner: true },
     });
-    if (venue.deletedAt) {
+    if (venue.deletedAt || venue.status !== VenueStatus.ACTIVE) {
       return null;
     }
 
@@ -35,7 +35,7 @@ export class VenuesService {
 
   async findByOwnerId(id: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
-      where: { deletedAt: null, owner: { id } },
+      where: { deletedAt: null, owner: { id }, status: VenueStatus.ACTIVE },
       include: {
         owner: true,
       },
@@ -78,7 +78,7 @@ export class VenuesService {
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
     const venues = await this.prisma.venue.findMany({
-      where: { id: { in: id.map((v) => v.id) } },
+      where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
       include: {
         owner: true,
       },

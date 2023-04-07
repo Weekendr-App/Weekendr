@@ -18,6 +18,11 @@ enum EventStatus {
   CANCELLED
 }
 
+enum VenueStatus {
+  DRAFT
+  ACTIVE
+}
+
 enum Role {
   OWNER
   MODERATOR
@@ -36,11 +41,12 @@ model Venue {
 
   events Event[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   deletedAt DateTime?
   phone     String
   userId    String
+  status    VenueStatus @default(DRAFT)
 
   @@index([latitude, longitude], name: "venue_location")
 }
@@ -58,16 +64,16 @@ model Event {
   startDate DateTime
   endDate   DateTime
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  deletedAt      DateTime?
-  price          Float
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  price     Float
 
   @@index([venueId], name: "event_venue")
 }
 
 model User {
-  id     String  @id
-  role   Role    @default(OWNER)
-  venues Venue[]
+  id    String  @id
+  role  Role    @default(OWNER)
+  Venue Venue[]
 }

@@ -17,14 +17,14 @@ const Header: FC<{}> = () => {
   const { user, logout } = useAuth();
   const [{ data }] = useQuery({ query });
 
-  const isModerator = useMemo(() => data?.me.role === "MODERATOR", [data]);
+  const isOwner = useMemo(() => data?.me.role === "OWNER", [data]);
   const headerItems = useMemo(() => {
     return [
       {
         title: "Profile",
         href: "/profile",
       },
-      ...(isModerator ? [{ title: "Add venue", href: "/venues/add" }] : []),
+      ...(isOwner ? [{ title: "Add venue", href: "/venues/add" }] : []),
     ].map((item) => (
       <div className="flex" key={item.title}>
         <Link className="hover:underline" href={item.href}>
@@ -33,7 +33,7 @@ const Header: FC<{}> = () => {
         <p className="mx-2">|</p>
       </div>
     ));
-  }, [isModerator]);
+  }, [isOwner]);
 
   return (
     <header className="bg-gray-800 px-6 flex items-center justify-between h-16">
