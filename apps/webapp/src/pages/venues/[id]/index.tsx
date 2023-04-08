@@ -1,4 +1,5 @@
 import { Spinner } from "@diplomski/components/Spinner";
+import { VenueStatus } from "@diplomski/gql/graphql";
 import useVenue from "@diplomski/hooks/useVenue";
 import Head from "next/head";
 import Image from "next/image";
@@ -35,6 +36,12 @@ export default function VenuePage() {
         <div className="flex text-white">
           <div className="p-3 w-1/2">
             <VenueNavigation venue={venue} />
+            {venue.status !== VenueStatus.Active && (
+              <p className="text-xl border-2 border-red-500 rounded-2xl p-3 my-2 text-center">
+                This venue is currently{" "}
+                <span className="font-bold">under review.</span>
+              </p>
+            )}
             <h1 className="text-4xl font-bold">
               {venue.name}
               {venue.isOwnedByMe && (
