@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, VenueStatus } from '@prisma/client';
+import { Prisma, Role, VenueStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
@@ -20,16 +20,27 @@ export class VenuesService {
 
   async findById(id: number, user?: User): Promise<Venue> {
     const venue = await this.prisma.venue.findFirst({
-      where: { id, status: VenueStatus.ACTIVE, deletedAt: null },
+      where: { id, deletedAt: null },
       include: { owner: true },
     });
+
     if (!venue) {
+      return null;
+    }
+
+    const isOwnedByMe = user?.id === venue.owner.id;
+    const canView =
+      isOwnedByMe ||
+      venue.status === VenueStatus.ACTIVE ||
+      user.role === Role.MODERATOR;
+
+    if (!canView) {
       return null;
     }
 
     return {
       ...venue,
-      isOwnedByMe: user?.id === venue.owner.id,
+      isOwnedByMe,
     };
   }
 
