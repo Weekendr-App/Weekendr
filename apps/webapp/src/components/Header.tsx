@@ -5,6 +5,7 @@ import home from "../../public/home-color.svg";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import { gql, useQuery } from "urql";
 import { Role } from "@diplomski/gql/graphql";
+import { useRouter } from "next/router";
 
 const query = gql`
   query {
@@ -16,25 +17,39 @@ const query = gql`
 
 const Header: FC<{}> = () => {
   const { user, logout } = useAuth();
-  const [{ data }] = useQuery({ query });
+  const [{ data }] = useQuery({ query, pause: !user });
+  const router = useRouter();
 
   const isOwner = useMemo(() => data?.me.role === Role.Owner, [data]);
   const headerItems = useMemo(() => {
-    return [
+    const items = [
       {
         title: "Profile",
         href: "/profile",
       },
-      ...(isOwner ? [{ title: "Add venue", href: "/venues/add" }] : []),
-    ].map((item) => (
+    ];
+
+    if (isOwner) {
+      items.push({ title: "Add venue", href: "/venues/add" });
+    }
+
+    return items.map((item) => (
       <div className="flex" key={item.title}>
-        <Link className="hover:underline" href={item.href}>
+        <a
+          className="hover:underline cursor-pointer"
+          onClick={() => {
+            if (router.asPath === item.href) {
+              return;
+            }
+            router.push(item.href);
+          }}
+        >
           {item.title}
-        </Link>
+        </a>
         <p className="mx-2">|</p>
       </div>
     ));
-  }, [isOwner]);
+  }, [isOwner, router]);
 
   return (
     <header className="bg-gray-800 px-6 flex items-center justify-between h-16">
