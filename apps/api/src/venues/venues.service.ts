@@ -35,7 +35,7 @@ export class VenuesService {
 
   async findByOwnerId(id: string): Promise<Venue[]> {
     return this.prisma.venue.findMany({
-      where: { deletedAt: null, owner: { id }, status: VenueStatus.ACTIVE },
+      where: { deletedAt: null, owner: { id } },
       include: {
         owner: true,
       },

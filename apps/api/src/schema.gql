@@ -105,5 +105,11 @@ type Venue {
   name: String!
   phone: String!
   picture: String!
+  status: VenueStatus!
   updatedAt: Date!
+}
+
+enum VenueStatus {
+  ACTIVE
+  DRAFT
 }
