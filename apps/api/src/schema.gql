@@ -37,9 +37,15 @@ type Event {
   picture: String
   price: Float!
   startDate: Date!
-  status: String!
+  status: EventStatus!
   updatedAt: Date!
   venue: Venue!
+}
+
+enum EventStatus {
+  CANCELLED
+  DRAFT
+  PUBLISHED
 }
 
 input GetVenuesInRangeInput {
@@ -62,6 +68,12 @@ type Query {
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 
+"""User role"""
+enum Role {
+  MODERATOR
+  OWNER
+}
+
 input UpdateVenueInput {
   address: String!
   id: Float!
@@ -76,7 +88,7 @@ input UpdateVenueInput {
 type User {
   email: String!
   id: ID!
-  role: String!
+  role: Role!
   venues: [Venue!]!
 }
 

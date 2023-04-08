@@ -55,7 +55,7 @@ function ReadySearchBox({
 
   useEffect(() => {
     if (defaultValue) {
-      setValue(defaultValue, false);
+      setValue(`${defaultValue}`, false);
     }
   }, [defaultValue, setValue]);
 

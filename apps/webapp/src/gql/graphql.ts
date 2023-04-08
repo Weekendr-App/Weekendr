@@ -48,10 +48,16 @@ export type Event = {
   picture?: Maybe<Scalars['String']>;
   price: Scalars['Float'];
   startDate: Scalars['Date'];
-  status: Scalars['String'];
+  status: EventStatus;
   updatedAt: Scalars['Date'];
   venue: Venue;
 };
+
+export enum EventStatus {
+  Cancelled = 'CANCELLED',
+  Draft = 'DRAFT',
+  Published = 'PUBLISHED'
+}
 
 export type GetVenuesInRangeInput = {
   bounds: Scalars['Bounds'];
@@ -120,6 +126,12 @@ export type QueryVenuesInRangeArgs = {
   fields: GetVenuesInRangeInput;
 };
 
+/** User role */
+export enum Role {
+  Moderator = 'MODERATOR',
+  Owner = 'OWNER'
+}
+
 export type UpdateVenueInput = {
   address: Scalars['String'];
   id: Scalars['Float'];
@@ -135,7 +147,7 @@ export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   id: Scalars['ID'];
-  role: Scalars['String'];
+  role: Role;
   venues: Array<Venue>;
 };
 

@@ -1,6 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Role } from '@prisma/client';
 import { Venue } from 'src/venues/models/venue.model';
+
+registerEnumType(Role, {
+  name: 'Role',
+  description: 'User role',
+});
 
 @ObjectType({ description: 'User' })
 export class User {
@@ -10,7 +15,7 @@ export class User {
   @Field()
   email: string;
 
-  @Field()
+  @Field(() => Role)
   role: Role;
 
   @Field(() => [Venue])
