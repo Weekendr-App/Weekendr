@@ -30,7 +30,7 @@ const query = gql`
 export default function useVenue() {
   const router = useRouter();
   const { id } = router.query;
-  const [{ data, fetching }] = useQuery<{ venue: Venue }>({
+  const [{ data, fetching, error }] = useQuery<{ venue: Venue }>({
     query,
     pause: isNaN(Number(id)),
     variables: { id: Number(id) },
@@ -41,5 +41,6 @@ export default function useVenue() {
   return {
     venue,
     fetching,
+    error,
   };
 }

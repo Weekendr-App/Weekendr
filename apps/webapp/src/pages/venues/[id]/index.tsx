@@ -15,8 +15,12 @@ const EventListItem = lazy(
 );
 
 export default function VenuePage() {
-  const { venue, fetching } = useVenue();
+  const { venue, fetching, error } = useVenue();
   const router = useRouter();
+
+  if (error && !fetching) {
+    router.push("/404");
+  }
 
   if (!venue || fetching) {
     return null;

@@ -19,11 +19,11 @@ export class VenuesService {
   }
 
   async findById(id: number, user?: User): Promise<Venue> {
-    const venue = await this.prisma.venue.findUnique({
-      where: { id },
+    const venue = await this.prisma.venue.findFirst({
+      where: { id, status: VenueStatus.ACTIVE, deletedAt: null },
       include: { owner: true },
     });
-    if (venue.deletedAt || venue.status !== VenueStatus.ACTIVE) {
+    if (!venue) {
       return null;
     }
 
