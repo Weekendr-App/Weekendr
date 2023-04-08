@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query NavbarMe {\n    me {\n      role\n    }\n  }\n": types.NavbarMeDocument,
-    "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n": types.VenuesInRangeDocument,
+    "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n      status\n    }\n  }\n": types.VenuesInRangeDocument,
     "\n  query Profile {\n    me {\n      id\n      role\n      venues {\n        id\n        name\n        picture\n        address\n        status\n      }\n    }\n  }\n": types.ProfileDocument,
 };
 
@@ -39,7 +39,7 @@ export function graphql(source: "\n  query NavbarMe {\n    me {\n      role\n   
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n"): (typeof documents)["\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n"];
+export function graphql(source: "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n      status\n    }\n  }\n"): (typeof documents)["\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n      status\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

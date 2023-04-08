@@ -32,7 +32,7 @@ export class VenuesService {
     const canView =
       isOwnedByMe ||
       venue.status === VenueStatus.ACTIVE ||
-      user.role === Role.MODERATOR;
+      user?.role === Role.MODERATOR;
 
     if (!canView) {
       return null;
@@ -88,11 +88,21 @@ export class VenuesService {
     const id = await this.prisma.$queryRaw<{ id: Venue['id'] }[]>`
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
-    const venues = await this.prisma.venue.findMany({
-      where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
-      include: {
-        owner: true,
-      },
+    const venues = (
+      await this.prisma.venue.findMany({
+        where: { id: { in: id.map((v) => v.id) } },
+        include: {
+          owner: true,
+        },
+      })
+    ).filter((venue) => {
+      const isOwnedByMe = user?.id === venue.owner.id;
+      const canView =
+        isOwnedByMe ||
+        venue.status === VenueStatus.ACTIVE ||
+        user?.role === Role.MODERATOR;
+
+      return canView;
     });
 
     return venues.map((venue) => ({
