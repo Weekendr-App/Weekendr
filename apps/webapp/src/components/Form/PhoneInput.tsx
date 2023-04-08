@@ -4,7 +4,7 @@ import { Props } from "./Input";
 
 interface PhoneProps extends Partial<Omit<Props, "onChange" | "type">> {
   onChange: (value: Value | undefined) => void;
-  defaultCountry?: Country | undefined;
+  defaultCountry?: Country;
   onCountryChange: (value: Country) => void;
 }
 
@@ -15,7 +15,7 @@ export default function PhoneInput({
   value,
   onChange,
   placeholder,
-  defaultCountry,
+  defaultCountry = "RS",
   onCountryChange,
 }: PhoneProps) {
   return (
