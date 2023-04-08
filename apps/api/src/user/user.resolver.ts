@@ -18,7 +18,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => [Venue])
-  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
+  @UseGuards(FirebaseGuard)
   async venues(@FirebaseUser() user: User) {
     return this.venuesService.findByOwnerId(user.id);
   }

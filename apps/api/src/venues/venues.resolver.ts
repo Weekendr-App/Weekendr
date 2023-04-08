@@ -59,7 +59,7 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
+  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async createVenue(
     @Args('fields') data: CreateVenueInput,
     @FirebaseUser() user: User,

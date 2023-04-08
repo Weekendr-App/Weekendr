@@ -14,7 +14,6 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n": types.VenuesInRangeDocument,
-    "\n  query meQuery {\n    me {\n      venues {\n        id\n        name\n        picture\n        address\n      }\n    }\n  }\n": types.MeQueryDocument,
 };
 
 /**
@@ -35,10 +34,6 @@ export function graphql(source: string): unknown;
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n"): (typeof documents)["\n  query venuesInRange($fields: GetVenuesInRangeInput!) {\n    venuesInRange(fields: $fields) {\n      id\n      name\n      picture\n      isOwnedByMe\n      address\n      latitude\n      longitude\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query meQuery {\n    me {\n      venues {\n        id\n        name\n        picture\n        address\n      }\n    }\n  }\n"): (typeof documents)["\n  query meQuery {\n    me {\n      venues {\n        id\n        name\n        picture\n        address\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -29,13 +29,15 @@ export const UrqlProvider: FC<Props> = ({ children }) => {
           cacheExchange,
           errorExchange({
             onError: (error) => {
-              toast.error(error.graphQLErrors[0].message, {
-                // Class names were being overwritten by the toast styles
-                style: {
-                  backgroundColor: colors.gray[900],
-                  color: colors.white,
-                },
-              });
+              if (error.graphQLErrors && error.graphQLErrors.length >= 1) {
+                toast.error(error.graphQLErrors[0]?.message, {
+                  // Class names were being overwritten by the toast styles
+                  style: {
+                    backgroundColor: colors.gray[900],
+                    color: colors.white,
+                  },
+                });
+              }
             },
           }),
           fetchExchange,
