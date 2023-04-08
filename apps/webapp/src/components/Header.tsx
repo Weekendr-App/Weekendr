@@ -4,6 +4,7 @@ import Image from "next/image";
 import home from "../../public/home-color.svg";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import { gql, useQuery } from "urql";
+import { Role } from "@diplomski/gql/graphql";
 
 const query = gql`
   query {
@@ -17,7 +18,7 @@ const Header: FC<{}> = () => {
   const { user, logout } = useAuth();
   const [{ data }] = useQuery({ query });
 
-  const isOwner = useMemo(() => data?.me.role === "OWNER", [data]);
+  const isOwner = useMemo(() => data?.me.role === Role.Owner, [data]);
   const headerItems = useMemo(() => {
     return [
       {

@@ -37,7 +37,7 @@ export default function PhoneInput({
         name={name}
         error={error}
         placeholder={placeholder}
-        value={value}
+        value={`${value}`}
         onChange={onChange}
         defaultCountry={defaultCountry}
         onCountryChange={onCountryChange}
