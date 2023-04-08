@@ -11,6 +11,7 @@ import {
   Resolver,
   Query,
 } from '@nestjs/graphql';
+import { VenueStatus } from '@prisma/client';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { User } from 'src/user/models/user.model';
@@ -55,6 +56,10 @@ export class EventsResolver {
       throw new NotFoundException('Venue not found');
     }
 
+    if (venue.status !== VenueStatus.ACTIVE) {
+      throw new ForbiddenException('This venue is not active');
+    }
+
     if (!venue.isOwnedByMe) {
       throw new ForbiddenException('You are not the owner of this venue');
     }
@@ -81,9 +86,15 @@ export class EventsResolver {
     @FirebaseUser() user: User,
   ): Promise<Event> {
     const event = await this.eventsService.findById(eventId);
+
     if (!event) {
       throw new NotFoundException('Event not found');
     }
+
+    if (event.venue.status !== VenueStatus.ACTIVE) {
+      throw new ForbiddenException('This venue is not active');
+    }
+
     if (event.venue.owner.id !== user.id) {
       throw new ForbiddenException('You are not the owner of this event');
     }
