@@ -57,10 +57,12 @@ type Mutation {
   createEvent(fields: CreateEventInput!): Event!
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
+  publishVenue(id: Float!): Venue!
   updateVenue(fields: UpdateVenueInput!): Venue!
 }
 
 type Query {
+  draftVenues: [Venue!]!
   event(eventId: Float!): Event!
   me: User!
   venue(id: Float!): Venue!
@@ -105,5 +107,11 @@ type Venue {
   name: String!
   phone: String!
   picture: String!
+  status: VenueStatus!
   updatedAt: Date!
+}
+
+enum VenueStatus {
+  ACTIVE
+  DRAFT
 }

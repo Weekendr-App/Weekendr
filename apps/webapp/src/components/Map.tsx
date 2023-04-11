@@ -31,6 +31,7 @@ const query = gql`
       address
       latitude
       longitude
+      status
     }
   }
 `;
@@ -147,7 +148,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
             ...old,
             latitude,
             longitude,
-            zoom: 13
+            zoom: 13,
           }));
         },
         (err) => console.error(err),

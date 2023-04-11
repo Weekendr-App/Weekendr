@@ -5,14 +5,13 @@ import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { Venue } from 'src/venues/models/venue.model';
 import { VenuesService } from 'src/venues/venues.service';
 import { User } from './models/user.model';
-import { RoleGuard } from './user.role.guard';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly venuesService: VenuesService) {}
 
   @Query(() => User)
-  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
+  @UseGuards(FirebaseGuard)
   async me(@FirebaseUser() user: User) {
     return user;
   }

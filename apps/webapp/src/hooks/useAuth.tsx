@@ -41,7 +41,7 @@ const AuthContext = createContext<AuthContextProps>({
   logout: () => Promise.resolve(),
 });
 
-const PROTECTED_ROUTES = ["/venues/add"];
+const PROTECTED_ROUTES = ["/venues/add", "/profile"];
 
 export const AuthProvider: FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);

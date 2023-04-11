@@ -20,11 +20,15 @@ export const getServerSideProps: GetServerSideProps<{
     context.req.headers["x-forwarded-for"] || context.req.socket.remoteAddress;
 
   const res = await fetch(`https://ipapi.co/${ip}/country_code/`);
-  const countryCode = (await res.text()) as Country;
+
+  let countryCode = await res.text();
+  if (countryCode === "Undefined") {
+    countryCode = "RS";
+  }
 
   return {
     props: {
-      countryCode,
+      countryCode: countryCode as Country,
     },
   };
 };

@@ -1,6 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { VenueStatus } from '@prisma/client';
 import { Event } from 'src/events/models/event.model';
 import { User } from 'src/user/models/user.model';
+
+registerEnumType(VenueStatus, {
+  name: 'VenueStatus',
+});
 
 @ObjectType({ description: 'Venue' })
 export class Venue {
@@ -41,4 +46,7 @@ export class Venue {
 
   @Field()
   phone: string;
+
+  @Field(() => VenueStatus)
+  status: VenueStatus;
 }

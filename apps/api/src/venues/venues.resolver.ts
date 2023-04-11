@@ -11,6 +11,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { VenueStatus } from '@prisma/client';
 import { omit } from 'ramda';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
@@ -58,6 +59,12 @@ export class VenuesResolver {
     return this.venuesService.findAllInRange(data, user);
   }
 
+  @Query(() => [Venue])
+  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
+  async draftVenues(): Promise<Venue[]> {
+    return this.venuesService.getDraftVenues();
+  }
+
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async createVenue(
@@ -71,17 +78,15 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
-  async updateVenue(
-    @Args('fields') data: UpdateVenueInput,
-    @FirebaseUser() user: User,
-  ): Promise<Venue> {
-    const venue = await this.venuesService.findById(data.id, user);
-    if (!venue?.isOwnedByMe) {
-      throw new ForbiddenException(data.id);
-    }
-
+  @UseGuards(FirebaseGuard)
+  async updateVenue(@Args('fields') data: UpdateVenueInput): Promise<Venue> {
     return this.venuesService.update(data.id, omit(['id'], data));
+  }
+
+  @Mutation(() => Venue)
+  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
+  async publishVenue(@Args('id') id: number): Promise<Venue> {
+    return this.venuesService.update(id, { status: VenueStatus.ACTIVE });
   }
 
   @Mutation(() => Venue)

@@ -8,7 +8,7 @@ import { Role } from "@diplomski/gql/graphql";
 import { useRouter } from "next/router";
 
 const query = gql`
-  query {
+  query NavbarMe {
     me {
       role
     }
