@@ -57,6 +57,7 @@ type Mutation {
   createEvent(fields: CreateEventInput!): Event!
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
+  publishVenue(id: Float!): Venue!
   updateVenue(fields: UpdateVenueInput!): Venue!
 }
 
@@ -83,7 +84,6 @@ input UpdateVenueInput {
   name: String!
   phone: String!
   picture: String!
-  status: String!
 }
 
 """User"""

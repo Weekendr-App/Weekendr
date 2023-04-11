@@ -11,6 +11,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { VenueStatus } from '@prisma/client';
 import { omit } from 'ramda';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
@@ -80,6 +81,12 @@ export class VenuesResolver {
   @UseGuards(FirebaseGuard)
   async updateVenue(@Args('fields') data: UpdateVenueInput): Promise<Venue> {
     return this.venuesService.update(data.id, omit(['id'], data));
+  }
+
+  @Mutation(() => Venue)
+  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
+  async publishVenue(@Args('id') id: number): Promise<Venue> {
+    return this.venuesService.update(id, { status: VenueStatus.ACTIVE });
   }
 
   @Mutation(() => Venue)

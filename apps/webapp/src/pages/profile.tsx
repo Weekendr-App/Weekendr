@@ -5,9 +5,9 @@ import Head from "next/head";
 import Link from "next/link";
 import { lazy, Suspense, useMemo } from "react";
 import { gql, useQuery } from "urql";
-import useEditVenue from "@diplomski/hooks/useEditVenue";
 import { toast } from "react-hot-toast";
 import Dialog from "@diplomski/components/Dialog";
+import usePublishVenue from "@diplomski/hooks/usePublishVenue";
 
 const query = gql`
   query ProfileMe {
@@ -52,7 +52,7 @@ export default function Profile() {
     query: draftVenues,
     pause: !user || data?.me.role !== Role.Moderator,
   });
-  const { updateVenue } = useEditVenue();
+  const { publishVenue, loading } = usePublishVenue();
 
   const profileSection = useMemo(() => {
     if (!user || !data?.me) {
@@ -86,47 +86,52 @@ export default function Profile() {
       return (
         <>
           <h2 className="text-2xl font-bold my-2">Draft venues</h2>
-          {draftVenues.map((venue: Venue) => (
-            <div className="mb-10" key={venue.id}>
-              <VenueListItem venue={venue} />
-              <Button
-                onClick={async () => {
-                  toast((t) => (
-                    <Dialog
-                      onConfirm={async () => {
-                        await updateVenue({
-                          ...venue,
-                          status: VenueStatus.Active,
-                          id: Number(venue.id),
-                        });
-                        toast.dismiss(t.id);
-                        toast((t2) => (
-                          <div>
-                            <p>Successfully updated venue status</p>
-                            <Button onClick={() => toast.dismiss(t2.id)}>
-                              OK
-                            </Button>
-                          </div>
-                        ));
-                      }}
-                      title="Are you sure you want to proceed?"
-                      message="Pressing OK will update the venue status to ACTIVE"
-                      id={t.id}
-                    />
-                  ));
-                }}
-                hidden={venue.status === VenueStatus.Active}
-              >
-                Change status to active
-              </Button>
-            </div>
-          ))}
+          {draftVenues.length > 0 ? (
+            draftVenues.map((venue: Venue) => (
+              <div className="mb-10" key={venue.id}>
+                <VenueListItem venue={venue} />
+                <Button
+                  disabled={loading}
+                  onClick={async () => {
+                    toast((t) => (
+                      <Dialog
+                        onConfirm={async () => {
+                          toast.dismiss(t.id);
+                          try {
+                            await publishVenue(Number(venue.id));
+                            toast((t) => (
+                              <div>
+                                <p>Successfully published venue</p>
+                                <Button onClick={() => toast.dismiss(t.id)}>
+                                  OK
+                                </Button>
+                              </div>
+                            ));
+                          } catch {
+                            // Error is handled in urql client
+                          }
+                        }}
+                        title="Are you sure you want to proceed?"
+                        message="Pressing OK will update the venue status to ACTIVE"
+                        id={t.id}
+                      />
+                    ));
+                  }}
+                  hidden={venue.status === VenueStatus.Active}
+                >
+                  {loading ? <Spinner /> : "Publish"}
+                </Button>
+              </div>
+            ))
+          ) : (
+            <p>No draft venues</p>
+          )}
         </>
       );
     }
 
     return null;
-  }, [data?.me, user, draftVenueData, updateVenue]);
+  }, [data?.me, user, draftVenueData, publishVenue, loading]);
 
   if (!user) {
     return null;

@@ -69,6 +69,7 @@ export type Mutation = {
   createEvent: Event;
   createVenue: Venue;
   deleteVenue: Venue;
+  publishVenue: Venue;
   updateVenue: Venue;
 };
 
@@ -89,6 +90,11 @@ export type MutationCreateVenueArgs = {
 
 
 export type MutationDeleteVenueArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type MutationPublishVenueArgs = {
   id: Scalars['Float'];
 };
 
@@ -141,7 +147,6 @@ export type UpdateVenueInput = {
   name: Scalars['String'];
   phone: Scalars['String'];
   picture: Scalars['String'];
-  status: Scalars['String'];
 };
 
 /** User */
