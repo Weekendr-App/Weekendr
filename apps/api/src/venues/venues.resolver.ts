@@ -59,8 +59,9 @@ export class VenuesResolver {
   }
 
   @Query(() => [Venue])
-  async draftedVenues(): Promise<Venue[]> {
-    return this.venuesService.getDraftedVenues();
+  @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
+  async draftVenues(): Promise<Venue[]> {
+    return this.venuesService.getDraftVenues();
   }
 
   @Mutation(() => Venue)

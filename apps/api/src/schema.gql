@@ -61,7 +61,7 @@ type Mutation {
 }
 
 type Query {
-  draftedVenues: [Venue!]!
+  draftVenues: [Venue!]!
   event(eventId: Float!): Event!
   me: User!
   venue(id: Float!): Venue!

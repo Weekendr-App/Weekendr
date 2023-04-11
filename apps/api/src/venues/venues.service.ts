@@ -108,7 +108,7 @@ export class VenuesService {
     }));
   }
 
-  async getDraftedVenues(): Promise<Venue[]> {
+  async getDraftVenues(): Promise<Venue[]> {
     return this.prisma.venue.findMany({
       include: { owner: true },
       where: { status: VenueStatus.DRAFT },
