@@ -1,5 +1,10 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import { Role, Venue, VenueStatus } from "@diplomski/gql/graphql";
+import {
+  DraftVenuesQuery,
+  ProfileMeQuery,
+  Role,
+  VenueStatus,
+} from "@diplomski/gql/graphql";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import Head from "next/head";
 import Link from "next/link";
@@ -47,8 +52,8 @@ const VenueListItem = lazy(
 
 export default function Profile() {
   const { user } = useAuth();
-  const [{ data }] = useQuery({ query, pause: !user });
-  const [{ data: draftVenueData }] = useQuery({
+  const [{ data }] = useQuery<ProfileMeQuery>({ query, pause: !user });
+  const [{ data: draftVenueData }] = useQuery<DraftVenuesQuery>({
     query: draftVenues,
     pause: !user || data?.me.role !== Role.Moderator,
   });
@@ -67,7 +72,7 @@ export default function Profile() {
           <h2 className="text-2xl font-bold my-2">My venues</h2>
           <div className="flex flex-col">
             {data.me.venues.length > 0 ? (
-              data.me.venues.map((venue: Venue) => (
+              data.me.venues.map((venue) => (
                 <VenueListItem key={venue.id} venue={venue} />
               ))
             ) : (
@@ -87,7 +92,7 @@ export default function Profile() {
         <>
           <h2 className="text-2xl font-bold my-2">Draft venues</h2>
           {draftVenues.length > 0 ? (
-            draftVenues.map((venue: Venue) => (
+            draftVenues.map((venue) => (
               <div className="mb-10" key={venue.id}>
                 <VenueListItem venue={venue} />
                 <Button

@@ -4,12 +4,13 @@ import Image from "next/image";
 import home from "../../public/home-color.svg";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import { gql, useQuery } from "urql";
-import { Role } from "@diplomski/gql/graphql";
+import { NavbarMeQuery, Role } from "@diplomski/gql/graphql";
 import { useRouter } from "next/router";
 
 const query = gql`
   query NavbarMe {
     me {
+      id
       role
     }
   }
@@ -17,7 +18,7 @@ const query = gql`
 
 const Header: FC<{}> = () => {
   const { user, logout } = useAuth();
-  const [{ data }] = useQuery({ query, pause: !user });
+  const [{ data }] = useQuery<NavbarMeQuery>({ query, pause: !user });
   const router = useRouter();
 
   const isOwner = useMemo(() => data?.me.role === Role.Owner, [data]);

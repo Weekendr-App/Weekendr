@@ -1,4 +1,4 @@
-import { Event } from "@diplomski/gql/graphql";
+import { Event, MutationCancelEventArgs } from "@diplomski/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const CANCEL_EVENT_MUTATION = gql`
@@ -14,9 +14,7 @@ const CANCEL_EVENT_MUTATION = gql`
 export default function useCancelEvent() {
   const [result, execute] = useMutation<
     { cancelEvent: Event },
-    {
-      eventId: number;
-    }
+    MutationCancelEventArgs
   >(CANCEL_EVENT_MUTATION);
 
   return {

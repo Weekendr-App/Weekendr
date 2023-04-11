@@ -1,5 +1,9 @@
 import { gql, useMutation } from "urql";
-import { UpdateVenueInput, Venue } from "@diplomski/gql/graphql";
+import {
+  MutationUpdateVenueArgs,
+  UpdateVenueInput,
+  Venue,
+} from "@diplomski/gql/graphql";
 import { pick } from "ramda";
 
 const EDIT_VENUE_MUTATION = gql`
@@ -13,7 +17,7 @@ const EDIT_VENUE_MUTATION = gql`
 export default function useEditVenue() {
   const [result, execute] = useMutation<
     { updateVenue: Venue },
-    { fields: UpdateVenueInput }
+    MutationUpdateVenueArgs
   >(EDIT_VENUE_MUTATION);
 
   return {

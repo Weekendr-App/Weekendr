@@ -1,4 +1,8 @@
-import { CreateEventInput, Event } from "@diplomski/gql/graphql";
+import {
+  CreateEventInput,
+  Event,
+  MutationCreateEventArgs,
+} from "@diplomski/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const mutation = gql`
@@ -12,7 +16,7 @@ const mutation = gql`
 export default function useAddEvent() {
   const [result, execute] = useMutation<
     { createEvent: Event },
-    { fields: CreateEventInput }
+    MutationCreateEventArgs
   >(mutation);
 
   return {
