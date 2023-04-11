@@ -58,6 +58,11 @@ export class VenuesResolver {
     return this.venuesService.findAllInRange(data, user);
   }
 
+  @Query(() => [Venue])
+  async draftedVenues(): Promise<Venue[]> {
+    return this.venuesService.getDraftedVenues();
+  }
+
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async createVenue(
@@ -71,16 +76,8 @@ export class VenuesResolver {
   }
 
   @Mutation(() => Venue)
-  @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
-  async updateVenue(
-    @Args('fields') data: UpdateVenueInput,
-    @FirebaseUser() user: User,
-  ): Promise<Venue> {
-    const venue = await this.venuesService.findById(data.id, user);
-    if (!venue?.isOwnedByMe) {
-      throw new ForbiddenException(data.id);
-    }
-
+  @UseGuards(FirebaseGuard)
+  async updateVenue(@Args('fields') data: UpdateVenueInput): Promise<Venue> {
     return this.venuesService.update(data.id, omit(['id'], data));
   }
 

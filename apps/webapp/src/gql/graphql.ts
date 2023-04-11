@@ -99,6 +99,7 @@ export type MutationUpdateVenueArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  draftedVenues: Array<Venue>;
   event: Event;
   me: User;
   venue: Venue;
@@ -140,6 +141,7 @@ export type UpdateVenueInput = {
   name: Scalars['String'];
   phone: Scalars['String'];
   picture: Scalars['String'];
+  status: Scalars['String'];
 };
 
 /** User */
@@ -186,12 +188,6 @@ export type VenuesInRangeQueryVariables = Exact<{
 
 export type VenuesInRangeQuery = { __typename?: 'Query', venuesInRange: Array<{ __typename?: 'Venue', id: string, name: string, picture: string, isOwnedByMe?: boolean | null, address: string, latitude: number, longitude: number, status: VenueStatus }> };
 
-export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ProfileQuery = { __typename?: 'Query', me: { __typename?: 'User', id: string, role: Role, venues: Array<{ __typename?: 'Venue', id: string, name: string, picture: string, address: string, status: VenueStatus }> } };
-
 
 export const NavbarMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"NavbarMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<NavbarMeQuery, NavbarMeQueryVariables>;
 export const VenuesInRangeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"venuesInRange"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"fields"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetVenuesInRangeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"venuesInRange"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"fields"},"value":{"kind":"Variable","name":{"kind":"Name","value":"fields"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"picture"}},{"kind":"Field","name":{"kind":"Name","value":"isOwnedByMe"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<VenuesInRangeQuery, VenuesInRangeQueryVariables>;
-export const ProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Profile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"venues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"picture"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<ProfileQuery, ProfileQueryVariables>;

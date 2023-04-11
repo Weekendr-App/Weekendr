@@ -90,17 +90,14 @@ export class VenuesService {
 
     const venues = (
       await this.prisma.venue.findMany({
-        where: { id: { in: id.map((v) => v.id) } },
+        where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
         include: {
           owner: true,
         },
       })
     ).filter((venue) => {
       const isOwnedByMe = user?.id === venue.owner.id;
-      const canView =
-        isOwnedByMe ||
-        venue.status === VenueStatus.ACTIVE ||
-        user?.role === Role.MODERATOR;
+      const canView = isOwnedByMe || user?.role === Role.MODERATOR;
 
       return canView;
     });
@@ -109,5 +106,12 @@ export class VenuesService {
       ...venue,
       isOwnedByMe: user?.id === venue.owner.id,
     }));
+  }
+
+  async getDraftedVenues(): Promise<Venue[]> {
+    return this.prisma.venue.findMany({
+      include: { owner: true },
+      where: { status: VenueStatus.DRAFT },
+    });
   }
 }

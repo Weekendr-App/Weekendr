@@ -40,7 +40,10 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           grayscale: venue.status === VenueStatus.Draft,
         }
       )}
-      onClick={() => router.push(`/venues/${venue.id}`)}
+      onClick={() => {
+        venue.status === VenueStatus.Active &&
+          router.push(`/venues/${venue.id}`);
+      }}
       onMouseEnter={() => setHighlightedVenueId(venue.id)}
       onMouseLeave={() => setHighlightedVenueId(null)}
     >

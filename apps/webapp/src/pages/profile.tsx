@@ -1,13 +1,16 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import { Role, Venue } from "@diplomski/gql/graphql";
+import { Role, Venue, VenueStatus } from "@diplomski/gql/graphql";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import Head from "next/head";
 import Link from "next/link";
 import { lazy, Suspense } from "react";
 import { gql, useQuery } from "urql";
+import useEditVenue from "@diplomski/hooks/useEditVenue";
+import { toast } from "react-hot-toast";
+import Dialog from "@diplomski/components/Dialog";
 
 const query = gql`
-  query Profile {
+  query {
     me {
       id
       role
@@ -22,6 +25,21 @@ const query = gql`
   }
 `;
 
+const draftedVenuesQuery = gql`
+  query {
+    draftedVenues {
+      id
+      name
+      picture
+      address
+      status
+      latitude
+      longitude
+      phone
+    }
+  }
+`;
+
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 const VenueListItem = lazy(
   () => import("@diplomski/components/Venue/VenueListItem")
@@ -30,6 +48,8 @@ const VenueListItem = lazy(
 export default function Profile() {
   const { user } = useAuth();
   const [{ data }] = useQuery({ query, pause: !user });
+  const [{ data: data2 }] = useQuery({ query: draftedVenuesQuery });
+  const { updateVenue } = useEditVenue();
 
   if (!user) {
     return null;
@@ -45,7 +65,7 @@ export default function Profile() {
         <hr className="my-3" />
         <div className="flex flex-col">
           <Suspense fallback={<Spinner />}>
-            {data?.me.role === Role.Owner && (
+            {data?.me.role !== Role.Owner ? (
               <>
                 <h2 className="text-2xl font-bold my-2">My venues</h2>
                 <div className="flex flex-col">
@@ -60,6 +80,45 @@ export default function Profile() {
                 <Link href="/venues/add" className="my-2">
                   <Button>Add venue</Button>
                 </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-bold my-2">Drafted venues</h2>
+                {data2?.draftedVenues.map((venue: Venue) => (
+                  <div className="mb-10" key={venue.id}>
+                    <VenueListItem venue={venue} />
+                    <Button
+                      onClick={async () => {
+                        toast((t) => (
+                          <Dialog
+                            onConfirm={async () => {
+                              await updateVenue({
+                                ...venue,
+                                status: VenueStatus.Active,
+                                id: Number(venue.id),
+                              });
+                              toast.dismiss(t.id);
+                              toast((t2) => (
+                                <div>
+                                  <p>Successfully updated venue status</p>
+                                  <Button onClick={() => toast.dismiss(t2.id)}>
+                                    OK
+                                  </Button>
+                                </div>
+                              ));
+                            }}
+                            title="Are you sure you want to proceed?"
+                            message="Pressing OK will update the venue status to ACTIVE"
+                            id={t.id}
+                          />
+                        ));
+                      }}
+                      hidden={venue.status === VenueStatus.Active}
+                    >
+                      Change status to active
+                    </Button>
+                  </div>
+                ))}
               </>
             )}
           </Suspense>

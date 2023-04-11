@@ -30,6 +30,7 @@ export default function useEditVenue() {
             "longitude",
             "phone",
             "picture",
+            "status",
           ],
           fields
         ),
