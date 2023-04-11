@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { lazy, Suspense, useState } from "react";
-import { Venue } from "@diplomski/gql/graphql";
 import { Spinner } from "@diplomski/components/Spinner";
+import { Props as VenueListItemProps } from "@diplomski/components/Venue/VenueListItem";
 
 const Map = lazy(() => import("@diplomski/components/Map"));
 const VenueListItem = lazy(
@@ -9,7 +9,9 @@ const VenueListItem = lazy(
 );
 
 export default function Home() {
-  const [visibleVenues, setVisibleVenues] = useState<Venue[]>([]);
+  const [visibleVenues, setVisibleVenues] = useState<
+    VenueListItemProps["venue"][]
+  >([]);
 
   return (
     <>

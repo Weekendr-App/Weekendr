@@ -1,5 +1,5 @@
 import { useEffectOnce, useLocalStorage } from "usehooks-ts";
-import { Venue } from "@diplomski/gql/graphql";
+import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
@@ -39,7 +39,7 @@ const query = gql`
 const prefixer = sync([autoprefixer]);
 
 interface Props {
-  onChangeVisibleVenues: (venues: Venue[]) => void;
+  onChangeVisibleVenues: (venues: VenuesInRangeQuery["venuesInRange"]) => void;
 }
 
 export default function Map({ onChangeVisibleVenues }: Props) {
@@ -63,7 +63,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
 
   const debouncedBounds = useDebounce(mapBounds, DEFAULT_DEBOUNCE_TIME);
 
-  const [{ data }] = useQuery({
+  const [{ data }] = useQuery<VenuesInRangeQuery>({
     query,
     pause: !debouncedBounds,
     variables: {
@@ -78,7 +78,7 @@ export default function Map({ onChangeVisibleVenues }: Props) {
       return null;
     }
 
-    return data.venuesInRange.map((venue: Venue) => {
+    return data.venuesInRange.map((venue) => {
       return (
         <div className="z-10" key={venue.id}>
           <Marker

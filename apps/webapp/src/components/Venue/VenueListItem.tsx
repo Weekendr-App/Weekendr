@@ -5,8 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
 
-interface Props {
-  venue: Venue;
+export interface Props {
+  venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status">;
 }
 
 const VenueListItem: FC<Props> = ({ venue }) => {

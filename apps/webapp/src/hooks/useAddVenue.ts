@@ -1,4 +1,8 @@
-import { CreateVenueInput, Venue } from "@diplomski/gql/graphql";
+import {
+  CreateVenueInput,
+  MutationCreateVenueArgs,
+  Venue,
+} from "@diplomski/gql/graphql";
 import { pick } from "ramda";
 import { gql, useMutation } from "urql";
 
@@ -13,7 +17,7 @@ const mutation = gql`
 export default function useAddVenue() {
   const [result, execute] = useMutation<
     { createVenue: Venue },
-    { fields: CreateVenueInput }
+    MutationCreateVenueArgs
   >(mutation);
 
   return {

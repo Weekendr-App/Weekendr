@@ -1,3 +1,4 @@
+import { MutationPublishVenueArgs } from "@diplomski/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const PUBLISH_VENUE_MUTATION = gql`
@@ -11,7 +12,7 @@ const PUBLISH_VENUE_MUTATION = gql`
 export default function usePublishVenue() {
   const [result, executeMutation] = useMutation<
     { publishVenue: { id: number } },
-    { id: number }
+    MutationPublishVenueArgs
   >(PUBLISH_VENUE_MUTATION);
 
   return {
