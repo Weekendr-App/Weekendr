@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Role } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from './models/user.model';
 
@@ -16,5 +17,11 @@ export class UserService {
     }
 
     return await this.prisma.user.create({ data: { id } });
+  }
+
+  async getAllModerators() {
+    return await this.prisma.user.findMany({
+      where: { role: Role.MODERATOR },
+    });
   }
 }
