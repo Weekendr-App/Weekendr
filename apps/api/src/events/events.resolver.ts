@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   NotFoundException,
+  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -35,12 +36,14 @@ export class EventsResolver {
   }
 
   @Query(() => Event)
-  async event(@Args('eventId') eventId: number): Promise<Event> {
+  async event(@Args('eventId', ParseIntPipe) eventId: number): Promise<Event> {
     return this.eventsService.findById(eventId);
   }
 
   @Query(() => [Event])
-  async venueEvents(@Args('venueId') venueId: number): Promise<Event[]> {
+  async venueEvents(
+    @Args('venueId', ParseIntPipe) venueId: number,
+  ): Promise<Event[]> {
     return this.eventsService.findAllByVenueId(venueId);
   }
 
@@ -82,7 +85,7 @@ export class EventsResolver {
   @Mutation(() => Event)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   async cancelEvent(
-    @Args('eventId') eventId: number,
+    @Args('eventId', ParseIntPipe) eventId: number,
     @FirebaseUser() user: User,
   ): Promise<Event> {
     const event = await this.eventsService.findById(eventId);

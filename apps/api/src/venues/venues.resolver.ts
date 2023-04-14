@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   NotFoundException,
+  ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -39,7 +40,7 @@ export class VenuesResolver {
 
   @Query(() => Venue)
   async venue(
-    @Args('id') id: number,
+    @Args('id', ParseIntPipe) id: number,
     @FirebaseUser('user') user: User | null,
   ): Promise<Venue> {
     const venue = await this.venuesService.findById(id, user);
@@ -85,13 +86,16 @@ export class VenuesResolver {
 
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
-  async publishVenue(@Args('id') id: number): Promise<Venue> {
+  async publishVenue(@Args('id', ParseIntPipe) id: number): Promise<Venue> {
     return this.venuesService.update(id, { status: VenueStatus.ACTIVE });
   }
 
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
-  async deleteVenue(@Args('id') id: number, @FirebaseUser() user: User) {
+  async deleteVenue(
+    @Args('id', ParseIntPipe) id: number,
+    @FirebaseUser() user: User,
+  ) {
     const venue = await this.venuesService.findById(id, user);
     if (!venue?.isOwnedByMe) {
       throw new ForbiddenException(id);
