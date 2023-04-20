@@ -3,7 +3,7 @@ import { Prisma, Role, VenueStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
-import { Venue } from './models/venue.model';
+import { Venue, VenueInRange } from './models/venue.model';
 
 @Injectable()
 export class VenuesService {
@@ -76,7 +76,7 @@ export class VenuesService {
   async findAllInRange(
     data: GetVenuesInRangeInput,
     user?: User,
-  ): Promise<Omit<Venue, 'events'>[]> {
+  ): Promise<VenueInRange[]> {
     const { bounds } = data;
     const { _sw, _ne } = bounds;
 
@@ -92,6 +92,7 @@ export class VenuesService {
       await this.prisma.venue.findMany({
         where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
         include: {
+          events: true,
           owner: true,
         },
       })

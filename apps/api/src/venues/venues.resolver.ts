@@ -23,7 +23,7 @@ import { RoleGuard } from 'src/user/user.role.guard';
 import { CreateVenueInput } from './dto/create-venue.input';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
-import { Venue } from './models/venue.model';
+import { Venue, VenueInRange } from './models/venue.model';
 import { VenuesService } from './venues.service';
 
 @Resolver(() => Venue)
@@ -56,7 +56,7 @@ export class VenuesResolver {
   async venuesInRange(
     @Args('fields') data: GetVenuesInRangeInput,
     @FirebaseUser('user') user: User | null,
-  ): Promise<Venue[]> {
+  ): Promise<VenueInRange[]> {
     return this.venuesService.findAllInRange(data, user);
   }
 

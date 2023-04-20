@@ -50,3 +50,7 @@ export class Venue {
   @Field(() => VenueStatus)
   status: VenueStatus;
 }
+
+export interface VenueInRange extends Omit<Venue, 'events'> {
+  events: Omit<Event, 'venue'>[];
+}
