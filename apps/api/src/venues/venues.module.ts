@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { FirebaseService } from 'src/common/firebase/firebase.service';
 import { BoundsScalar } from 'src/common/scalars/bounds.scalar';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { EventsService } from 'src/events/events.service';
@@ -11,7 +10,6 @@ import { VenuesService } from './venues.service';
 @Module({
   imports: [MailModule],
   providers: [
-    FirebaseService,
     PrismaService,
     VenuesResolver,
     VenuesService,

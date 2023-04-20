@@ -2,7 +2,6 @@ import { CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
 import { GraphQLExecutionContext } from '@nestjs/graphql';
 import { Venue } from '@prisma/client';
 import { Observable, tap } from 'rxjs';
-import { FirebaseService } from 'src/common/firebase/firebase.service';
 import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'src/user/user.service';
 
@@ -11,7 +10,6 @@ export class VenueCreatedInterceptor implements NestInterceptor {
   constructor(
     private readonly mailService: MailService,
     private readonly userService: UserService,
-    private readonly firebaseService: FirebaseService,
   ) {}
 
   intercept(
@@ -21,12 +19,7 @@ export class VenueCreatedInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(async (venue) => {
         const moderators = await this.userService.getAllModerators();
-        const firebaseUsers = await Promise.all(
-          moderators.map((moderator) =>
-            this.firebaseService.getAuth().getUser(moderator.id),
-          ),
-        );
-        const emails = firebaseUsers.map((user) => user.email);
+        const emails = moderators.map((moderator) => moderator.email);
 
         await this.mailService.sendNewVenueEmail(venue, emails);
       }),

@@ -7,14 +7,13 @@ import { User } from './models/user.model';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async ensureUser(user: User) {
-    const { id, email } = user;
-    const dbUser = await this.prisma.user.findUnique({
+  async ensureUser(id: User['id'], email: User['email']) {
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
 
-    if (dbUser) {
-      return dbUser;
+    if (user) {
+      return user;
     }
 
     return await this.prisma.user.create({ data: { id, email } });
