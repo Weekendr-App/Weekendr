@@ -79,35 +79,33 @@ export default function Map({ onChangeVisibleVenues }: Props) {
       return null;
     }
 
-    return data.venuesInRange.map((venue) => {
-      return (
-        <div className="z-10" key={venue.id}>
-          <Marker
-            key={venue.id}
-            latitude={venue.latitude}
-            longitude={venue.longitude}
-          >
-            <div
-              aria-label={venue.name}
-              className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
-                "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
-                "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
-                "bg-white": !isHighlighted(venue.id),
-                "hover:bg-red-500": !venue.isOwnedByMe,
-                "hover:bg-amber-300": venue.isOwnedByMe,
-              })}
-              style={prefixer({
-                maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
-                maskMode: "alpha", // Tailwind doesn't support mask-mode
-              })}
-              onClick={() => router.push(`/venues/${venue.id}`)}
-              onMouseEnter={() => setHighlightedVenueId(venue.id)}
-              onMouseLeave={() => setHighlightedVenueId(null)}
-            ></div>
-          </Marker>
-        </div>
-      );
-    });
+    return data.venuesInRange.map((venue) => (
+      <div className="z-10" key={venue.id}>
+        <Marker
+          key={venue.id}
+          latitude={venue.latitude}
+          longitude={venue.longitude}
+        >
+          <div
+            aria-label={venue.name}
+            className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
+              "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
+              "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
+              "bg-white": !isHighlighted(venue.id),
+              "hover:bg-red-500": !venue.isOwnedByMe,
+              "hover:bg-amber-300": venue.isOwnedByMe,
+            })}
+            style={prefixer({
+              maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+              maskMode: "alpha", // Tailwind doesn't support mask-mode
+            })}
+            onClick={() => router.push(`/venues/${venue.id}`)}
+            onMouseEnter={() => setHighlightedVenueId(venue.id)}
+            onMouseLeave={() => setHighlightedVenueId(null)}
+          ></div>
+        </Marker>
+      </div>
+    ));
   }, [data, router, setHighlightedVenueId, isHighlighted]);
 
   const calculateMapBounds = useCallback(() => {
