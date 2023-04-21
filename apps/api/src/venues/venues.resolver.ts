@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   Args,
@@ -24,6 +25,7 @@ import { CreateVenueInput } from './dto/create-venue.input';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
 import { Venue } from './models/venue.model';
+import { VenueCreatedInterceptor } from './venue-created.interceptor';
 import { VenuesService } from './venues.service';
 
 @Resolver(() => Venue)
@@ -68,6 +70,7 @@ export class VenuesResolver {
 
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
+  @UseInterceptors(VenueCreatedInterceptor)
   async createVenue(
     @Args('fields') data: CreateVenueInput,
     @FirebaseUser() user: User,
