@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ParseIntPipe,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   Args,
@@ -68,6 +69,7 @@ export class VenuesResolver {
 
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
+  @UseInterceptors(VenueCreatedInterceptor)
   async createVenue(
     @Args('fields') data: CreateVenueInput,
     @FirebaseUser() user: User,

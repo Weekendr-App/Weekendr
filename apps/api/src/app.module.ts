@@ -15,7 +15,9 @@ import { PrismaService } from './common/services/prisma.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     VenuesModule,
     EventsModule,
