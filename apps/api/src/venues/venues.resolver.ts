@@ -26,6 +26,7 @@ import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
 import { UpdateVenueInput } from './dto/update-venue.input';
 import { Venue, VenueInRange } from './models/venue.model';
 import { VenuesService } from './venues.service';
+import { VenueCreatedInterceptor } from 'src/venues/venue-created.interceptor';
 
 @Resolver(() => Venue)
 export class VenuesResolver {
