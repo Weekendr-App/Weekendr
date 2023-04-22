@@ -110,7 +110,7 @@ function ReadySearchBox({
         <ComboboxList>
           {status === "OK" &&
             data.map(({ place_id, description, types }) => {
-              if (types.includes("locality")) {
+              if (types.includes("geocode")) {
                 return <ComboboxOption key={place_id} value={description} />;
               }
             })}
