@@ -33,8 +33,8 @@ export default function VenuePage() {
         <title>{venue.name}</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <div className="flex text-white">
-          <div className="p-3 w-1/2">
+        <div className="sm:flex text-white">
+          <div className="p-3 w-full sm:w-1/2">
             <VenueNavigation venue={venue} />
             {venue.status !== VenueStatus.Active && (
               <p className="text-xl border-2 border-red-500 rounded-2xl p-3 my-2 text-center">
@@ -81,7 +81,7 @@ export default function VenuePage() {
               Add event to this venue
             </Button>
           </div>
-          <div className="w-1/2">
+          <div className="w-full sm:w-1/2">
             <Suspense fallback={<Spinner />}>
               <StaticMap
                 viewport={{
