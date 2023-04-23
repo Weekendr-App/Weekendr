@@ -10,7 +10,7 @@ import ReactMapGl, {
 } from "react-map-gl";
 import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
-import { useDebounce } from "usehooks-ts";
+import { useDebounce, useMediaQuery } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../public/pin.png";
 import clsx from "clsx";
@@ -43,6 +43,7 @@ interface Props {
 }
 
 export default function Map({ onChangeVisibleVenues }: Props) {
+  const isPhone = useMediaQuery("(max-width: 640px)");
   const router = useRouter();
   const { setHighlightedVenueId, isHighlighted } = useMapHover();
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
@@ -174,7 +175,11 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     <div className="text-black relative">
       <ReactMapGl
         {...viewport}
-        style={{ width: "100%", height: "calc(100vh - 64px)", cursor: "grab" }}
+        style={{
+          width: "100%",
+          height: isPhone ? "calc(100vh / 2 - 32px)" : "calc(100vh - 64px)",
+          cursor: "grab",
+        }}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
         onMove={onMove}
         onLoad={calculateMapBounds}

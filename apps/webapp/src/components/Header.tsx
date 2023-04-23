@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import home from "../../public/home-color.svg";
+import logo from "../../public/undraw_beer_xg5f.svg";
 import { useAuth } from "@diplomski/hooks/useAuth";
 import { gql, useQuery } from "urql";
 import { NavbarMeQuery, Role } from "@diplomski/gql/graphql";
@@ -56,11 +56,11 @@ const Header: FC<{}> = () => {
     <header className="bg-gray-800 px-6 flex items-center justify-between h-16">
       <Link href="/">
         <Image
-          src={home}
-          alt="home house"
+          src={logo}
+          alt="logo"
           className="inline"
-          width="24"
-          height="24"
+          width="50"
+          height="50"
         />
       </Link>
       <div className="text-white">
@@ -69,14 +69,11 @@ const Header: FC<{}> = () => {
         ) : (
           <div className="flex items-center">
             {headerItems}
-            <p>
-              Logged in as:{" "}
-              <strong
-                className="hover:underline hover:cursor-pointer"
-                onClick={logout}
-              >
-                {user.email}
-              </strong>
+            <p
+              className="hover:underline hover:cursor-pointer"
+              onClick={logout}
+            >
+              Logout
             </p>
           </div>
         )}
