@@ -4,7 +4,14 @@
 
 scalar Bounds
 
+"""Category"""
+type Category {
+  id: ID!
+  name: String!
+}
+
 input CreateEventInput {
+  categoryId: Float!
   description: String
   endDate: Date!
   name: String!
@@ -28,6 +35,7 @@ scalar Date
 
 """Event"""
 type Event {
+  category: Category!
   createdAt: Date!
   deletedAt: Date
   description: String

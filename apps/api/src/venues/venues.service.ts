@@ -91,7 +91,11 @@ export class VenuesService {
     const venues = await this.prisma.venue.findMany({
       where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
       include: {
-        events: true,
+        events: {
+          include: {
+            category: true,
+          },
+        },
         owner: true,
       },
     });
