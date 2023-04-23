@@ -1,17 +1,15 @@
 import clsx from "clsx";
 
-type TData = number | string | readonly string[] | undefined;
-
-interface SelectOption {
+interface SelectOption<TValue> {
   label: string;
-  value: TData;
+  value: TValue;
 }
 
-interface Props {
-  value: TData;
-  onChange: (value: TData) => void;
-  transform?: (value: unknown) => TData;
-  options: SelectOption[];
+interface Props<TOption = string | number> {
+  value: TOption;
+  onChange: (value: TOption) => void;
+  transform?: (value: unknown) => TOption;
+  options: SelectOption<TOption>[];
   label?: string;
   name?: string;
   error?: string;
@@ -37,42 +35,50 @@ export default function Select({
           {label}
         </label>
       )}
-      <select
-        name={name}
-        value={value}
-        onChange={(e) => {
-          const { value } = e.target;
-          onChange(transform ? transform(value) : value);
-        }}
-        className={clsx([
-          "h-10",
-          "border",
-          "border-gray-300",
-          "rounded",
-          "focus:outline-none",
-          "focus:ring-2",
-          "focus:ring-gray-600",
-          "focus:border-transparent",
-          {
-            "border-red-500": error,
-          },
-        ])}
+      <div
+        className={clsx("flex", "flex-col", {
+          "opacity-50": disabled,
+          "cursor-not-allowed": disabled,
+        })}
       >
-        {placeholder && (
-          <option value="" disabled>
-            {placeholder}
-          </option>
-        )}
-        {options.map((option, index) => (
-          <option
-            key={`${name}-${index}`}
-            value={option.value}
-            disabled={disabled}
-          >
-            {option.label}
-          </option>
-        ))}
-      </select>
+        <select
+          name={name}
+          value={value}
+          onChange={(e) => {
+            const { value } = e.target;
+            onChange(transform ? transform(value) : value);
+          }}
+          className={clsx([
+            "h-10",
+            "border",
+            "border-gray-300",
+            "rounded",
+            "focus:outline-none",
+            "focus:ring-2",
+            "focus:ring-gray-600",
+            "focus:border-transparent",
+            {
+              "border-red-500": error,
+              "pointer-events-none": disabled,
+            },
+          ])}
+        >
+          {placeholder && (
+            <option value={0} disabled>
+              {placeholder}
+            </option>
+          )}
+          {options.map((option, index) => (
+            <option
+              key={`${name}-${index}`}
+              value={option.value}
+              disabled={disabled}
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       {error && <span className="text-red-500">{error}</span>}
     </div>
   );

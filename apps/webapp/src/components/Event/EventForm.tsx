@@ -2,14 +2,15 @@ import useCategories from "@diplomski/hooks/useCategories";
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { isAfter } from "date-fns";
 import { useFormik } from "formik";
-import { lazy, useMemo, useState } from "react";
+import { isEmpty } from "ramda";
+import { lazy, useCallback, useMemo, useState } from "react";
 import * as Yup from "yup";
-import Select from "../Form/Select";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const DatePicker = lazy(() => import("@diplomski/components/Form/DatePicker"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const Select = lazy(() => import("@diplomski/components/Form/Select"));
 
 export interface EventFormValues {
   name: string;
@@ -46,6 +47,9 @@ const validationSchema = Yup.object().shape({
         return isAfter(endDate, startDate);
       }
     ),
+  price: Yup.number()
+    .min(0, "Price must be 0 or greater")
+    .typeError("Invalid price"),
   categoryId: Yup.number()
     .integer("Invalid category")
     .min(1, "Invalid category")
@@ -83,35 +87,37 @@ export default function EventForm({
       startDate: new Date(),
       endDate: new Date(),
       price: 0,
-      categoryId: "",
+      categoryId: 0,
     },
     onSubmit,
     enableReinitialize,
     validationSchema,
   });
 
+  const handlePriceButtonClick = useCallback(() => {
+    if (isPriceHidden) {
+      setIsPriceHidden(() => false);
+    } else {
+      setIsPriceHidden(() => true);
+      handleChange({
+        target: {
+          name: "price",
+          value: 0,
+        },
+      });
+    }
+  }, [isPriceHidden, handleChange]);
+
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
       <h1 className="text-2xl font-bold text-white">{title}</h1>
-      <Button hidden={!isPriceHidden} onClick={() => setIsPriceHidden(false)}>
-        Set Price of Admission (optional)
-      </Button>
-      <Input
-        hidden={isPriceHidden}
-        name="price"
-        label="Price of admission (€)"
-        value={values.price}
-        onChange={handleChange}
-        type="number"
-        error={errors.price}
-        placeholder="Event price in €"
-      />
       <Input
         name="name"
         label="Name"
         value={values.name}
         onChange={handleChange}
         error={errors.name}
+        disabled={isSubmitting}
         placeholder="Event name"
       />
       <Input
@@ -121,8 +127,24 @@ export default function EventForm({
         onChange={handleChange}
         error={errors.description}
         placeholder="Event description"
+        disabled={isSubmitting}
         multiline
       />
+      <Input
+        hidden={isPriceHidden}
+        name="price"
+        label="Price of admission (€)"
+        value={values.price}
+        onChange={handleChange}
+        type="number"
+        error={errors.price}
+        disabled={isSubmitting}
+        placeholder="Event price in €"
+      />
+      <Button disabled={isSubmitting} onClick={handlePriceButtonClick}>
+        {isPriceHidden ? "Add price" : "Remove price"}
+      </Button>
+
       <FileUpload
         name="picture"
         label="Picture (optional)"
@@ -130,6 +152,7 @@ export default function EventForm({
         onChange={handleChange}
         onError={setFieldError}
         error={errors.picture}
+        disabled={isSubmitting}
       />
 
       <div className="flex justify-between gap-4 flex-wrap">
@@ -138,6 +161,7 @@ export default function EventForm({
           label="Start date"
           value={values.startDate}
           error={errors.startDate}
+          disabled={isSubmitting}
           onChange={(date: Date) =>
             handleChange({ target: { name: "startDate", value: date } })
           }
@@ -147,11 +171,13 @@ export default function EventForm({
           label="End date"
           value={values.endDate}
           error={errors.endDate}
+          disabled={isSubmitting}
           onChange={(date: Date) =>
             handleChange({ target: { name: "endDate", value: date } })
           }
         />
       </div>
+
       <Select
         value={values.categoryId}
         transform={(v) => Number(v)}
@@ -163,6 +189,7 @@ export default function EventForm({
         label="Event category"
         placeholder="Select category"
         error={errors.categoryId}
+        disabled={isSubmitting || isEmpty(categories)}
       />
       <Button
         loading={isSubmitting}
