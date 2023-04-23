@@ -114,6 +114,7 @@ export type MutationUpdateVenueArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  categories: Array<Category>;
   draftVenues: Array<Venue>;
   event: Event;
   me: User;

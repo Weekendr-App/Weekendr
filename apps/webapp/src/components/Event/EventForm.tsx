@@ -46,6 +46,11 @@ const validationSchema = Yup.object().shape({
         return isAfter(endDate, startDate);
       }
     ),
+  categoryId: Yup.number()
+    .integer("Invalid category")
+    .min(1, "Invalid category")
+    .typeError("Invalid category")
+    .required("Category is required"),
 });
 
 export default function EventForm({
@@ -78,7 +83,7 @@ export default function EventForm({
       startDate: new Date(),
       endDate: new Date(),
       price: 0,
-      categoryId: 0,
+      categoryId: "",
     },
     onSubmit,
     enableReinitialize,
@@ -148,16 +153,17 @@ export default function EventForm({
         />
       </div>
       <Select
-        onChange={(e) =>
-          handleChange({
-            target: { name: "categoryId", value: Number(e.target.value) },
-          })
-        }
         value={values.categoryId}
-        values={categories}
+        transform={(v) => Number(v)}
+        onChange={(value) =>
+          handleChange({ target: { name: "categoryId", value } })
+        }
+        options={categories.map((c) => ({ value: c.id, label: c.name }))}
         name="categoryId"
-        label="Music Genre"
-      ></Select>
+        label="Event category"
+        placeholder="Select category"
+        error={errors.categoryId}
+      />
       <Button
         loading={isSubmitting}
         disabled={!isValid || isSubmitting || !dirty}

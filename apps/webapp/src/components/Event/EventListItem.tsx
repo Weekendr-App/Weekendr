@@ -74,7 +74,7 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
             Ends: <strong>{getDate(event.endDate)}</strong>
           </div>
           <div>
-            Music Genre: <strong>{event.category.name}</strong>
+            Category: <strong>{event.category.name}</strong>
           </div>
           {venue?.isOwnedByMe && (
             <Button

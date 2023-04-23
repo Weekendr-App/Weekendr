@@ -12,7 +12,7 @@ export class CategoriesService {
     });
   }
 
-  async categories(): Promise<Category[]> {
-    return this.prisma.category.findMany();
+  async getAllCategories(): Promise<Category[]> {
+    return this.prisma.category.findMany({ include: { events: true } });
   }
 }

@@ -8,6 +8,6 @@ export class CategoriesResolver {
 
   @Query(() => [Category])
   async categories(): Promise<Category[]> {
-    return this.categoriesService.categories();
+    return this.categoriesService.getAllCategories();
   }
 }
