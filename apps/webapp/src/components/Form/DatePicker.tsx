@@ -9,7 +9,6 @@ interface Props
   extends Omit<InputProps, "multiline" | "value" | "onChange" | "error"> {
   value: Date;
   onChange: (date: Date) => void;
-  disabled?: boolean;
   error?: FormikErrors<Date>;
 }
 
