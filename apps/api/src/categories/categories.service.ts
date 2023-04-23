@@ -11,4 +11,8 @@ export class CategoriesService {
       where: { id: categoryId },
     });
   }
+
+  async categories(): Promise<Category[]> {
+    return this.prisma.category.findMany();
+  }
 }

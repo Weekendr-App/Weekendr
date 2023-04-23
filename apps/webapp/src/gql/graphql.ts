@@ -17,7 +17,15 @@ export type Scalars = {
   Date: any;
 };
 
+/** Category */
+export type Category = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type CreateEventInput = {
+  categoryId: Scalars['Float'];
   description?: InputMaybe<Scalars['String']>;
   endDate: Scalars['Date'];
   name: Scalars['String'];
@@ -39,6 +47,7 @@ export type CreateVenueInput = {
 /** Event */
 export type Event = {
   __typename?: 'Event';
+  category: Category;
   createdAt: Scalars['Date'];
   deletedAt?: Maybe<Scalars['Date']>;
   description?: Maybe<Scalars['String']>;

@@ -1,8 +1,10 @@
+import useCategories from "@diplomski/hooks/useCategories";
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { isAfter } from "date-fns";
 import { useFormik } from "formik";
 import { lazy, useMemo, useState } from "react";
 import * as Yup from "yup";
+import Select from "../Form/Select";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const DatePicker = lazy(() => import("@diplomski/components/Form/DatePicker"));
@@ -16,6 +18,7 @@ export interface EventFormValues {
   startDate: Date;
   endDate: Date;
   price: number;
+  categoryId: number;
 }
 
 interface Props {
@@ -51,6 +54,7 @@ export default function EventForm({
   buttonText,
   initialValues,
 }: Props) {
+  const { categories } = useCategories();
   const [isPriceHidden, setIsPriceHidden] = useState(true);
 
   const enableReinitialize = useMemo(
@@ -74,6 +78,7 @@ export default function EventForm({
       startDate: new Date(),
       endDate: new Date(),
       price: 0,
+      categoryId: 0,
     },
     onSubmit,
     enableReinitialize,
@@ -142,6 +147,17 @@ export default function EventForm({
           }
         />
       </div>
+      <Select
+        onChange={(e) =>
+          handleChange({
+            target: { name: "categoryId", value: Number(e.target.value) },
+          })
+        }
+        value={values.categoryId}
+        values={categories}
+        name="categoryId"
+        label="Music Genre"
+      ></Select>
       <Button
         loading={isSubmitting}
         disabled={!isValid || isSubmitting || !dirty}
