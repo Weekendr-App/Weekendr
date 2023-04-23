@@ -13,6 +13,10 @@ export class CategoriesService {
   }
 
   async getAllCategories(): Promise<Category[]> {
-    return this.prisma.category.findMany({ include: { events: true } });
+    return this.prisma.category.findMany({
+      include: {
+        events: { include: { venue: true } },
+      },
+    });
   }
 }
