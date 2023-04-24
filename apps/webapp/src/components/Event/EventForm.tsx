@@ -14,8 +14,8 @@ const Select = lazy(() => import("@diplomski/components/Form/Select"));
 
 export interface EventFormValues {
   name: string;
-  description?: string;
-  picture?: string;
+  description: string;
+  picture: string;
   startDate: Date;
   endDate: Date;
   price: number;
@@ -84,6 +84,7 @@ export default function EventForm({
     initialValues: initialValues || {
       name: "",
       description: "",
+      picture: "",
       startDate: new Date(),
       endDate: new Date(),
       price: 0,
@@ -98,6 +99,10 @@ export default function EventForm({
     if (isPriceHidden) {
       setIsPriceHidden(() => false);
     } else {
+      // When the price is removed, we need to set the value to 0.
+      // The reason for this is that we may have set a price before
+      // and decided to remove it. If we don't set the value to 0,
+      // the form will still contain the old value.
       setIsPriceHidden(() => true);
       handleChange({
         target: {
@@ -123,7 +128,7 @@ export default function EventForm({
       <Input
         name="description"
         label="Description (optional)"
-        value={values.description ?? ""}
+        value={values.description}
         onChange={handleChange}
         error={errors.description}
         placeholder="Event description"
@@ -148,7 +153,7 @@ export default function EventForm({
       <FileUpload
         name="picture"
         label="Picture (optional)"
-        value={values.picture ?? ""}
+        value={values.picture}
         onChange={handleChange}
         onError={setFieldError}
         error={errors.picture}
