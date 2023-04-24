@@ -1,15 +1,15 @@
 import clsx from "clsx";
 
-interface SelectOption<TValue> {
+interface SelectOption {
   label: string;
-  value: TValue;
+  value: string;
 }
 
-interface Props<TOption = string | number> {
-  value: TOption;
-  onChange: (value: TOption) => void;
-  transform?: (value: unknown) => TOption;
-  options: SelectOption<TOption>[];
+interface Props {
+  value: number;
+  defaultValue?: number;
+  onChange: (value: number) => void;
+  options: SelectOption[];
   label?: string;
   name?: string;
   error?: string;
@@ -19,8 +19,8 @@ interface Props<TOption = string | number> {
 
 export default function Select({
   value,
+  defaultValue,
   onChange,
-  transform,
   options,
   label,
   name,
@@ -46,7 +46,7 @@ export default function Select({
           value={value}
           onChange={(e) => {
             const { value } = e.target;
-            onChange(transform ? transform(value) : value);
+            onChange(Number(value));
           }}
           className={clsx([
             "h-10",
@@ -64,7 +64,7 @@ export default function Select({
           ])}
         >
           {placeholder && (
-            <option value={0} disabled>
+            <option value={defaultValue ?? 0} disabled>
               {placeholder}
             </option>
           )}

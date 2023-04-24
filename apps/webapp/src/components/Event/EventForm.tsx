@@ -180,7 +180,6 @@ export default function EventForm({
 
       <Select
         value={values.categoryId}
-        transform={(v) => Number(v)}
         onChange={(value) =>
           handleChange({ target: { name: "categoryId", value } })
         }
