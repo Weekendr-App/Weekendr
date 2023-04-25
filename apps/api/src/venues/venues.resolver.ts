@@ -37,7 +37,10 @@ export class VenuesResolver {
 
   @ResolveField(() => [Event])
   async events(@Parent() venue: Venue): Promise<Omit<Event, 'venue'>[]> {
-    return this.eventsService.findAllByVenueId(venue.id);
+    if (!venue.events) {
+      return this.eventsService.findAllByVenueId(venue.id);
+    }
+    return venue.events;
   }
 
   @Query(() => Venue)

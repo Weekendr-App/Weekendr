@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Role, VenueStatus } from '@prisma/client';
+import { EventStatus, Prisma, Role, VenueStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
@@ -89,9 +89,15 @@ export class VenuesService {
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
     const venues = await this.prisma.venue.findMany({
-      where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
+      where: {
+        id: { in: id.map((v) => v.id) },
+        status: VenueStatus.ACTIVE,
+        events: { every: { status: EventStatus.PUBLISHED } },
+      },
       include: {
         events: {
+          take: 1,
+          orderBy: { startDate: 'desc' },
           include: {
             category: true,
           },
