@@ -6,7 +6,10 @@ import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
 
 export interface Props {
-  venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status">;
+  venue: Pick<
+    Venue,
+    "id" | "name" | "picture" | "address" | "status" | "events"
+  >;
 }
 
 const VenueListItem: FC<Props> = ({ venue }) => {
@@ -57,6 +60,12 @@ const VenueListItem: FC<Props> = ({ venue }) => {
       <div className="flex flex-col">
         <span className="font-bold">{name}</span>
         <span>{venue.address}</span>
+        {venue.events?.map((e) => (
+          <span key={e.id}>
+            <strong>Next event we&apos;ll be playing: </strong>
+            {e.category.name}
+          </span>
+        ))}
       </div>
     </div>
   );

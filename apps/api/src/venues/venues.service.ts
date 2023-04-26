@@ -89,18 +89,20 @@ export class VenuesService {
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
     const venues = await this.prisma.venue.findMany({
-      where: {
-        id: { in: id.map((v) => v.id) },
-        status: VenueStatus.ACTIVE,
-        events: { every: { status: EventStatus.PUBLISHED } },
-      },
+      where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
       include: {
         events: {
-          take: 1,
-          orderBy: { startDate: 'desc' },
           include: {
             category: true,
           },
+          orderBy: {
+            startDate: 'asc',
+          },
+          where: {
+            endDate: { gte: new Date() },
+            status: EventStatus.PUBLISHED,
+          },
+          take: 1,
         },
         owner: true,
       },

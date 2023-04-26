@@ -32,6 +32,14 @@ const query = gql`
       latitude
       longitude
       status
+      events {
+        id
+        startDate
+        category {
+          id
+          name
+        }
+      }
     }
   }
 `;

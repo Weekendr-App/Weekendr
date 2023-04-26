@@ -11,8 +11,9 @@ const query = gql`
 `;
 
 export default function useCategories() {
-  const [result] = useQuery<{ categories: Category[] }>({ query });
-  const { data, fetching, error } = result;
+  const [{ data, fetching, error }] = useQuery<{ categories: Category[] }>({
+    query,
+  });
 
   return {
     categories: data?.categories ?? [],
