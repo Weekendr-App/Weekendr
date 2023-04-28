@@ -8,6 +8,7 @@ import useCancelEvent from "@diplomski/hooks/useCancelEvent";
 import useVenue from "@diplomski/hooks/useVenue";
 import Dialog from "../Dialog";
 import { toast } from "react-hot-toast";
+import { renderCategory } from "@diplomski/utils/category";
 
 interface Props {
   event: Event;
@@ -73,8 +74,9 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
           <div>
             Ends: <strong>{getDate(event.endDate)}</strong>
           </div>
-          <div>
-            Category: <strong>{event.category.name}</strong>
+          <div className="flex items-center">
+            <span>Category: </span>
+            {renderCategory(event.category)}
           </div>
           {venue?.isOwnedByMe && (
             <Button

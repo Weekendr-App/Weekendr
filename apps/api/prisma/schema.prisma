@@ -76,8 +76,9 @@ model Event {
 }
 
 model Category {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id   Int     @id @default(autoincrement())
+  name String  @unique
+  icon String?
 
   events Event[]
 

@@ -6,6 +6,7 @@ scalar Bounds
 
 """Category"""
 type Category {
+  icon: String
   id: ID!
   name: String!
 }

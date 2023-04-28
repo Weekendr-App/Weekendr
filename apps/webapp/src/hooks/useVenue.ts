@@ -22,7 +22,9 @@ const query = gql`
         endDate
         price
         category {
+          id
           name
+          icon
         }
       }
       phone

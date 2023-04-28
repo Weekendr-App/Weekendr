@@ -38,6 +38,7 @@ const query = gql`
         category {
           id
           name
+          icon
         }
       }
     }
