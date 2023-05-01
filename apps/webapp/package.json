@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen",
-    "postinstall": "npx typesync"
+    "codegen": "graphql-codegen"
   },
   "dependencies": {
     "@firebase/app": "^0.9.3",
