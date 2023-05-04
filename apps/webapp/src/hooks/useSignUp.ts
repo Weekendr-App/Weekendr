@@ -1,22 +1,28 @@
+import {
+  MutationRegisterUserArgs,
+  RegisterUserInput,
+  RegisterUserResponse,
+} from "@diplomski/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const SIGN_UP_MUTATION = gql`
-  mutation RegisterUser($user: FirebaseUserCustom!) {
+  mutation RegisterUser($user: RegisterUserInput!) {
     registerUser(user: $user) {
       message
+      success
     }
   }
 `;
 
 export default function useSignUp() {
-  const [result, execute] = useMutation(SIGN_UP_MUTATION);
+  const [result, execute] = useMutation<
+    { registerUser: RegisterUserResponse },
+    MutationRegisterUserArgs
+  >(SIGN_UP_MUTATION);
 
   return {
+    result,
     loading: result.fetching,
-    signUp: (user: {
-      email: string;
-      password: string;
-      taxReturnsPicture: string;
-    }) => execute({ user }),
+    signUp: (user: RegisterUserInput) => execute({ user }),
   };
 }

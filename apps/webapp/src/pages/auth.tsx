@@ -1,11 +1,11 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import { useAuth } from "@diplomski/hooks/useAuth";
+import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { useFormik } from "formik";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
@@ -22,24 +22,37 @@ const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
 export default function Auth() {
-  const { user, login } = useAuth();
+  const { authState, user, login } = useAuth();
   const router = useRouter();
 
-  const { values, errors, handleChange, handleSubmit, isValid, isSubmitting } =
-    useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema,
-      onSubmit: async (values) => {
-        await login(values.email, values.password);
-      },
-    });
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    isValid,
+    isSubmitting,
+    setFieldError,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      await login(values.email, values.password);
+    },
+  });
 
   if (user) {
     router.push("/");
   }
+
+  useEffect(() => {
+    if (authState === AuthState.NOT_VERIFIED) {
+      setFieldError("email", "Email is not verified");
+    }
+  }, [authState]);
 
   return (
     <>

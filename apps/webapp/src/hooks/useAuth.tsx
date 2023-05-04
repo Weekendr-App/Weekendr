@@ -2,7 +2,6 @@ import { Spinner } from "@diplomski/components/Spinner";
 import { auth } from "@diplomski/utils/firebase";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from "@firebase/auth";
@@ -17,6 +16,12 @@ import {
   useEffect,
 } from "react";
 
+export enum AuthState {
+  NOT_AUTHENTICATED,
+  AUTHENTICATED,
+  NOT_VERIFIED,
+}
+
 interface FirebaseUser {
   email: string;
   id: string;
@@ -29,14 +34,14 @@ interface Props {
 
 interface AuthContextProps {
   user: FirebaseUser | null;
-  authenticated: boolean;
+  authState: AuthState;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
-  authenticated: false,
+  authState: AuthState.NOT_AUTHENTICATED,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
 });
@@ -46,29 +51,12 @@ const PROTECTED_ROUTES = ["/venues/add", "/profile"];
 export const AuthProvider: FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<FirebaseUser | null | undefined>(undefined);
+  const [authState, setAuthState] = useState(AuthState.NOT_AUTHENTICATED);
   const router = useRouter();
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      user.getIdTokenResult().then(async (idTokenResult) => {
-        console.log(idTokenResult.claims);
-        if (idTokenResult.claims.email_verified) {
-          console.log("verified");
-        } else {
-          try {
-            console.log("gonna try to logout");
-            await signOut(auth);
-          } catch (e) {
-            console.error("Error signing out", e);
-          }
-        }
-      });
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Error signing in with password and email", error);
     }
@@ -84,8 +72,12 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user || !user.email) {
+      if (!user || !user.email || !user.emailVerified) {
+        console.log("User is not logged in or email is not verified");
         setUser(null);
+        setAuthState(
+          user ? AuthState.NOT_VERIFIED : AuthState.NOT_AUTHENTICATED
+        );
       } else {
         const token = await user.getIdToken();
         setUser({
@@ -93,6 +85,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
           id: user.uid,
           token,
         });
+        setAuthState(AuthState.AUTHENTICATED);
       }
     });
   }, []);
@@ -126,9 +119,9 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     <AuthContext.Provider
       value={{
         user: user || null,
-        authenticated: !!user,
         login,
         logout,
+        authState,
       }}
     >
       {isLoading ? (

@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Spinner } from "../Spinner";
 import useSignUp from "@diplomski/hooks/useSignUp";
 import { useRouter } from "next/router";
@@ -19,18 +19,14 @@ const validationSchema = Yup.object().shape({
     ),
   password: Yup.string()
     .required("Password is required")
-    .test(
-      "password",
-      "Password must be at least 8 characters long",
-      (value) => value?.length >= 8
-    ),
-  taxReturnsPicture: Yup.string().required(
-    "Picture of tax returns is required"
-  ),
+    .min(8, "Password must be at least 8 characters long"),
+  taxReturnsPicture: Yup.string()
+    .required("Picture of tax returns is required")
+    .url("Picture of tax returns is required"),
 });
 
 export default function RegistrationForm() {
-  const { signUp } = useSignUp();
+  const { signUp, result } = useSignUp();
   const router = useRouter();
   const {
     values,
@@ -44,7 +40,6 @@ export default function RegistrationForm() {
   } = useFormik({
     onSubmit: async (values) => {
       await signUp(values);
-      router.push('/info');
     },
     initialValues: {
       email: "",
@@ -53,6 +48,20 @@ export default function RegistrationForm() {
     },
     validationSchema,
   });
+
+  useEffect(() => {
+    if (result && result.data) {
+      const {
+        registerUser: { success, message },
+      } = result.data;
+
+      if (success) {
+        router.push("/info");
+      } else {
+        setFieldError("email", message);
+      }
+    }
+  }, [result]);
 
   return (
     <Suspense fallback={<Spinner />}>
@@ -64,6 +73,7 @@ export default function RegistrationForm() {
           value={values.email}
           onChange={handleChange}
           error={errors.email}
+          disabled={isSubmitting}
           placeholder="Email"
         />
         <Input
@@ -72,6 +82,7 @@ export default function RegistrationForm() {
           value={values.password}
           onChange={handleChange}
           error={errors.password}
+          disabled={isSubmitting}
           placeholder="Password"
           type="password"
         />
@@ -81,6 +92,7 @@ export default function RegistrationForm() {
           value={values.taxReturnsPicture}
           onChange={handleChange}
           onError={setFieldError}
+          disabled={isSubmitting}
           error={errors.taxReturnsPicture}
         />
         <Button
