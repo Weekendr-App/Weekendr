@@ -20,6 +20,7 @@ export enum AuthState {
   NOT_AUTHENTICATED,
   AUTHENTICATED,
   NOT_VERIFIED,
+  WRONG_CREDENTIALS,
 }
 
 interface FirebaseUser {
@@ -59,6 +60,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Error signing in with password and email", error);
+      setAuthState(AuthState.WRONG_CREDENTIALS);
     }
   }, []);
 

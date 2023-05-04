@@ -49,8 +49,15 @@ export default function Auth() {
   }
 
   useEffect(() => {
-    if (authState === AuthState.NOT_VERIFIED) {
-      setFieldError("email", "Email is not verified");
+    switch (authState) {
+      case AuthState.WRONG_CREDENTIALS:
+        setFieldError("email", "Wrong credentials");
+        break;
+      case AuthState.NOT_VERIFIED:
+        setFieldError("email", "Email is not verified");
+        break;
+      default:
+        break;
     }
   }, [authState]);
 
