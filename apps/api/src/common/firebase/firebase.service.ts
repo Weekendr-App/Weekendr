@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fb from 'firebase-admin';
-import { MailerService } from '@nestjs-modules/mailer';
 import { RegisterUserInput } from 'src/user/dto/register-user.input';
 import { RegisterUserResponse } from 'src/user/models/registration.model';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class FirebaseService {
@@ -11,7 +11,7 @@ export class FirebaseService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly mailerService: MailerService,
+    private readonly mailService: MailService,
   ) {
     const firebaseConfig = {
       clientEmail: this.configService.get<string>('FIREBASE_CLIENT_EMAIL'),
@@ -36,11 +36,9 @@ export class FirebaseService {
     return this.app.auth();
   }
 
-  async registerUser({
-    email,
-    password,
-    taxReturnsPicture,
-  }: RegisterUserInput): Promise<RegisterUserResponse> {
+  async registerUser(values: RegisterUserInput): Promise<RegisterUserResponse> {
+    const { email, password } = values;
+
     try {
       await this.app.auth().getUserByEmail(email);
 
@@ -53,19 +51,7 @@ export class FirebaseService {
 
       const link = await this.app.auth().generateEmailVerificationLink(email);
 
-      await this.mailerService.sendMail({
-        to: process.env.ADMIN_EMAIL,
-        subject: `${email} wants to sign up`,
-        template: 'sign-up',
-        context: {
-          values: {
-            email,
-            password,
-            taxReturnsPicture,
-          },
-          link,
-        },
-      });
+      await this.mailService.sendNewUserEmail(values, link);
 
       return {
         message: 'User created',

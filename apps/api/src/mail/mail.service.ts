@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Venue } from '@prisma/client';
+import { RegisterUserInput } from 'src/user/dto/register-user.input';
 
 @Injectable()
 export class MailService {
@@ -19,17 +20,14 @@ export class MailService {
     }
   }
 
-  async sendNewUserEmail(values: {
-    email: string;
-    password: string;
-    taxReturnsPicture: string;
-  }) {
+  async sendNewUserEmail(values: RegisterUserInput, link: string) {
     await this.mailerService.sendMail({
-      to: 'urosjeknic@gmail.com',
+      to: process.env.ADMIN_EMAIL,
       subject: `${values.email} wants to sign up`,
       template: 'sign-up',
       context: {
         values,
+        link,
       },
     });
   }
