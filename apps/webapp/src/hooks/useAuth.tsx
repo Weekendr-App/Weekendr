@@ -72,13 +72,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user || !user.email || !user.emailVerified) {
-        console.log("User is not logged in or email is not verified");
-        setUser(null);
-        setAuthState(
-          user ? AuthState.NOT_VERIFIED : AuthState.NOT_AUTHENTICATED
-        );
-      } else {
+      if (user && user.email && user.emailVerified) {
         const token = await user.getIdToken();
         setUser({
           email: user.email,
@@ -86,9 +80,19 @@ export const AuthProvider: FC<Props> = ({ children }) => {
           token,
         });
         setAuthState(AuthState.AUTHENTICATED);
+        return;
       }
+
+      if (user && !user.emailVerified) {
+        await logout();
+        setAuthState(AuthState.NOT_VERIFIED);
+        return;
+      }
+
+      setUser(null);
+      setAuthState(AuthState.NOT_AUTHENTICATED);
     });
-  }, []);
+  }, [logout]);
 
   useEffect(() => {
     const checkAuth = () => {
