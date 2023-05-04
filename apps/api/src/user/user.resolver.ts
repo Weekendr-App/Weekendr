@@ -8,26 +8,14 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { IsEmail, MinLength } from 'class-validator';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseService } from 'src/common/firebase/firebase.service';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { Firebase } from 'src/common/firebase/models/firebase.model';
 import { Venue } from 'src/venues/models/venue.model';
 import { VenuesService } from 'src/venues/venues.service';
+import { RegisterUserInput } from './dto/register-user.input';
 import { User } from './models/user.model';
-
-@InputType()
-class FirebaseUserCustom {
-  @Field()
-  @IsEmail()
-  email: string;
-  @Field()
-  @MinLength(8)
-  password: string;
-  @Field()
-  taxReturnsPicture: string;
-}
 
 @Resolver(() => User)
 export class UserResolver {
@@ -49,7 +37,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Firebase)
-  async registerUser(@Args('user') data: FirebaseUserCustom) {
+  async registerUser(@Args('user') data: RegisterUserInput) {
     return this.firebaseService.registerUser(data);
   }
 }
