@@ -37,6 +37,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           "shadow",
           "gap-2",
           "cursor-pointer",
+          "items-center"
         ],
         {
           "bg-blue-900": isHighlighted(venue.id),
@@ -51,7 +52,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
       onMouseLeave={() => setHighlightedVenueId(null)}
     >
       <Image
-        className="rounded"
+        className="rounded aspect-video"
         alt={venue.name}
         src={venue.picture}
         width={100}

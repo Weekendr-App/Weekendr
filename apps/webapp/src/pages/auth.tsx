@@ -3,12 +3,18 @@ import { useAuth } from "@diplomski/hooks/useAuth";
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { useFormik } from "formik";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { lazy, Suspense } from "react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email("Email is not valid").required("Email is required"),
+  email: Yup.string()
+    .email("Email is not valid")
+    .required("Email is required")
+    .test("tld", "Email is not valid", (value) =>
+      /\.[a-z]{2,}(?=\s|$)/.test(value)
+    ),
   password: Yup.string().required("Password is required"),
 });
 
@@ -69,6 +75,12 @@ export default function Auth() {
           >
             Login
           </Button>
+          <div className="text-white">
+            Want to add your own venue to our website?{" "}
+            <Link className="font-bold hover:underline" href="/sign-up">
+              Sign up
+            </Link>
+          </div>
         </form>
       </Suspense>
     </>

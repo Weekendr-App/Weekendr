@@ -37,7 +37,7 @@ export default function PhoneInput({
         autoComplete="off"
         name={name}
         error={error}
-        readonly={disabled}
+        readOnly={disabled}
         placeholder={placeholder}
         value={`${value}`}
         onChange={onChange}

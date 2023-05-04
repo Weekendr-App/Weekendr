@@ -50,14 +50,27 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      user.getIdTokenResult().then(async (idTokenResult) => {
+        console.log(idTokenResult.claims);
+        if (idTokenResult.claims.email_verified) {
+          console.log("verified");
+        } else {
+          try {
+            console.log("gonna try to logout");
+            await signOut(auth);
+          } catch (e) {
+            console.error("Error signing out", e);
+          }
+        }
+      });
     } catch (error) {
       console.error("Error signing in with password and email", error);
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        console.error("Error signing up with password and email", error);
-      }
     }
   }, []);
 

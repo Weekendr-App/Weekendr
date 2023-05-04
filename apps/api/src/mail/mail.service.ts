@@ -18,4 +18,19 @@ export class MailService {
       });
     }
   }
+
+  async sendNewUserEmail(values: {
+    email: string;
+    password: string;
+    taxReturnsPicture: string;
+  }) {
+    await this.mailerService.sendMail({
+      to: 'urosjeknic@gmail.com',
+      subject: `${values.email} wants to sign up`,
+      template: 'sign-up',
+      context: {
+        values,
+      },
+    });
+  }
 }
