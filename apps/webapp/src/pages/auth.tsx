@@ -64,6 +64,7 @@ export default function Auth() {
       </Head>
       <Suspense fallback={<Spinner />}>
         <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
+          <h1 className="text-2xl font-bold text-white">Login</h1>
           <Input
             label="Email"
             name="email"
