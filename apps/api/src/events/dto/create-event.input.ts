@@ -14,6 +14,9 @@ export class CreateEventInput {
   picture?: string;
 
   @Field()
+  categoryId: number;
+
+  @Field()
   venueId: number;
 
   @Field()

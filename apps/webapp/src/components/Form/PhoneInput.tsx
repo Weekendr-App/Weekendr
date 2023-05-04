@@ -17,6 +17,7 @@ export default function PhoneInput({
   placeholder,
   defaultCountry = "RS",
   onCountryChange,
+  disabled,
 }: PhoneProps) {
   return (
     <div className="flex flex-col">
@@ -36,6 +37,7 @@ export default function PhoneInput({
         autoComplete="off"
         name={name}
         error={error}
+        readonly={disabled}
         placeholder={placeholder}
         value={`${value}`}
         onChange={onChange}

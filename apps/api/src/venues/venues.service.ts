@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Role, VenueStatus } from '@prisma/client';
+import { EventStatus, Prisma, Role, VenueStatus } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 import { User } from 'src/user/models/user.model';
 import { GetVenuesInRangeInput } from './dto/get-venues-in-range.input';
@@ -91,7 +91,19 @@ export class VenuesService {
     const venues = await this.prisma.venue.findMany({
       where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
       include: {
-        events: true,
+        events: {
+          include: {
+            category: true,
+          },
+          orderBy: {
+            startDate: 'asc',
+          },
+          where: {
+            endDate: { gte: new Date() },
+            status: EventStatus.PUBLISHED,
+          },
+          take: 1,
+        },
         owner: true,
       },
     });

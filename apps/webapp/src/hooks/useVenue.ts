@@ -21,6 +21,11 @@ const query = gql`
         startDate
         endDate
         price
+        category {
+          id
+          name
+          icon
+        }
       }
       phone
       status

@@ -8,6 +8,7 @@ import useCancelEvent from "@diplomski/hooks/useCancelEvent";
 import useVenue from "@diplomski/hooks/useVenue";
 import Dialog from "../Dialog";
 import { toast } from "react-hot-toast";
+import { renderCategory } from "@diplomski/utils/category";
 
 interface Props {
   event: Event;
@@ -64,7 +65,7 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
             width={128}
             height={128}
             alt={event.name}
-            src={event.picture ?? fallbackPicture}
+            src={event.picture || fallbackPicture}
           />
           <div>
             <span className="uppercase">entry fee</span>:{" "}
@@ -72,6 +73,10 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
           </div>
           <div>
             Ends: <strong>{getDate(event.endDate)}</strong>
+          </div>
+          <div className="flex items-center">
+            <span>Category: </span>
+            {renderCategory(event.category)}
           </div>
           {venue?.isOwnedByMe && (
             <Button

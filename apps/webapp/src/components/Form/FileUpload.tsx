@@ -16,11 +16,13 @@ interface Props {
   onError: (name: string, error: string) => void;
   label?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 const FileUpload: FC<Props> = ({
   name,
   value,
+  disabled,
   onChange,
   label,
   error,
@@ -87,7 +89,12 @@ const FileUpload: FC<Props> = ({
         )}
         {error && <span className="mt-2 text-red-500 italic">{error}</span>}
       </div>
-      <Button type="button" loading={isUploading} onClick={openFileUpload}>
+      <Button
+        type="button"
+        loading={isUploading}
+        disabled={isUploading || disabled}
+        onClick={openFileUpload}
+      >
         Upload
       </Button>
       <input

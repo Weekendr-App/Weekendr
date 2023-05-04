@@ -10,6 +10,7 @@ export interface Props {
   type?: string;
   placeholder?: string;
   multiline?: boolean;
+  disabled?: boolean;
   hidden?: boolean;
 }
 
@@ -21,6 +22,7 @@ const Input: FC<Props> = ({
   label,
   type = "text",
   placeholder,
+  disabled,
   multiline = false,
   hidden = false,
 }) => {
@@ -28,7 +30,10 @@ const Input: FC<Props> = ({
     () => ({
       className: clsx(["border", "border-gray-300", "p-2", "rounded-md"], {
         "border-red-500": error,
+        "opacity-50": disabled,
+        "cursor-not-allowed": disabled,
       }),
+      readOnly: disabled,
       name,
       value,
       onChange,
@@ -38,7 +43,7 @@ const Input: FC<Props> = ({
       autoComplete: "off",
       hidden,
     }),
-    [error, name, onChange, placeholder, type, value, hidden]
+    [error, name, onChange, placeholder, type, value, hidden, disabled]
   );
 
   return (

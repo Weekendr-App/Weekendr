@@ -60,6 +60,9 @@ model Event {
   venue   Venue @relation(fields: [venueId], references: [id])
   venueId Int
 
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
   status    EventStatus @default(DRAFT)
   startDate DateTime
   endDate   DateTime
@@ -70,6 +73,16 @@ model Event {
   price     Float
 
   @@index([venueId], name: "event_venue")
+}
+
+model Category {
+  id   Int     @id @default(autoincrement())
+  name String  @unique
+  icon String?
+
+  events Event[]
+
+  @@index([name], name: "category_name")
 }
 
 model User {

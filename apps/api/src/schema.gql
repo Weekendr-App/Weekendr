@@ -4,7 +4,15 @@
 
 scalar Bounds
 
+"""Category"""
+type Category {
+  icon: String
+  id: ID!
+  name: String!
+}
+
 input CreateEventInput {
+  categoryId: Float!
   description: String
   endDate: Date!
   name: String!
@@ -28,6 +36,7 @@ scalar Date
 
 """Event"""
 type Event {
+  category: Category!
   createdAt: Date!
   deletedAt: Date
   description: String
@@ -62,6 +71,7 @@ type Mutation {
 }
 
 type Query {
+  categories: [Category!]!
   draftVenues: [Venue!]!
   event(eventId: Float!): Event!
   me: User!

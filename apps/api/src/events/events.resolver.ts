@@ -13,6 +13,7 @@ import {
   Query,
 } from '@nestjs/graphql';
 import { VenueStatus } from '@prisma/client';
+import { CategoriesService } from 'src/categories/categories.service';
 import { FirebaseGuard } from 'src/common/firebase/firebase.guard';
 import { FirebaseUser } from 'src/common/firebase/firebase.user.decorator';
 import { User } from 'src/user/models/user.model';
@@ -28,6 +29,7 @@ export class EventsResolver {
   constructor(
     private readonly eventsService: EventsService,
     private readonly venuesService: VenuesService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   @ResolveField(() => Venue)
@@ -53,6 +55,14 @@ export class EventsResolver {
     @Args('fields') data: CreateEventInput,
     @FirebaseUser() user: User,
   ): Promise<Event> {
+    const category = await this.categoriesService.findCategoryById(
+      data.categoryId,
+    );
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
     const venue = await this.venuesService.findById(data.venueId, user);
 
     if (!venue) {

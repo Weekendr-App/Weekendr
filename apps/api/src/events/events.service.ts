@@ -11,7 +11,7 @@ export class EventsService {
 
   async create(data: CreateEventInput): Promise<Event> {
     return this.prisma.event.create({
-      include: { venue: { include: { owner: true } } },
+      include: { venue: { include: { owner: true } }, category: true },
       data: {
         ...data,
         status: EventStatus.PUBLISHED,
@@ -22,14 +22,14 @@ export class EventsService {
   async findById(eventId: number): Promise<Event> {
     return this.prisma.event.findUnique({
       where: { id: eventId },
-      include: { venue: { include: { owner: true } } },
+      include: { venue: { include: { owner: true } }, category: true },
     });
   }
 
   async findAllByVenueId(venueId: number): Promise<Event[]> {
     return this.prisma.event.findMany({
       where: { venueId, status: EventStatus.PUBLISHED },
-      include: { venue: { include: { owner: true } } },
+      include: { venue: { include: { owner: true } }, category: true },
       orderBy: [{ startDate: 'desc' }],
       take: 3,
     });
@@ -55,14 +55,14 @@ export class EventsService {
           in: id.map((i) => i.id),
         },
       },
-      include: { venue: { include: { owner: true } } },
+      include: { venue: { include: { owner: true } }, category: true },
     });
   }
 
   async cancelEvent(eventId: number): Promise<Event> {
     return this.prisma.event.update({
       where: { id: eventId },
-      include: { venue: { include: { owner: true } } },
+      include: { venue: { include: { owner: true } }, category: true },
       data: { status: EventStatus.CANCELLED },
     });
   }
