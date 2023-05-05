@@ -35,28 +35,4 @@ export class FirebaseService {
   getAuth() {
     return this.app.auth();
   }
-
-  async registerUser(values: RegisterUserInput): Promise<RegisterUserResponse> {
-    const { email, password } = values;
-
-    try {
-      await this.app.auth().getUserByEmail(email);
-
-      return {
-        message: 'User already exists',
-        success: false,
-      };
-    } catch {
-      await this.app.auth().createUser({ email, password });
-
-      const link = await this.app.auth().generateEmailVerificationLink(email);
-
-      await this.mailService.sendNewUserEmail(values, link);
-
-      return {
-        message: 'User created',
-        success: true,
-      };
-    }
-  }
 }
