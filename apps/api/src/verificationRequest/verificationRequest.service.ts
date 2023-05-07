@@ -6,12 +6,14 @@ import {
 import { addHours, isAfter } from 'date-fns';
 import { FirebaseService } from 'src/common/firebase/firebase.service';
 import { PrismaService } from 'src/common/services/prisma.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class VerificationRequestService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly firebaseService: FirebaseService,
+    private readonly mailService: MailService,
   ) {}
 
   async ensureVerificationRequest(firebaseUserId: string, id: string) {
@@ -50,6 +52,8 @@ export class VerificationRequestService {
       throw new BadRequestException('Verification request has expired');
     }
 
+    const user = await this.firebaseService.getAuth().getUser(firebaseUserId);
+
     await this.firebaseService.getAuth().updateUser(firebaseUserId, {
       emailVerified: true,
     });
@@ -57,5 +61,8 @@ export class VerificationRequestService {
     await this.prisma.verificationRequest.delete({
       where: { firebaseUserId },
     });
+
+    // TODO: Might not be necessary to await this
+    await this.mailService.sendVerifiedEmail(user.email);
   }
 }

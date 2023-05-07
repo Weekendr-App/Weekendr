@@ -31,4 +31,12 @@ export class MailService {
       },
     });
   }
+
+  async sendVerifiedEmail(email: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Your email has been verified',
+      template: 'verified',
+    });
+  }
 }
