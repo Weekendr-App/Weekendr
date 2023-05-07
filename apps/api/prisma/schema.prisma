@@ -94,8 +94,7 @@ model User {
 }
 
 model VerificationRequest {
-  id             Int    @id @default(autoincrement())
-  url            String @unique
+  id             String @id
   firebaseUserId String @unique
 
   expiresAt DateTime

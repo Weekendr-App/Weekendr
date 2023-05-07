@@ -14,31 +14,48 @@ export class VerificationRequestService {
     private readonly firebaseService: FirebaseService,
   ) {}
 
-  async createVerificationRequest(firebaseUserId: string, url: string) {
-    return this.prisma.verificationRequest.create({
-      data: {
-        url,
+  async ensureVerificationRequest(firebaseUserId: string, id: string) {
+    return this.prisma.verificationRequest.upsert({
+      create: {
+        id,
         firebaseUserId,
         expiresAt: addHours(new Date(), 1),
+      },
+      update: {
+        id,
+        expiresAt: addHours(new Date(), 1),
+      },
+      where: {
+        firebaseUserId,
       },
     });
   }
 
-  async verifyUser(userId: string, url: string) {
+  async getByUserId(userId: string) {
+    return this.prisma.verificationRequest.findFirst({
+      where: { firebaseUserId: userId },
+    });
+  }
+
+  async verifyUser(id: string, firebaseUserId: string) {
     const request = await this.prisma.verificationRequest.findFirst({
-      where: { url },
+      where: { id, firebaseUserId },
     });
 
     if (!request) {
       throw new NotFoundException('Verification request not found');
     }
 
-    if (isAfter(request.expiresAt, new Date())) {
+    if (isAfter(new Date(), request.expiresAt)) {
       throw new BadRequestException('Verification request has expired');
     }
 
-    await this.firebaseService.getAuth().updateUser(userId, {
+    await this.firebaseService.getAuth().updateUser(firebaseUserId, {
       emailVerified: true,
+    });
+
+    await this.prisma.verificationRequest.delete({
+      where: { firebaseUserId },
     });
   }
 }
