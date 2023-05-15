@@ -90,5 +90,12 @@ model User {
   email String @unique
 
   role  Role    @default(OWNER)
-  Venue Venue[]
+  venue Venue[]
+}
+
+model VerificationRequest {
+  id             String @id
+  firebaseUserId String @unique
+
+  expiresAt DateTime
 }

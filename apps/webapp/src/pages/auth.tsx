@@ -1,14 +1,20 @@
 import { Spinner } from "@diplomski/components/Spinner";
-import { useAuth } from "@diplomski/hooks/useAuth";
+import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
 import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
 import { useFormik } from "formik";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email("Email is not valid").required("Email is required"),
+  email: Yup.string()
+    .email("Email is not valid")
+    .required("Email is required")
+    .test("tld", "Email is not valid", (value) =>
+      /\.[a-z]{2,}(?=\s|$)/.test(value)
+    ),
   password: Yup.string().required("Password is required"),
 });
 
@@ -16,24 +22,44 @@ const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const Button = lazy(() => import("@diplomski/components/Form/Button"));
 
 export default function Auth() {
-  const { user, login } = useAuth();
+  const { authState, user, login } = useAuth();
   const router = useRouter();
 
-  const { values, errors, handleChange, handleSubmit, isValid, isSubmitting } =
-    useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema,
-      onSubmit: async (values) => {
-        await login(values.email, values.password);
-      },
-    });
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+    isValid,
+    isSubmitting,
+    setFieldError,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      await login(values.email, values.password);
+    },
+  });
 
   if (user) {
     router.push("/");
   }
+
+  useEffect(() => {
+    switch (authState) {
+      case AuthState.WRONG_CREDENTIALS:
+        setFieldError("email", "Wrong credentials");
+        break;
+      case AuthState.NOT_VERIFIED:
+        setFieldError("email", "Email is not verified");
+        break;
+      default:
+        break;
+    }
+  }, [authState]);
 
   return (
     <>
@@ -45,6 +71,7 @@ export default function Auth() {
       </Head>
       <Suspense fallback={<Spinner />}>
         <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
+          <h1 className="text-2xl font-bold text-white">Login</h1>
           <Input
             label="Email"
             name="email"
@@ -69,6 +96,12 @@ export default function Auth() {
           >
             Login
           </Button>
+          <div className="text-white">
+            Want to add your own venue to our website?{" "}
+            <Link className="font-bold hover:underline" href="/sign-up">
+              Sign up
+            </Link>
+          </div>
         </form>
       </Suspense>
     </>

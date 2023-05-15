@@ -109,11 +109,9 @@ function ReadySearchBox({
       <ComboboxPopover>
         <ComboboxList>
           {status === "OK" &&
-            data
-              .filter(({ types }) => types.includes("geocode"))
-              .map(({ place_id, description }) => (
-                <ComboboxOption key={place_id} value={description} />
-              ))}
+            data.map(({ place_id, description }) => (
+              <ComboboxOption key={place_id} value={description} />
+            ))}
         </ComboboxList>
       </ComboboxPopover>
       {error && <span className="italic text-red-500">{error}</span>}

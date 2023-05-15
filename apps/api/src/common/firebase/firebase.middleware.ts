@@ -23,6 +23,10 @@ export class FirebaseMiddleware implements NestMiddleware {
           .getAuth()
           .verifyIdToken(token);
 
+        if (!decodedToken.email_verified) {
+          throw new Error('User not verified');
+        }
+
         request['user'] = await this.userService.ensureUser(
           decodedToken.uid,
           decodedToken.email,

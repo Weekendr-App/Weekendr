@@ -2,7 +2,6 @@ import { Spinner } from "@diplomski/components/Spinner";
 import { auth } from "@diplomski/utils/firebase";
 import {
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from "@firebase/auth";
@@ -17,6 +16,13 @@ import {
   useEffect,
 } from "react";
 
+export enum AuthState {
+  NOT_AUTHENTICATED,
+  AUTHENTICATED,
+  NOT_VERIFIED,
+  WRONG_CREDENTIALS,
+}
+
 interface FirebaseUser {
   email: string;
   id: string;
@@ -29,14 +35,14 @@ interface Props {
 
 interface AuthContextProps {
   user: FirebaseUser | null;
-  authenticated: boolean;
+  authState: AuthState;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
-  authenticated: false,
+  authState: AuthState.NOT_AUTHENTICATED,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
 });
@@ -46,6 +52,7 @@ const PROTECTED_ROUTES = ["/venues/add", "/profile"];
 export const AuthProvider: FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<FirebaseUser | null | undefined>(undefined);
+  const [authState, setAuthState] = useState(AuthState.NOT_AUTHENTICATED);
   const router = useRouter();
 
   const login = useCallback(async (email: string, password: string) => {
@@ -53,11 +60,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Error signing in with password and email", error);
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        console.error("Error signing up with password and email", error);
-      }
+      setAuthState(AuthState.WRONG_CREDENTIALS);
     }
   }, []);
 
@@ -71,18 +74,27 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user || !user.email) {
-        setUser(null);
-      } else {
+      if (user && user.email && user.emailVerified) {
         const token = await user.getIdToken();
         setUser({
           email: user.email,
           id: user.uid,
           token,
         });
+        setAuthState(AuthState.AUTHENTICATED);
+        return;
       }
+
+      if (user && !user.emailVerified) {
+        await logout();
+        setAuthState(AuthState.NOT_VERIFIED);
+        return;
+      }
+
+      setUser(null);
+      setAuthState(AuthState.NOT_AUTHENTICATED);
     });
-  }, []);
+  }, [logout]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -113,9 +125,9 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     <AuthContext.Provider
       value={{
         user: user || null,
-        authenticated: !!user,
         login,
         logout,
+        authState,
       }}
     >
       {isLoading ? (

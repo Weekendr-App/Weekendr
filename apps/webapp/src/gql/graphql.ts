@@ -80,6 +80,7 @@ export type Mutation = {
   createVenue: Venue;
   deleteVenue: Venue;
   publishVenue: Venue;
+  registerUser: RegisterUserResponse;
   updateVenue: Venue;
 };
 
@@ -106,6 +107,11 @@ export type MutationDeleteVenueArgs = {
 
 export type MutationPublishVenueArgs = {
   id: Scalars['Float'];
+};
+
+
+export type MutationRegisterUserArgs = {
+  user: RegisterUserInput;
 };
 
 
@@ -142,6 +148,19 @@ export type QueryVenueEventsArgs = {
 
 export type QueryVenuesInRangeArgs = {
   fields: GetVenuesInRangeInput;
+};
+
+export type RegisterUserInput = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  taxReturnsPicture: Scalars['String'];
+};
+
+/** Firebase registration response */
+export type RegisterUserResponse = {
+  __typename?: 'RegisterUserResponse';
+  message: Scalars['String'];
+  success: Scalars['Boolean'];
 };
 
 /** User role */

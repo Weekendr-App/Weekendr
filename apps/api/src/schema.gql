@@ -67,6 +67,7 @@ type Mutation {
   createVenue(fields: CreateVenueInput!): Venue!
   deleteVenue(id: Float!): Venue!
   publishVenue(id: Float!): Venue!
+  registerUser(user: RegisterUserInput!): RegisterUserResponse!
   updateVenue(fields: UpdateVenueInput!): Venue!
 }
 
@@ -78,6 +79,18 @@ type Query {
   venue(id: Float!): Venue!
   venueEvents(venueId: Float!): [Event!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
+}
+
+input RegisterUserInput {
+  email: String!
+  password: String!
+  taxReturnsPicture: String!
+}
+
+"""Firebase registration response"""
+type RegisterUserResponse {
+  message: String!
+  success: Boolean!
 }
 
 """User role"""

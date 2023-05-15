@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fb from 'firebase-admin';
+import { RegisterUserInput } from 'src/user/dto/register-user.input';
+import { RegisterUserResponse } from 'src/user/models/registration.model';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class FirebaseService {
   private app: fb.app.App;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly mailService: MailService,
+  ) {
     const firebaseConfig = {
       clientEmail: this.configService.get<string>('FIREBASE_CLIENT_EMAIL'),
       privateKey: this.configService

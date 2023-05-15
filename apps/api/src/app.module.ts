@@ -12,12 +12,16 @@ import { EventsModule } from './events/events.module';
 import { DateScalar } from './common/scalars/date.scalar';
 import { UserService } from './user/user.service';
 import { PrismaService } from './common/services/prisma.service';
+import { MailModule } from './mail/mail.module';
+import { VerificationRequestModule } from './verificationRequest/verificationRequest.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MailModule,
+    VerificationRequestModule,
     UserModule,
     VenuesModule,
     EventsModule,
