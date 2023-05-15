@@ -59,13 +59,11 @@ export default function SignUpPage() {
         registerUser: { success, message },
       } = result.data;
 
-      if (success) {
-        router.push("/info");
-      } else {
+      if (!success) {
         setFieldError("email", message);
       }
     }
-  }, [result]);
+  }, [result, setFieldError]);
 
   if (authState === AuthState.AUTHENTICATED) {
     router.push("/");

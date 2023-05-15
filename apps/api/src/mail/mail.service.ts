@@ -26,7 +26,7 @@ export class MailService {
       subject: `${values.email} wants to sign up`,
       template: 'sign-up',
       context: {
-        values,
+        ...values,
         link,
       },
     });
