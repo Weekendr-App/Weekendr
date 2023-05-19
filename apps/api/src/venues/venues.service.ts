@@ -76,6 +76,7 @@ export class VenuesService {
   async findAllInRange(
     data: GetVenuesInRangeInput,
     user?: User,
+    categoryId?: number,
   ): Promise<VenueInRange[]> {
     const { bounds } = data;
     const { _sw, _ne } = bounds;
@@ -88,30 +89,69 @@ export class VenuesService {
     const id = await this.prisma.$queryRaw<{ id: Venue['id'] }[]>`
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
-    const venues = await this.prisma.venue.findMany({
-      where: { id: { in: id.map((v) => v.id) }, status: VenueStatus.ACTIVE },
-      include: {
-        events: {
-          include: {
-            category: true,
+    if (categoryId) {
+      const venues = await this.prisma.venue.findMany({
+        where: {
+          id: { in: id.map((v) => v.id) },
+          status: VenueStatus.ACTIVE,
+          events: {
+            some: {
+              category: { id: categoryId },
+              AND: { endDate: { gte: new Date() } },
+            },
           },
-          orderBy: {
-            startDate: 'asc',
-          },
-          where: {
-            endDate: { gte: new Date() },
-            status: EventStatus.PUBLISHED,
-          },
-          take: 1,
         },
-        owner: true,
-      },
-    });
+        include: {
+          events: {
+            include: {
+              category: true,
+            },
+            orderBy: {
+              startDate: 'asc',
+            },
+            where: {
+              endDate: { gte: new Date() },
+              status: EventStatus.PUBLISHED,
+            },
+            take: 1,
+          },
+          owner: true,
+        },
+      });
 
-    return venues.map((venue) => ({
-      ...venue,
-      isOwnedByMe: user?.id === venue.owner.id,
-    }));
+      return venues.map((venue) => ({
+        ...venue,
+        isOwnedByMe: user?.id === venue.owner.id,
+      }));
+    } else {
+      const venues = await this.prisma.venue.findMany({
+        where: {
+          id: { in: id.map((v) => v.id) },
+          status: VenueStatus.ACTIVE,
+        },
+        include: {
+          events: {
+            include: {
+              category: true,
+            },
+            orderBy: {
+              startDate: 'asc',
+            },
+            where: {
+              endDate: { gte: new Date() },
+              status: EventStatus.PUBLISHED,
+            },
+            take: 1,
+          },
+          owner: true,
+        },
+      });
+
+      return venues.map((venue) => ({
+        ...venue,
+        isOwnedByMe: user?.id === venue.owner.id,
+      }));
+    }
   }
 
   async getDraftVenues(): Promise<Venue[]> {

@@ -78,6 +78,7 @@ type Query {
   me: User!
   venue(id: Float!): Venue!
   venueEvents(venueId: Float!): [Event!]!
+  venuesByCategory(categoryId: Float!, fields: GetVenuesInRangeInput!): [Venue!]!
   venuesInRange(fields: GetVenuesInRangeInput!): [Venue!]!
 }
 

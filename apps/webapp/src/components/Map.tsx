@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import { useMapHover } from "@diplomski/hooks/useMapHover";
 import { sync } from "postcss-js";
 import autoprefixer from "autoprefixer";
+import Image from "next/image";
 
 const DEFAULT_DEBOUNCE_TIME = 500;
 
@@ -45,13 +46,39 @@ const query = gql`
   }
 `;
 
+const query2 = gql`
+  query venuesByCategory($fields: GetVenuesInRangeInput!, $categoryId: Float!) {
+    venuesByCategory(fields: $fields, categoryId: $categoryId) {
+      id
+      name
+      picture
+      isOwnedByMe
+      address
+      latitude
+      longitude
+      status
+      events {
+        id
+        startDate
+        category {
+          id
+          name
+          icon
+        }
+      }
+    }
+  }
+`;
+
 const prefixer = sync([autoprefixer]);
 
 interface Props {
   onChangeVisibleVenues: (venues: VenuesInRangeQuery["venuesInRange"]) => void;
+  // onChangeCategory: (categoryId: number) => void;
+  categoryId: number;
 }
 
-export default function Map({ onChangeVisibleVenues }: Props) {
+export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
   const isPhone = useMediaQuery("(max-width: 640px)");
   const router = useRouter();
   const { setHighlightedVenueId, isHighlighted } = useMapHover();
@@ -83,9 +110,61 @@ export default function Map({ onChangeVisibleVenues }: Props) {
     },
   });
 
+  const [{ data: data2 }] = useQuery({
+    query: query2,
+    pause: !debouncedBounds,
+    variables: {
+      fields: {
+        bounds: JSON.stringify(debouncedBounds),
+      },
+      categoryId,
+    },
+  });
+
   const pins = useMemo(() => {
     if (!data) {
       return null;
+    }
+
+    if (data2) {
+      return data2.venuesByCategory.map((venue) => (
+        <div className="z-10" key={venue.id}>
+          <Marker
+            key={venue.id}
+            latitude={venue.latitude}
+            longitude={venue.longitude}
+          >
+            {venue.events[0]?.category.icon ? (
+              <Image
+                src={venue.events[0].category.icon}
+                alt="icon"
+                width={48}
+                height={48}
+                className="hover:cursor-pointer"
+                onClick={() => router.push(`/venues/${venue.id}`)}
+              />
+            ) : (
+              <div
+                aria-label={venue.name}
+                className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
+                  "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
+                  "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
+                  "bg-white": !isHighlighted(venue.id),
+                  "hover:bg-red-500": !venue.isOwnedByMe,
+                  "hover:bg-amber-300": venue.isOwnedByMe,
+                })}
+                style={prefixer({
+                  maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+                  maskMode: "alpha", // Tailwind doesn't support mask-mode
+                })}
+                onClick={() => router.push(`/venues/${venue.id}`)}
+                onMouseEnter={() => setHighlightedVenueId(venue.id)}
+                onMouseLeave={() => setHighlightedVenueId(null)}
+              ></div>
+            )}
+          </Marker>
+        </div>
+      ));
     }
 
     return data.venuesInRange.map((venue) => (
@@ -95,27 +174,38 @@ export default function Map({ onChangeVisibleVenues }: Props) {
           latitude={venue.latitude}
           longitude={venue.longitude}
         >
-          <div
-            aria-label={venue.name}
-            className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
-              "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
-              "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
-              "bg-white": !isHighlighted(venue.id),
-              "hover:bg-red-500": !venue.isOwnedByMe,
-              "hover:bg-amber-300": venue.isOwnedByMe,
-            })}
-            style={prefixer({
-              maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
-              maskMode: "alpha", // Tailwind doesn't support mask-mode
-            })}
-            onClick={() => router.push(`/venues/${venue.id}`)}
-            onMouseEnter={() => setHighlightedVenueId(venue.id)}
-            onMouseLeave={() => setHighlightedVenueId(null)}
-          ></div>
+          {venue.events[0]?.category.icon ? (
+            <Image
+              src={venue.events[0].category.icon}
+              alt="icon"
+              width={48}
+              height={48}
+              className="hover:cursor-pointer"
+              onClick={() => router.push(`/venues/${venue.id}`)}
+            />
+          ) : (
+            <div
+              aria-label={venue.name}
+              className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
+                "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
+                "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
+                "bg-white": !isHighlighted(venue.id),
+                "hover:bg-red-500": !venue.isOwnedByMe,
+                "hover:bg-amber-300": venue.isOwnedByMe,
+              })}
+              style={prefixer({
+                maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
+                maskMode: "alpha", // Tailwind doesn't support mask-mode
+              })}
+              onClick={() => router.push(`/venues/${venue.id}`)}
+              onMouseEnter={() => setHighlightedVenueId(venue.id)}
+              onMouseLeave={() => setHighlightedVenueId(null)}
+            ></div>
+          )}
         </Marker>
       </div>
     ));
-  }, [data, router, setHighlightedVenueId, isHighlighted]);
+  }, [data, router, setHighlightedVenueId, isHighlighted, data2]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -173,6 +263,15 @@ export default function Map({ onChangeVisibleVenues }: Props) {
 
     onChangeVisibleVenues(data.venuesInRange);
   }, [data, onChangeVisibleVenues]);
+
+  useEffect(() => {
+    if (!data2) {
+      onChangeVisibleVenues([]);
+      return;
+    }
+
+    onChangeVisibleVenues(data2.venuesByCategory);
+  }, [categoryId, data2, onChangeVisibleVenues, data]);
 
   useEffect(() => {
     calculateMapBounds();

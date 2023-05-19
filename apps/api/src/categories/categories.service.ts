@@ -17,6 +17,9 @@ export class CategoriesService {
       include: {
         events: { include: { venue: true } },
       },
+      orderBy: {
+        id: 'asc',
+      },
     });
   }
 }
