@@ -46,9 +46,9 @@ const query = gql`
   }
 `;
 
-const query2 = gql`
-  query venuesByCategory($fields: GetVenuesInRangeInput!, $categoryId: Float!) {
-    venuesByCategory(fields: $fields, categoryId: $categoryId) {
+const venuesInRangeByCategoryQuery = gql`
+  query venuesInRangeByCategory($fields: GetVenuesInRangeInput!, $categoryId: Float!) {
+    venuesInRangeByCategory(fields: $fields, categoryId: $categoryId) {
       id
       name
       picture
@@ -74,7 +74,6 @@ const prefixer = sync([autoprefixer]);
 
 interface Props {
   onChangeVisibleVenues: (venues: VenuesInRangeQuery["venuesInRange"]) => void;
-  // onChangeCategory: (categoryId: number) => void;
   categoryId: number;
 }
 
@@ -110,8 +109,8 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
     },
   });
 
-  const [{ data: data2 }] = useQuery({
-    query: query2,
+  const [{ data: venuesFilteredByCategory }] = useQuery({
+    query: venuesInRangeByCategoryQuery,
     pause: !debouncedBounds,
     variables: {
       fields: {
@@ -126,8 +125,8 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
       return null;
     }
 
-    if (data2) {
-      return data2.venuesByCategory.map((venue) => (
+    if (venuesFilteredByCategory) {
+      return venuesFilteredByCategory.venuesInRangeByCategory.map((venue) => (
         <div className="z-10" key={venue.id}>
           <Marker
             key={venue.id}
@@ -205,7 +204,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         </Marker>
       </div>
     ));
-  }, [data, router, setHighlightedVenueId, isHighlighted, data2]);
+  }, [data, router, setHighlightedVenueId, isHighlighted, venuesFilteredByCategory]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -265,13 +264,13 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
   }, [data, onChangeVisibleVenues]);
 
   useEffect(() => {
-    if (!data2) {
+    if (!venuesFilteredByCategory) {
       onChangeVisibleVenues([]);
       return;
     }
 
-    onChangeVisibleVenues(data2.venuesByCategory);
-  }, [categoryId, data2, onChangeVisibleVenues, data]);
+    onChangeVisibleVenues(venuesFilteredByCategory.venuesInRangeByCategory);
+  }, [categoryId, venuesFilteredByCategory, onChangeVisibleVenues, data]);
 
   useEffect(() => {
     calculateMapBounds();

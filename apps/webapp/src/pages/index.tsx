@@ -1,15 +1,15 @@
 import Head from "next/head";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Spinner } from "@diplomski/components/Spinner";
 import { Props as VenueListItemProps } from "@diplomski/components/Venue/VenueListItem";
 import { useMediaQuery } from "usehooks-ts";
-import Select from "@diplomski/components/Form/Select";
 import useCategories from "@diplomski/hooks/useCategories";
 
 const Map = lazy(() => import("@diplomski/components/Map"));
 const VenueListItem = lazy(
   () => import("@diplomski/components/Venue/VenueListItem")
 );
+const Select = lazy(() => import("@diplomski/components/Form/Select"))
 
 export default function Home() {
   const isPhone = useMediaQuery("(max-width: 640px)");

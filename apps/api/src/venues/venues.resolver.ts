@@ -72,7 +72,7 @@ export class VenuesResolver {
   }
 
   @Query(() => [Venue])
-  async venuesByCategory(
+  async venuesInRangeByCategory(
     @Args('fields') data: GetVenuesInRangeInput,
     @Args('categoryId') categoryId: number,
     @FirebaseUser('user') user: User | null,
