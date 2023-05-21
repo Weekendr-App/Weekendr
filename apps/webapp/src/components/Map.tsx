@@ -47,7 +47,10 @@ const query = gql`
 `;
 
 const venuesInRangeByCategoryQuery = gql`
-  query venuesInRangeByCategory($fields: GetVenuesInRangeInput!, $categoryId: Float!) {
+  query venuesInRangeByCategory(
+    $fields: GetVenuesInRangeInput!
+    $categoryId: Float!
+  ) {
     venuesInRangeByCategory(fields: $fields, categoryId: $categoryId) {
       id
       name
@@ -141,6 +144,8 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
                 height={48}
                 className="hover:cursor-pointer"
                 onClick={() => router.push(`/venues/${venue.id}`)}
+                onMouseEnter={() => setHighlightedVenueId(venue.id)}
+                onMouseLeave={() => setHighlightedVenueId(null)}
               />
             ) : (
               <div
@@ -204,7 +209,13 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         </Marker>
       </div>
     ));
-  }, [data, router, setHighlightedVenueId, isHighlighted, venuesFilteredByCategory]);
+  }, [
+    data,
+    router,
+    setHighlightedVenueId,
+    isHighlighted,
+    venuesFilteredByCategory,
+  ]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
