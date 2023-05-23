@@ -89,36 +89,7 @@ export class VenuesService {
     const id = await this.prisma.$queryRaw<{ id: Venue['id'] }[]>`
       SELECT id FROM "Venue" WHERE "deletedAt" IS NULL AND ST_Within(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), ST_MakeEnvelope(${xmin}, ${ymin}, ${xmax}, ${ymax}, 4326))`;
 
-    const queryWithCategory = {
-      where: {
-        id: { in: id.map((v) => v.id) },
-        status: VenueStatus.ACTIVE,
-        events: {
-          some: {
-            category: { id: categoryId },
-            AND: { endDate: { gte: new Date() } },
-          },
-        },
-      },
-      include: {
-        events: {
-          include: {
-            category: true,
-          },
-          orderBy: {
-            startDate: Prisma.SortOrder.asc,
-          },
-          where: {
-            endDate: { gte: new Date() },
-            status: EventStatus.PUBLISHED,
-          },
-          take: 1,
-        },
-        owner: true,
-      },
-    };
-
-    const queryWithoutCategory = {
+    const query = {
       where: {
         id: { in: id.map((v) => v.id) },
         status: VenueStatus.ACTIVE,
@@ -141,7 +112,21 @@ export class VenuesService {
       },
     };
 
-    const query = categoryId ? queryWithCategory : queryWithoutCategory;
+    if (categoryId) {
+      query.where['events'] = {
+        some: {
+          AND: [
+            {
+              category: { id: categoryId },
+            },
+            {
+              endDate: { gte: new Date() },
+            },
+          ],
+        },
+      };
+    }
+
     const venues = await this.prisma.venue.findMany(query);
     return venues.map((venue) => ({
       ...venue,
