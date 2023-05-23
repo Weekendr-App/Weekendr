@@ -71,6 +71,15 @@ export class VenuesResolver {
     return this.venuesService.getDraftVenues();
   }
 
+  @Query(() => [Venue])
+  async venuesInRangeByCategory(
+    @Args('fields') data: GetVenuesInRangeInput,
+    @Args('categoryId') categoryId: number,
+    @FirebaseUser('user') user: User | null,
+  ) {
+    return this.venuesService.findAllInRange(data, user, categoryId);
+  }
+
   @Mutation(() => Venue)
   @UseGuards(FirebaseGuard, RoleGuard('OWNER'))
   @UseInterceptors(VenueCreatedInterceptor)

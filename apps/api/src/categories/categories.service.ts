@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { Category, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/common/services/prisma.service';
 
 @Injectable()
@@ -16,6 +16,9 @@ export class CategoriesService {
     return this.prisma.category.findMany({
       include: {
         events: { include: { venue: true } },
+      },
+      orderBy: {
+        id: Prisma.SortOrder.asc,
       },
     });
   }
