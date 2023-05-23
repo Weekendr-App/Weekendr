@@ -78,11 +78,6 @@ export class VenuesService {
     user?: User,
     categoryId?: number,
   ): Promise<VenueInRange[]> {
-    interface SortOrder {
-      asc: 'asc';
-      desc: 'desc';
-    }
-
     const { bounds } = data;
     const { _sw, _ne } = bounds;
 
@@ -111,7 +106,7 @@ export class VenuesService {
             category: true,
           },
           orderBy: {
-            startDate: 'asc' as SortOrder['asc'],
+            startDate: Prisma.SortOrder.asc,
           },
           where: {
             endDate: { gte: new Date() },
@@ -134,7 +129,7 @@ export class VenuesService {
             category: true,
           },
           orderBy: {
-            startDate: 'asc' as SortOrder['asc'],
+            startDate: Prisma.SortOrder.asc,
           },
           where: {
             endDate: { gte: new Date() },
