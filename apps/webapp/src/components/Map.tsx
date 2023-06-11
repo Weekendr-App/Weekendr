@@ -1,5 +1,8 @@
 import { useEffectOnce, useLocalStorage } from "usehooks-ts";
-import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
+import {
+  VenuesInRangeByCategoryQuery,
+  VenuesInRangeQuery,
+} from "@diplomski/gql/graphql";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
@@ -112,16 +115,17 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
     },
   });
 
-  const [{ data: venuesFilteredByCategory }] = useQuery({
-    query: venuesInRangeByCategoryQuery,
-    pause: !debouncedBounds,
-    variables: {
-      fields: {
-        bounds: JSON.stringify(debouncedBounds),
+  const [{ data: venuesFilteredByCategory }] =
+    useQuery<VenuesInRangeByCategoryQuery>({
+      query: venuesInRangeByCategoryQuery,
+      pause: !debouncedBounds,
+      variables: {
+        fields: {
+          bounds: JSON.stringify(debouncedBounds),
+        },
+        categoryId,
       },
-      categoryId,
-    },
-  });
+    });
 
   const pins = useMemo(() => {
     if (!data) {
@@ -136,7 +140,9 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
             latitude={venue.latitude}
             longitude={venue.longitude}
           >
-            {venue.events[0]?.category.icon ? (
+            {venue.events &&
+            venue.events.length > 0 &&
+            venue.events[0].category.icon ? (
               <Image
                 src={venue.events[0].category.icon}
                 alt="icon"
@@ -178,7 +184,9 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
           latitude={venue.latitude}
           longitude={venue.longitude}
         >
-          {venue.events[0]?.category.icon ? (
+          {venue.events &&
+          venue.events.length > 0 &&
+          venue.events[0].category.icon ? (
             <Image
               src={venue.events[0].category.icon}
               alt="icon"

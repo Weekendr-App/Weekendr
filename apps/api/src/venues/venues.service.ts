@@ -91,7 +91,7 @@ export class VenuesService {
 
     const query = {
       where: {
-        id: { in: id.map((v) => v.id) },
+        id: { in: id.map(({ id }) => id) },
         status: VenueStatus.ACTIVE,
       },
       include: {

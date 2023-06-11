@@ -37,7 +37,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           "shadow",
           "gap-2",
           "cursor-pointer",
-          "items-center"
+          "items-center",
         ],
         {
           "bg-blue-900": isHighlighted(venue.id),
@@ -61,12 +61,14 @@ const VenueListItem: FC<Props> = ({ venue }) => {
       <div className="flex flex-col">
         <span className="font-bold">{name}</span>
         <span>{venue.address}</span>
-        {venue.events?.map((e) => (
-          <span key={e.id}>
-            <strong>Next event we&apos;ll be playing: </strong>
-            {e.category.name}
-          </span>
-        ))}
+        {venue.events && venue.events.length > 0
+          ? venue.events.map((e) => (
+              <span key={e.id}>
+                <strong>Next event we&apos;ll be playing: </strong>
+                {e.category.name}
+              </span>
+            ))
+          : "No events scheduled"}
       </div>
     </div>
   );
