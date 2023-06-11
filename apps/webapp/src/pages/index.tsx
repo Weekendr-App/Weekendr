@@ -1,20 +1,20 @@
 import Head from "next/head";
 import { lazy, Suspense, useState } from "react";
 import { Spinner } from "@diplomski/components/Spinner";
-import { Props as VenueListItemProps } from "@diplomski/components/Venue/VenueListItem";
 import { useMediaQuery } from "usehooks-ts";
 import useCategories from "@diplomski/hooks/useCategories";
+import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
 
 const Map = lazy(() => import("@diplomski/components/Map"));
 const VenueListItem = lazy(
   () => import("@diplomski/components/Venue/VenueListItem")
 );
-const Select = lazy(() => import("@diplomski/components/Form/Select"))
+const Select = lazy(() => import("@diplomski/components/Form/Select"));
 
 export default function Home() {
   const isPhone = useMediaQuery("(max-width: 640px)");
   const [visibleVenues, setVisibleVenues] = useState<
-    VenueListItemProps["venue"][]
+    VenuesInRangeQuery["venuesInRange"]
   >([]);
   const [categoryId, setCategoryId] = useState(0);
   const { categories } = useCategories();

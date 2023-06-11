@@ -1,15 +1,14 @@
-import { Venue, VenueStatus } from "@diplomski/gql/graphql";
+import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
 import { useMapHover } from "@diplomski/hooks/useMapHover";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
 
-export interface Props {
-  venue: Pick<
-    Venue,
-    "id" | "name" | "picture" | "address" | "status" | "events"
-  >;
+interface Props {
+  venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status"> & {
+    events?: Pick<Event, "id" | "category">[] | null;
+  };
 }
 
 const VenueListItem: FC<Props> = ({ venue }) => {

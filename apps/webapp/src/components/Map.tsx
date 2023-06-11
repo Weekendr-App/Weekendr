@@ -38,7 +38,6 @@ const query = gql`
       status
       events {
         id
-        startDate
         category {
           id
           name
@@ -65,7 +64,6 @@ const venuesInRangeByCategoryQuery = gql`
       status
       events {
         id
-        startDate
         category {
           id
           name
