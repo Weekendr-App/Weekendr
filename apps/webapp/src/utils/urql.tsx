@@ -25,7 +25,7 @@ export const UrqlProvider: FC<Props> = ({ children }) => {
       createClient({
         url:
           process.env.NODE_ENV === "production"
-            ? "https://bdad-46-40-15-31.ngrok-free.app/4000"
+            ? "https://9111-46-40-15-31.ngrok-free.app/graphql"
             : "http://localhost:4000/graphql",
         exchanges: [
           dedupExchange,
