@@ -30,7 +30,7 @@ export default function VenuePage() {
   return (
     <>
       <Head>
-        <title>{venue.name}</title>
+        <title>{venue.name} Profile Page</title>
       </Head>
       <Suspense fallback={<Spinner />}>
         <div className="sm:flex text-white">
