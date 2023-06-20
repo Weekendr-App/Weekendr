@@ -60,24 +60,16 @@ export class VenuesResolver {
   @Query(() => [Venue])
   async venuesInRange(
     @Args('fields') data: GetVenuesInRangeInput,
+    @Args('categoryId') categoryId: number,
     @FirebaseUser('user') user: User | null,
   ): Promise<VenueInRange[]> {
-    return this.venuesService.findAllInRange(data, user);
+    return this.venuesService.findAllInRange(data, user, categoryId);
   }
 
   @Query(() => [Venue])
   @UseGuards(FirebaseGuard, RoleGuard('MODERATOR'))
   async draftVenues(): Promise<Venue[]> {
     return this.venuesService.getDraftVenues();
-  }
-
-  @Query(() => [Venue])
-  async venuesInRangeByCategory(
-    @Args('fields') data: GetVenuesInRangeInput,
-    @Args('categoryId') categoryId: number,
-    @FirebaseUser('user') user: User | null,
-  ) {
-    return this.venuesService.findAllInRange(data, user, categoryId);
   }
 
   @Mutation(() => Venue)

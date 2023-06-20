@@ -1,8 +1,5 @@
 import { useEffectOnce, useLocalStorage } from "usehooks-ts";
-import {
-  VenuesInRangeByCategoryQuery,
-  VenuesInRangeQuery,
-} from "@diplomski/gql/graphql";
+import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
@@ -26,34 +23,8 @@ import Image from "next/image";
 const DEFAULT_DEBOUNCE_TIME = 500;
 
 const query = gql`
-  query venuesInRange($fields: GetVenuesInRangeInput!) {
-    venuesInRange(fields: $fields) {
-      id
-      name
-      picture
-      isOwnedByMe
-      address
-      latitude
-      longitude
-      status
-      events {
-        id
-        category {
-          id
-          name
-          icon
-        }
-      }
-    }
-  }
-`;
-
-const venuesInRangeByCategoryQuery = gql`
-  query venuesInRangeByCategory(
-    $fields: GetVenuesInRangeInput!
-    $categoryId: Float!
-  ) {
-    venuesInRangeByCategory(fields: $fields, categoryId: $categoryId) {
+  query venuesInRange($fields: GetVenuesInRangeInput!, $categoryId: Float!) {
+    venuesInRange(fields: $fields, categoryId: $categoryId) {
       id
       name
       picture
@@ -110,69 +81,13 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
       fields: {
         bounds: JSON.stringify(debouncedBounds),
       },
+      categoryId,
     },
   });
-
-  const [{ data: venuesFilteredByCategory }] =
-    useQuery<VenuesInRangeByCategoryQuery>({
-      query: venuesInRangeByCategoryQuery,
-      pause: !debouncedBounds,
-      variables: {
-        fields: {
-          bounds: JSON.stringify(debouncedBounds),
-        },
-        categoryId,
-      },
-    });
 
   const pins = useMemo(() => {
     if (!data) {
       return null;
-    }
-
-    if (venuesFilteredByCategory) {
-      return venuesFilteredByCategory.venuesInRangeByCategory.map((venue) => (
-        <div className="z-10" key={venue.id}>
-          <Marker
-            key={venue.id}
-            latitude={venue.latitude}
-            longitude={venue.longitude}
-          >
-            {venue.events &&
-            venue.events.length > 0 &&
-            venue.events[0].category.icon ? (
-              <Image
-                src={venue.events[0].category.icon}
-                alt="icon"
-                width={48}
-                height={48}
-                className="hover:cursor-pointer"
-                onClick={() => router.push(`/venues/${venue.id}`)}
-                onMouseEnter={() => setHighlightedVenueId(venue.id)}
-                onMouseLeave={() => setHighlightedVenueId(null)}
-              />
-            ) : (
-              <div
-                aria-label={venue.name}
-                className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
-                  "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
-                  "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
-                  "bg-white": !isHighlighted(venue.id),
-                  "hover:bg-red-500": !venue.isOwnedByMe,
-                  "hover:bg-amber-300": venue.isOwnedByMe,
-                })}
-                style={prefixer({
-                  maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
-                  maskMode: "alpha", // Tailwind doesn't support mask-mode
-                })}
-                onClick={() => router.push(`/venues/${venue.id}`)}
-                onMouseEnter={() => setHighlightedVenueId(venue.id)}
-                onMouseLeave={() => setHighlightedVenueId(null)}
-              ></div>
-            )}
-          </Marker>
-        </div>
-      ));
     }
 
     return data.venuesInRange.map((venue) => (
@@ -192,6 +107,8 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
               height={48}
               className="hover:cursor-pointer"
               onClick={() => router.push(`/venues/${venue.id}`)}
+              onMouseEnter={() => setHighlightedVenueId(venue.id)}
+              onMouseLeave={() => setHighlightedVenueId(null)}
             />
           ) : (
             <div
@@ -215,13 +132,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         </Marker>
       </div>
     ));
-  }, [
-    data,
-    router,
-    setHighlightedVenueId,
-    isHighlighted,
-    venuesFilteredByCategory,
-  ]);
+  }, [data, router, setHighlightedVenueId, isHighlighted]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -279,15 +190,6 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
 
     onChangeVisibleVenues(data.venuesInRange);
   }, [data, onChangeVisibleVenues]);
-
-  useEffect(() => {
-    if (!venuesFilteredByCategory) {
-      onChangeVisibleVenues([]);
-      return;
-    }
-
-    onChangeVisibleVenues(venuesFilteredByCategory.venuesInRangeByCategory);
-  }, [categoryId, venuesFilteredByCategory, onChangeVisibleVenues, data]);
 
   useEffect(() => {
     calculateMapBounds();
