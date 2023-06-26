@@ -64,7 +64,14 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           ? venue.events.map((e) => (
               <span key={e.id}>
                 <strong>Next event we&apos;ll be playing: </strong>
-                {e.category.name}
+                {e.category.name}{" "}
+                <Image
+                  src={e.category.icon || ""}
+                  width={32}
+                  height={32}
+                  alt={e.category.name}
+                  style={{ display: "inline" }}
+                />
               </span>
             ))
           : "No events scheduled"}
