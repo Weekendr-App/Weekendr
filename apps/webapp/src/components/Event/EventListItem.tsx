@@ -9,6 +9,7 @@ import useVenue from "@diplomski/hooks/useVenue";
 import Dialog from "../Dialog";
 import { toast } from "react-hot-toast";
 import { renderCategory } from "@diplomski/utils/category";
+import { useDarkMode } from "usehooks-ts";
 
 interface Props {
   event: Event;
@@ -23,6 +24,7 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
   const { cancelEvent, loading } = useCancelEvent();
   const { venue } = useVenue();
   const [isExpanded, setIsExpanded] = useState(false);
+  const { isDarkMode } = useDarkMode();
 
   const description = useMemo(() => {
     // TODO: Trim description if too long
@@ -35,15 +37,21 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
     <div className="my-2">
       <div
         onClick={() => setIsExpanded((prev) => !prev)}
-        className={clsx([
-          "hover:cursor-pointer",
-          "flex",
-          "items-center",
-          "justify-between",
-          "p-4",
-          "bg-gray-700",
-          "select-none",
-        ])}
+        className={clsx(
+          [
+            "hover:cursor-pointer",
+            "flex",
+            "items-center",
+            "justify-between",
+            "p-4",
+            "bg-gray-700",
+            "select-none",
+          ],
+          {
+            "bg-gray-700": isDarkMode,
+            "bg-zinc-400": !isDarkMode,
+          }
+        )}
       >
         <div>{event.name}</div>
         <div>
@@ -51,12 +59,11 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
         </div>
       </div>
       <div
-        className={clsx(
-          ["max-h-0", "overflow-hidden", "bg-gray-50", "flex", "bg-gray-600"],
-          {
-            "max-h-screen p-4": isExpanded,
-          }
-        )}
+        className={clsx(["max-h-0", "overflow-hidden", "flex"], {
+          "max-h-screen p-4": isExpanded,
+          "bg-gray-600": isDarkMode,
+          "bg-zinc-300": !isDarkMode,
+        })}
       >
         <div className="w-full">{description}</div>
         <div className="w-1/3 ml-8 flex flex-col">

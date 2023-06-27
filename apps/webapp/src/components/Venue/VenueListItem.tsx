@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
+import { useDarkMode } from "usehooks-ts";
 
 interface Props {
   venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status"> & {
@@ -15,6 +16,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
 
   const { setHighlightedVenueId, isHighlighted } = useMapHover();
+  const { isDarkMode } = useDarkMode();
 
   const name = useMemo(() => {
     if (venue.status === VenueStatus.Draft) {
@@ -39,7 +41,8 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           "items-center",
         ],
         {
-          "bg-blue-900": isHighlighted(venue.id),
+          "bg-amber-100": isHighlighted(venue.id) && !isDarkMode,
+          "bg-blue-900": isHighlighted(venue.id) && isDarkMode,
           grayscale: venue.status === VenueStatus.Draft,
         }
       )}
@@ -57,7 +60,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
         width={100}
         height={100}
       />
-      <div className="flex flex-col">
+      <div className="flex flex-col dark:text-white">
         <span className="font-bold">{name}</span>
         <span>{venue.address}</span>
         {venue.events && venue.events.length > 0

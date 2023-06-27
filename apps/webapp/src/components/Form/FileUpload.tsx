@@ -69,7 +69,7 @@ const FileUpload: FC<Props> = ({
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="text-white font-bold">
+        <label htmlFor={name} className="font-bold">
           {label}
         </label>
       )}

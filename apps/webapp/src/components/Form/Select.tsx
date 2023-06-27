@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useDarkMode } from "usehooks-ts";
 
 interface SelectOption {
   label: string;
@@ -28,10 +29,11 @@ export default function Select({
   placeholder,
   disabled,
 }: Props) {
+  const {isDarkMode} = useDarkMode();
   return (
     <div className="flex flex-col gap-1">
       {label && (
-        <label htmlFor={name} className="text-white">
+        <label htmlFor={name}>
           {label}
         </label>
       )}
@@ -60,11 +62,13 @@ export default function Select({
             {
               "border-red-500": error,
               "pointer-events-none": disabled,
+              "bg-amber-50": !isDarkMode,
+              "text-black": isDarkMode,
             },
           ])}
         >
           {placeholder && (
-            <option value={defaultValue ?? 0} disabled>
+            <option className="dark:text-black" value={defaultValue ?? 0} disabled>
               {placeholder}
             </option>
           )}
@@ -73,6 +77,7 @@ export default function Select({
               key={`${name}-${index}`}
               value={option.value}
               disabled={disabled}
+              className="dark:text-black"
             >
               {option.label}
             </option>

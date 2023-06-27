@@ -5,16 +5,19 @@ import { UrqlProvider } from "@diplomski/utils/urql";
 import type { AppProps } from "next/app";
 import { lazy } from "react";
 import { Toaster } from "react-hot-toast";
+import { useDarkMode } from "usehooks-ts";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
 
 export default function App({ Component, pageProps }: AppProps) {
+  const { toggle } = useDarkMode();
   return (
     <AuthProvider>
       <UrqlProvider>
         <MapHoverProvider>
           <Header />
           <Component {...pageProps} />
+          <button onClick={toggle}>Toggle</button>
           <Toaster />
         </MapHoverProvider>
       </UrqlProvider>

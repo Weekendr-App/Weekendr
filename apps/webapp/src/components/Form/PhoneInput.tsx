@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Input, { Value, Country } from "react-phone-number-input";
+import { useDarkMode } from "usehooks-ts";
 import { Props } from "./Input";
 
 interface PhoneProps extends Partial<Omit<Props, "onChange" | "type">> {
@@ -19,10 +20,11 @@ export default function PhoneInput({
   onCountryChange,
   disabled,
 }: PhoneProps) {
+  const { isDarkMode } = useDarkMode();
   return (
     <div className="flex flex-col">
       {label && (
-        <label htmlFor={name} className="font-bold text-white">
+        <label htmlFor={name} className="font-bold">
           {label}
         </label>
       )}
@@ -31,6 +33,7 @@ export default function PhoneInput({
           ["border", "border-gray-300", "bg-white", "p-2", "rounded-md"],
           {
             "border-red-500": error,
+            "text-black": isDarkMode,
           }
         )}
         id={name}

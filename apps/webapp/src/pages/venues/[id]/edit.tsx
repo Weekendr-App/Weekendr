@@ -11,6 +11,7 @@ import {
   InferGetServerSidePropsType,
 } from "next";
 import { Country } from "react-phone-number-input";
+import { useDarkMode } from "usehooks-ts";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
@@ -38,6 +39,7 @@ export default function EditVenue({
   const { venue, fetching } = useVenue();
   const { updateVenue } = useEditVenue();
   const router = useRouter();
+  const { isDarkMode } = useDarkMode();
 
   const onSubmit = useCallback(
     async (values: VenueFormValues) => {
@@ -63,22 +65,29 @@ export default function EditVenue({
       <Head>
         <title>Edit Venue</title>
       </Head>
-      <Suspense fallback={<Spinner />}>
-        <VenueForm
-          title="Update Venue"
-          initialValues={{
-            name: venue.name,
-            address: venue.address,
-            latitude: venue.latitude,
-            longitude: venue.longitude,
-            picture: venue.picture,
-            phone: venue.phone,
-            countryCode, // TODO: Can we get this from the phone number?
-          }}
-          buttonText="Update"
-          onSubmit={onSubmit}
-        />
-      </Suspense>
+      <div
+        className={`${isDarkMode && "dark"}`}
+        style={{ height: "calc(100vh - 64px)" }}
+      >
+        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+          <Suspense fallback={<Spinner />}>
+            <VenueForm
+              title="Update Venue"
+              initialValues={{
+                name: venue.name,
+                address: venue.address,
+                latitude: venue.latitude,
+                longitude: venue.longitude,
+                picture: venue.picture,
+                phone: venue.phone,
+                countryCode, // TODO: Can we get this from the phone number?
+              }}
+              buttonText="Update"
+              onSubmit={onSubmit}
+            />
+          </Suspense>
+        </div>
+      </div>
     </>
   );
 }

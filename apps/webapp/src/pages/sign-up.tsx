@@ -8,6 +8,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { Spinner } from "@diplomski/components/Spinner";
 import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
+import { useDarkMode } from "usehooks-ts";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
@@ -52,6 +53,7 @@ export default function SignUpPage() {
     },
     validationSchema,
   });
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     if (result && result.data) {
@@ -74,53 +76,60 @@ export default function SignUpPage() {
       <Head>
         <title>Sign Up</title>
       </Head>
-      <Suspense fallback={<Spinner />}>
-        <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
-          <h1 className="text-2xl font-bold text-white">Sign Up</h1>
-          <Input
-            name="email"
-            type="email"
-            label="Email"
-            value={values.email}
-            onChange={handleChange}
-            error={errors.email}
-            disabled={isSubmitting}
-            placeholder="Email"
-          />
-          <Input
-            label="Password"
-            name="password"
-            value={values.password}
-            onChange={handleChange}
-            error={errors.password}
-            disabled={isSubmitting}
-            placeholder="Password"
-            type="password"
-          />
-          <FileUpload
-            name="taxReturnsPicture"
-            label="Tax Returns picture (Proof of Ownership)"
-            value={values.taxReturnsPicture}
-            onChange={handleChange}
-            onError={setFieldError}
-            disabled={isSubmitting}
-            error={errors.taxReturnsPicture}
-          />
-          <Button
-            loading={isSubmitting}
-            disabled={!isValid || isSubmitting || !dirty}
-            onClick={handleSubmit}
-          >
-            Sign Up
-          </Button>
-          <div className="text-white">
-            Already have an account?{" "}
-            <Link className="font-bold hover:underline" href="/auth">
-              Login
-            </Link>
-          </div>
-        </form>
-      </Suspense>
+      <div
+        className={`${isDarkMode && "dark"}`}
+        style={{ height: "calc(100vh - 64px)" }}
+      >
+        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+          <Suspense fallback={<Spinner />}>
+            <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
+              <h1 className="text-2xl font-bold">Sign Up</h1>
+              <Input
+                name="email"
+                type="email"
+                label="Email"
+                value={values.email}
+                onChange={handleChange}
+                error={errors.email}
+                disabled={isSubmitting}
+                placeholder="Email"
+              />
+              <Input
+                label="Password"
+                name="password"
+                value={values.password}
+                onChange={handleChange}
+                error={errors.password}
+                disabled={isSubmitting}
+                placeholder="Password"
+                type="password"
+              />
+              <FileUpload
+                name="taxReturnsPicture"
+                label="Tax Returns picture (Proof of Ownership)"
+                value={values.taxReturnsPicture}
+                onChange={handleChange}
+                onError={setFieldError}
+                disabled={isSubmitting}
+                error={errors.taxReturnsPicture}
+              />
+              <Button
+                loading={isSubmitting}
+                disabled={!isValid || isSubmitting || !dirty}
+                onClick={handleSubmit}
+              >
+                Sign Up
+              </Button>
+              <div>
+                Already have an account?{" "}
+                <Link className="font-bold hover:underline" href="/auth">
+                  Login
+                </Link>
+              </div>
+            </form>
+          </Suspense>
+        </div>
+      </div>
     </>
   );
 }

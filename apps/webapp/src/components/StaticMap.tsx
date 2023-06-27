@@ -6,7 +6,7 @@ import ReactMapGl, { Marker, ViewState } from "react-map-gl";
 import Pin from "../../public/pin.png";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Venue } from "@diplomski/gql/graphql";
-import { useMediaQuery } from "usehooks-ts";
+import { useDarkMode, useMediaQuery } from "usehooks-ts";
 
 interface Props {
   viewport: ViewState;
@@ -17,6 +17,7 @@ const prefixer = sync([autoprefixer]);
 
 const StaticMap: FC<Props> = ({ viewport, venues }) => {
   const isPhone = useMediaQuery("(max-width: 640px)");
+  const { isDarkMode } = useDarkMode();
   const pins = useMemo(() => {
     return venues.map((location) => (
       <Marker
@@ -25,16 +26,19 @@ const StaticMap: FC<Props> = ({ viewport, venues }) => {
         longitude={location.longitude}
       >
         <div
-          className={clsx(["w-10", "h-10", "bg-white", "mx-auto"])}
+          className={clsx(["w-10", "h-10", "mx-auto"], {
+            "bg-red-500": !isDarkMode,
+            "bg-white": isDarkMode,
+          })}
           style={prefixer({
             maskImage: `url(${Pin.src})`,
             maskMode: "alpha",
           })}
         ></div>
-        <span className="text-white text-xs">{location.name}</span>
+        <span className="dark:text-white text-xs">{location.name}</span>
       </Marker>
     ));
-  }, [venues]);
+  }, [venues, isDarkMode]);
 
   return (
     <ReactMapGl
@@ -46,7 +50,11 @@ const StaticMap: FC<Props> = ({ viewport, venues }) => {
       mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
       minZoom={10}
       maxZoom={15}
-      mapStyle="mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+      mapStyle={
+        isDarkMode
+          ? "mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+          : "mapbox://styles/mapbox/navigation-day-v1"
+      }
     >
       {pins}
     </ReactMapGl>

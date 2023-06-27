@@ -156,7 +156,7 @@ export default function VenueForm({
 
   return (
     <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
-      <h1 className="text-2xl font-bold text-white">{title}</h1>
+      <h1 className="text-2xl font-bold">{title}</h1>
       <Input
         name="name"
         label="Name"

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { lazy, Suspense, useState } from "react";
 import { Spinner } from "@diplomski/components/Spinner";
-import { useMediaQuery } from "usehooks-ts";
+import { useDarkMode, useMediaQuery } from "usehooks-ts";
 import useCategories from "@diplomski/hooks/useCategories";
 import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
 
@@ -12,6 +12,7 @@ const VenueListItem = lazy(
 const Select = lazy(() => import("@diplomski/components/Form/Select"));
 
 export default function Home() {
+  const { isDarkMode, toggle } = useDarkMode(true);
   const isPhone = useMediaQuery("(max-width: 640px)");
   const [visibleVenues, setVisibleVenues] = useState<
     VenuesInRangeQuery["venuesInRange"]
@@ -25,9 +26,9 @@ export default function Home() {
         <title>Weekendr</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <div className="sm:flex">
+        <div className={`sm:flex ${isDarkMode && 'dark'}`}>
           <div
-            className="sm:w-1/2 w-full p-2 overflow-y-auto"
+            className="sm:w-1/2 w-full p-2 overflow-y-auto dark:bg-gray-900 bg-gray-200"
             style={{ height: isPhone ? "calc((100vh / 2) - 32px)" : "auto" }}
           >
             <Select
@@ -36,8 +37,8 @@ export default function Home() {
               onChange={(categoryId) => setCategoryId(categoryId)}
               placeholder="Filter by category"
             />
-            <div className="text-white">
-              <h2 className="text-2xl font-bold mb-2">
+            <div>
+              <h2 className="dark:text-white text-2xl font-bold mb-2">
                 Venues currently visible on map
               </h2>
               <div className="flex flex-col gap-2">

@@ -1,4 +1,4 @@
-import { useEffectOnce, useLocalStorage } from "usehooks-ts";
+import { useDarkMode, useEffectOnce, useLocalStorage } from "usehooks-ts";
 import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
@@ -69,6 +69,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
       right: 0,
     },
   });
+  const { isDarkMode } = useDarkMode();
   const mapRef = useRef<MapRef | null>(null);
   const [mapBounds, setMapBounds] = useState<LngLatBounds | null>(null);
 
@@ -114,9 +115,11 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
             <div
               aria-label={venue.name}
               className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
-                "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
+                "bg-red-500":
+                  isHighlighted(venue.id) && !venue.isOwnedByMe && !isDarkMode,
                 "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
-                "bg-white": !isHighlighted(venue.id),
+                "bg-white": !isHighlighted(venue.id) && isDarkMode,
+                "bg-red-400": !isHighlighted(venue.id) && !isDarkMode,
                 "hover:bg-red-500": !venue.isOwnedByMe,
                 "hover:bg-amber-300": venue.isOwnedByMe,
               })}
@@ -132,7 +135,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         </Marker>
       </div>
     ));
-  }, [data, router, setHighlightedVenueId, isHighlighted]);
+  }, [data, router, setHighlightedVenueId, isHighlighted, isDarkMode]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -209,7 +212,11 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         onLoad={calculateMapBounds}
         minZoom={10}
         maxZoom={15}
-        mapStyle="mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+        mapStyle={
+          isDarkMode
+            ? "mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
+            : "mapbox://styles/mapbox/navigation-day-v1"
+        }
         ref={mapRef}
       >
         {pins}

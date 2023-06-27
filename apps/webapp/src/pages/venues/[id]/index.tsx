@@ -5,6 +5,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { lazy, Suspense } from "react";
+import { useDarkMode } from "usehooks-ts";
 
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 const VenueNavigation = lazy(
@@ -18,6 +19,7 @@ const EventListItem = lazy(
 export default function VenuePage() {
   const { venue, fetching, error } = useVenue();
   const router = useRouter();
+  const { isDarkMode } = useDarkMode();
 
   if (error && !fetching) {
     router.push("/404");
@@ -33,8 +35,8 @@ export default function VenuePage() {
         <title>{venue.name} Profile Page</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <div className="sm:flex text-white">
-          <div className="p-3 w-full sm:w-1/2">
+        <div className={`sm:flex ${isDarkMode && 'dark'}`}>
+          <div className="p-3 w-full sm:w-1/2 dark:bg-gray-900 bg-gray-200 dark:text-white">
             <VenueNavigation venue={venue} />
             {venue.status !== VenueStatus.Active && (
               <p className="text-xl border-2 border-red-500 rounded-2xl p-3 my-2 text-center">
@@ -64,7 +66,7 @@ export default function VenuePage() {
               width={500}
               height={500}
             />
-            <div className="flex flex-col text-white my-3 overflow-y-auto">
+            <div className="flex flex-col my-3 overflow-y-auto">
               {venue.events?.map((event) => (
                 <EventListItem
                   key={event.id}

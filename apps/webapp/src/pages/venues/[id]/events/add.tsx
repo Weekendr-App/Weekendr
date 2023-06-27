@@ -6,12 +6,14 @@ import useVenue from "@diplomski/hooks/useVenue";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
+import { useDarkMode } from "usehooks-ts";
 
 export default function AddEventPage() {
   const { addEvent, result } = useAddEvent();
   const { venue } = useVenue();
   const router = useRouter();
   const { id } = router.query;
+  const { isDarkMode } = useDarkMode();
 
   if (venue?.isOwnedByMe === false) {
     router.push("/");
@@ -36,7 +38,18 @@ export default function AddEventPage() {
       <Head>
         <title>Add an event</title>
       </Head>
-      <EventForm title="Add an event" buttonText="Add" onSubmit={onSubmit} />
+      <div
+        className={`${isDarkMode && "dark"}`}
+        style={{ height: "calc(100vh - 64px)" }}
+      >
+        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+          <EventForm
+            title="Add an event"
+            buttonText="Add"
+            onSubmit={onSubmit}
+          />
+        </div>
+      </div>
     </>
   );
 }
