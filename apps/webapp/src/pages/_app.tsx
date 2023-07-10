@@ -3,21 +3,26 @@ import { MapHoverProvider } from "@diplomski/hooks/useMapHover";
 import "@diplomski/styles/globals.css";
 import { UrqlProvider } from "@diplomski/utils/urql";
 import type { AppProps } from "next/app";
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { useDarkMode } from "usehooks-ts";
 
 const Header = lazy(() => import("@diplomski/components/Header"));
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { toggle } = useDarkMode();
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => console.log("scope is: ", registration.scope));
+    }
+  }, []);
+
   return (
     <AuthProvider>
       <UrqlProvider>
         <MapHoverProvider>
           <Header />
           <Component {...pageProps} />
-          <button onClick={toggle}>Toggle</button>
           <Toaster />
         </MapHoverProvider>
       </UrqlProvider>
