@@ -23,7 +23,7 @@ export const UrqlProvider: FC<Props> = ({ children }) => {
   const client = useMemo(
     () =>
       createClient({
-        url: "https://8e14-46-40-15-31.ngrok-free.app/graphql",
+        url: "http://localhost:4000/graphql",
         exchanges: [
           dedupExchange,
           cacheExchange,
