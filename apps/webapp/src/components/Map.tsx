@@ -50,12 +50,10 @@ const query = gql`
 const prefixer = sync([autoprefixer]);
 
 interface Props {
-  onChangeVisibleVenues: (venues: VenuesInRangeQuery["venuesInRange"]) => void;
   setCardId: (id: string) => void;
 }
 
 export default function Map({
-  onChangeVisibleVenues,
   setCardId,
 }: Props) {
   const { categories } = useCategories();
@@ -189,19 +187,6 @@ export default function Map({
       );
     }
   });
-
-  useEffect(() => {
-    if (!data) {
-      onChangeVisibleVenues([]);
-      return;
-    }
-
-    onChangeVisibleVenues(data.venuesInRange);
-  }, [data, onChangeVisibleVenues]);
-
-  useEffect(() => {
-    calculateMapBounds();
-  }, [calculateMapBounds, viewport]);
 
   return (
     <div className="text-black relative">
