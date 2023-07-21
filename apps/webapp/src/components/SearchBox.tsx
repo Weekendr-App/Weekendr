@@ -88,7 +88,7 @@ function ReadySearchBox({
   );
 
   return (
-    <Combobox onSelect={handleSelect}>
+    <Combobox className="w-full sm:w-auto" onSelect={handleSelect}>
       {label && (
         <label htmlFor={name} className="font-bold">
           {label}

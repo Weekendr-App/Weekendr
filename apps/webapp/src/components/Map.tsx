@@ -1,6 +1,6 @@
 import { useDarkMode, useEffectOnce, useLocalStorage } from "usehooks-ts";
 import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
   Marker,
@@ -10,15 +10,17 @@ import ReactMapGl, {
 } from "react-map-gl";
 import { gql, useQuery } from "urql";
 import SearchBox from "./SearchBox";
-import { useDebounce, useMediaQuery } from "usehooks-ts";
+import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../public/pin.png";
 import clsx from "clsx";
-import { useRouter } from "next/router";
 import { useMapHover } from "@diplomski/hooks/useMapHover";
 import { sync } from "postcss-js";
 import autoprefixer from "autoprefixer";
 import Image from "next/image";
+import useCategories from "@diplomski/hooks/useCategories";
+
+const Select = lazy(() => import("@diplomski/components/Form/Select"));
 
 const DEFAULT_DEBOUNCE_TIME = 500;
 
@@ -49,12 +51,15 @@ const prefixer = sync([autoprefixer]);
 
 interface Props {
   onChangeVisibleVenues: (venues: VenuesInRangeQuery["venuesInRange"]) => void;
-  categoryId: number;
+  setCardId: (id: string) => void;
 }
 
-export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
-  const isPhone = useMediaQuery("(max-width: 640px)");
-  const router = useRouter();
+export default function Map({
+  onChangeVisibleVenues,
+  setCardId,
+}: Props) {
+  const { categories } = useCategories();
+  const [categoryId, setCategoryId] = useState(0);
   const { setHighlightedVenueId, isHighlighted } = useMapHover();
   const [viewport, setViewport] = useLocalStorage<ViewState>("viewport", {
     latitude: 46.09167269144208,
@@ -104,10 +109,10 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
             <Image
               src={venue.events[0].category.icon}
               alt="icon"
-              width={48}
-              height={48}
+              width={36}
+              height={36}
               className="hover:cursor-pointer"
-              onClick={() => router.push(`/venues/${venue.id}`)}
+              onClick={() => setCardId(venue.id)}
               onMouseEnter={() => setHighlightedVenueId(venue.id)}
               onMouseLeave={() => setHighlightedVenueId(null)}
             />
@@ -127,7 +132,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
                 maskImage: `url(${Pin.src})`, // Tailwind doesn't support mask-image
                 maskMode: "alpha", // Tailwind doesn't support mask-mode
               })}
-              onClick={() => router.push(`/venues/${venue.id}`)}
+              onClick={() => setCardId(venue.id)}
               onMouseEnter={() => setHighlightedVenueId(venue.id)}
               onMouseLeave={() => setHighlightedVenueId(null)}
             ></div>
@@ -135,7 +140,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         </Marker>
       </div>
     ));
-  }, [data, router, setHighlightedVenueId, isHighlighted, isDarkMode]);
+  }, [data, setHighlightedVenueId, isHighlighted, isDarkMode, setCardId]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -204,7 +209,7 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         {...viewport}
         style={{
           width: "100%",
-          height: isPhone ? "calc(100vh / 2 - 32px)" : "calc(100vh - 64px)",
+          height: "calc(100vh - 64px)",
           cursor: "grab",
         }}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
@@ -220,7 +225,13 @@ export default function Map({ onChangeVisibleVenues, categoryId }: Props) {
         ref={mapRef}
       >
         {pins}
-        <div className="absolute top-0 w-full z-20 p-4">
+        <div className="flex justify-between absolute top-0 w-full z-20 p-4">
+          <Select
+            value={categoryId}
+            options={categories.map((c) => ({ value: c.id, label: c.name }))}
+            onChange={(categoryId) => setCategoryId(categoryId)}
+            placeholder="Filter by category"
+          />
           <SearchBox
             name="search"
             placeholder={"Search for an address"}

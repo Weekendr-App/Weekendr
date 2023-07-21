@@ -33,9 +33,9 @@ const query = gql`
   }
 `;
 
-export default function useVenue() {
+export default function useVenue(idNumber?: string) {
   const router = useRouter();
-  const { id } = router.query;
+  const id = router.query.id || idNumber;
   const [{ data, fetching, error }] = useQuery<
     { venue: Venue },
     { id: number }

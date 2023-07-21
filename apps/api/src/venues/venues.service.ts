@@ -18,11 +18,48 @@ export class VenuesService {
     });
   }
 
-  async findById(id: number, user?: User): Promise<Venue> {
-    const venue = await this.prisma.venue.findFirst({
+  async findById(id: number, user?: User, categoryId?: number): Promise<Venue> {
+    const query = {
       where: { id, deletedAt: null },
-      include: { owner: true },
-    });
+      include: {
+        owner: true,
+        events: {
+          include: {
+            category: true,
+            venue: {
+              include: {
+                owner: true,
+              },
+            },
+          },
+          orderBy: {
+            startDate: Prisma.SortOrder.asc,
+          },
+          where: {
+            endDate: { gte: new Date() },
+            status: EventStatus.PUBLISHED,
+          },
+          take: 1,
+        },
+      },
+    };
+
+    if (categoryId) {
+      query.where['events'] = {
+        some: {
+          AND: [
+            {
+              category: { id: categoryId },
+            },
+            {
+              endDate: { gte: new Date() },
+            },
+          ],
+        },
+      };
+    }
+
+    const venue = await this.prisma.venue.findFirst(query);
 
     if (!venue) {
       return null;
@@ -128,6 +165,7 @@ export class VenuesService {
     }
 
     const venues = await this.prisma.venue.findMany(query);
+
     return venues.map((venue) => ({
       ...venue,
       isOwnedByMe: user?.id === venue.owner.id,

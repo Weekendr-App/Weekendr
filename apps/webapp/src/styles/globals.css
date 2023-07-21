@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.card {
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.212);
+  transition: all 0.4s;
+}
+
+.card::before {
+  content: attr(data-content);
+  letter-spacing: 0.2em;
+  position: absolute;
+  bottom: 8px;
+  left: 20px;
+  color: rgb(51, 51, 51);
+  font-size: 0.8em;
+  font-weight: 700;
+}
+
+.card div {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.212);
+  transition: all 0.4s;
+}
+
+body {
+  background-color: rgba(17, 24, 39);
+}

@@ -1,10 +1,9 @@
 import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
-import { useMapHover } from "@diplomski/hooks/useMapHover";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
-import { useDarkMode } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
   venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status"> & {
@@ -14,9 +13,8 @@ interface Props {
 
 const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
-
-  const { setHighlightedVenueId, isHighlighted } = useMapHover();
-  const { isDarkMode } = useDarkMode();
+  const isPhone = useMediaQuery("(pointer: coarse)");
+  const isSmallScreen = useMediaQuery("(max-width: 640px)")
 
   const name = useMemo(() => {
     if (venue.status === VenueStatus.Draft) {
@@ -28,56 +26,53 @@ const VenueListItem: FC<Props> = ({ venue }) => {
 
   return (
     <div
-      key={venue.id}
+      data-content={name}
+      onClick={() =>
+        venue.status === VenueStatus.Active &&
+        router.push(`/venues/${venue.id}`)
+      }
       className={clsx(
         [
+          "card",
+          "bg-white",
           "flex",
-          "border",
-          "p-2",
-          "rounded",
-          "shadow",
-          "gap-2",
-          "cursor-pointer",
-          "items-center",
+          "rounded-3xl",
+          "justify-center",
+          "relative",
         ],
         {
-          "bg-amber-100": isHighlighted(venue.id) && !isDarkMode,
-          "bg-blue-900": isHighlighted(venue.id) && isDarkMode,
           grayscale: venue.status === VenueStatus.Draft,
+          "w-40": isSmallScreen,
+          "h-56": isSmallScreen,
+          "w-48": !isSmallScreen,
+          "h-64": !isSmallScreen,
         }
       )}
-      onClick={() => {
-        venue.status === VenueStatus.Active &&
-          router.push(`/venues/${venue.id}`);
-      }}
-      onMouseEnter={() => setHighlightedVenueId(venue.id)}
-      onMouseLeave={() => setHighlightedVenueId(null)}
     >
-      <Image
-        className="rounded aspect-video"
-        alt={venue.name}
-        src={venue.picture}
-        width={100}
-        height={100}
-      />
-      <div className="flex flex-col dark:text-white">
-        <span className="font-bold">{name}</span>
-        <span>{venue.address}</span>
-        {venue.events && venue.events.length > 0
-          ? venue.events.map((e) => (
-              <span key={e.id}>
-                <strong>Next event we&apos;ll be playing: </strong>
-                {e.category.name}{" "}
-                <Image
-                  src={e.category.icon || ""}
-                  width={32}
-                  height={32}
-                  alt={e.category.name}
-                  style={{ display: "inline" }}
-                />
-              </span>
-            ))
-          : "No events scheduled"}
+      <div
+        className={clsx(
+          [
+            "flex",
+            "justify-center",
+            "items-center",
+            "rounded-3xl",
+            "cursor-pointer",
+            "z-10",
+            "transform",
+            "hover:-translate-y-8",
+          ],
+          { "-translate-y-8": isPhone, "rounded-b-none": isPhone }
+        )}
+        style={{
+          backgroundImage: `url(${venue.picture})`,
+        }}
+      >
+        <Image
+          src={venue.picture}
+          alt={name}
+          width={isSmallScreen ? 160 : 192}
+          height={isSmallScreen ? 224 : 256}
+        />
       </div>
     </div>
   );
