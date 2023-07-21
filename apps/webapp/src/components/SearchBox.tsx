@@ -14,7 +14,6 @@ import {
 import "@reach/combobox/styles.css";
 import { Props } from "./Form/Input";
 import clsx from "clsx";
-import { useDarkMode } from "usehooks-ts";
 
 interface SearchBoxProps extends Partial<Omit<Props, "type" | "onChange">> {
   onSelectAddress: (
@@ -46,7 +45,6 @@ function ReadySearchBox({
   placeholder,
   onSelectAddress,
 }: SearchBoxProps) {
-  const { isDarkMode } = useDarkMode();
   const {
     value,
     ready,
@@ -101,10 +99,16 @@ function ReadySearchBox({
         disabled={!ready}
         placeholder={placeholder}
         className={clsx(
-          ["w-full", "p-2", "border", "rounded", "border-gray-300"],
+          [
+            "w-full",
+            "p-2",
+            "border",
+            "rounded",
+            "border-gray-300",
+            "text-black",
+          ],
           {
             "border-red-500": error,
-            "text-black": isDarkMode,
           }
         )}
         autoComplete="off"

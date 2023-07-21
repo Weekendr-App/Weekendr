@@ -13,7 +13,6 @@ import { gql, useQuery } from "urql";
 import { toast } from "react-hot-toast";
 import Dialog from "@diplomski/components/Dialog";
 import usePublishVenue from "@diplomski/hooks/usePublishVenue";
-import { useDarkMode } from "usehooks-ts";
 
 const query = gql`
   query ProfileMe {
@@ -52,6 +51,7 @@ const VenueListItem = lazy(
 );
 
 export default function Profile() {
+  /* TODO: Fix layout on mobile */
   const { user } = useAuth();
   const [{ data }] = useQuery<ProfileMeQuery>({ query, pause: !user });
   const [{ data: draftVenueData }] = useQuery<DraftVenuesQuery>({
@@ -59,7 +59,6 @@ export default function Profile() {
     pause: !user || data?.me.role !== Role.Moderator,
   });
   const { publishVenue, loading } = usePublishVenue();
-  const { isDarkMode } = useDarkMode();
 
   const profileSection = useMemo(() => {
     if (!user || !data?.me) {
@@ -92,9 +91,7 @@ export default function Profile() {
       const { draftVenues } = draftVenueData;
       return (
         <>
-          <h2 className="text-2xl font-bold my-2 dark:text-white">
-            Draft venues
-          </h2>
+          <h2 className="text-2xl font-bold my-2 text-white">Draft venues</h2>
           {draftVenues.length > 0 ? (
             draftVenues.map((venue) => (
               <div className="mb-10" key={venue.id}>
@@ -151,13 +148,8 @@ export default function Profile() {
       <Head>
         <title>Profile</title>
       </Head>
-      <div
-        className={`${isDarkMode && "dark"}`}
-        style={{ height: "calc(100vh - 64px)" }}
-      >
-        <div
-          className={`flex flex-col p-3 dark:text-white dark:bg-gray-900 bg-gray-200 h-full`}
-        >
+      <div style={{ height: "calc(100vh - 64px)" }}>
+        <div className={`flex flex-col p-3 text-white bg-gray-900 h-full`}>
           <h1 className="text-4xl font-bold ">Profile</h1>
           <hr className="my-3" />
           <div className="flex flex-col">

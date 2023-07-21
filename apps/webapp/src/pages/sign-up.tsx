@@ -8,7 +8,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { Spinner } from "@diplomski/components/Spinner";
 import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
-import { useDarkMode } from "usehooks-ts";
 
 const Input = lazy(() => import("@diplomski/components/Form/Input"));
 const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
@@ -53,7 +52,6 @@ export default function SignUpPage() {
     },
     validationSchema,
   });
-  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     if (result && result.data) {
@@ -77,10 +75,9 @@ export default function SignUpPage() {
         <title>Sign Up</title>
       </Head>
       <div
-        className={`${isDarkMode && "dark"}`}
         style={{ height: "calc(100vh - 64px)" }}
       >
-        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+        <div className="h-full bg-gray-900 pt-10">
           <Suspense fallback={<Spinner />}>
             <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
               <h1 className="text-2xl font-bold">Sign Up</h1>

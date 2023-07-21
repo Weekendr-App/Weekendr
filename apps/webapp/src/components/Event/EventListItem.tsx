@@ -9,7 +9,7 @@ import useVenue from "@diplomski/hooks/useVenue";
 import Dialog from "../Dialog";
 import { toast } from "react-hot-toast";
 import { renderCategory } from "@diplomski/utils/category";
-import { useDarkMode } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
   event: Event;
@@ -21,10 +21,11 @@ const getDate = (date: number) => {
 };
 
 const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
+  const isPhone = useMediaQuery("(pointer: coarse)");
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
   const { cancelEvent, loading } = useCancelEvent();
   const { venue } = useVenue();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { isDarkMode } = useDarkMode();
 
   const description = useMemo(() => {
     // TODO: Trim description if too long
@@ -34,24 +35,22 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
   }, [event.description]);
 
   return (
-    <div className="my-2">
+    <div
+      onMouseEnter={() => setIsExpanded((prev) => !prev)}
+      onMouseLeave={() => setIsExpanded(false)}
+      className="my-2"
+    >
       <div
-        onClick={() => setIsExpanded((prev) => !prev)}
-        className={clsx(
-          [
-            "hover:cursor-pointer",
-            "flex",
-            "items-center",
-            "justify-between",
-            "p-4",
-            "bg-gray-700",
-            "select-none",
-          ],
-          {
-            "bg-gray-700": isDarkMode,
-            "bg-zinc-400": !isDarkMode,
-          }
-        )}
+        className={clsx([
+          "hover:cursor-pointer",
+          "flex",
+          "items-center",
+          "justify-between",
+          "p-4",
+          "bg-gray-700",
+          "select-none",
+          "bg-gray-700",
+        ])}
       >
         <div>{event.name}</div>
         <div>
@@ -59,14 +58,14 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
         </div>
       </div>
       <div
-        className={clsx(["max-h-0", "overflow-hidden", "flex"], {
-          "max-h-screen p-4": isExpanded,
-          "bg-gray-600": isDarkMode,
-          "bg-zinc-300": !isDarkMode,
+        className={clsx(["max-h-0", "overflow-hidden", "bg-gray-600"], {
+          "max-h-screen p-4": isExpanded || isPhone,
+          flex: !isSmallScreen,
+          "px-0": isSmallScreen,
         })}
       >
-        <div className="w-full">{description}</div>
-        <div className="w-1/3 ml-8 flex flex-col">
+        <div className="w-1/2">{description}</div>
+        <div className="w-1/2 ml-8 flex flex-col">
           <Image
             className="rounded"
             width={128}

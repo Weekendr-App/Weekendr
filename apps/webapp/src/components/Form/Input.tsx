@@ -1,6 +1,5 @@
 import { ChangeEvent, FC, useMemo } from "react";
 import { clsx } from "clsx";
-import { useDarkMode } from "usehooks-ts";
 
 export interface Props {
   name: string;
@@ -27,15 +26,16 @@ const Input: FC<Props> = ({
   multiline = false,
   hidden = false,
 }) => {
-  const { isDarkMode } = useDarkMode();
   const props = useMemo(
     () => ({
-      className: clsx(["border", "border-gray-300", "p-2", "rounded-md"], {
-        "border-red-500": error,
-        "opacity-50": disabled,
-        "cursor-not-allowed": disabled,
-        "text-black": isDarkMode,
-      }),
+      className: clsx(
+        ["border", "border-gray-300", "p-2", "rounded-md", "text-black"],
+        {
+          "border-red-500": error,
+          "opacity-50": disabled,
+          "cursor-not-allowed": disabled,
+        }
+      ),
       readOnly: disabled,
       name,
       value,
@@ -46,17 +46,7 @@ const Input: FC<Props> = ({
       autoComplete: "off",
       hidden,
     }),
-    [
-      error,
-      name,
-      onChange,
-      placeholder,
-      type,
-      value,
-      hidden,
-      disabled,
-      isDarkMode,
-    ]
+    [error, name, onChange, placeholder, type, value, hidden, disabled]
   );
 
   return (

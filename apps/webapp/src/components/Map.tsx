@@ -1,6 +1,6 @@
-import { useDarkMode, useEffectOnce, useLocalStorage } from "usehooks-ts";
+import { useEffectOnce, useLocalStorage } from "usehooks-ts";
 import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
-import { lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, useCallback, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
   Marker,
@@ -53,9 +53,7 @@ interface Props {
   setCardId: (id: string) => void;
 }
 
-export default function Map({
-  setCardId,
-}: Props) {
+export default function Map({ setCardId }: Props) {
   const { categories } = useCategories();
   const [categoryId, setCategoryId] = useState(0);
   const { setHighlightedVenueId, isHighlighted } = useMapHover();
@@ -72,7 +70,6 @@ export default function Map({
       right: 0,
     },
   });
-  const { isDarkMode } = useDarkMode();
   const mapRef = useRef<MapRef | null>(null);
   const [mapBounds, setMapBounds] = useState<LngLatBounds | null>(null);
 
@@ -118,11 +115,9 @@ export default function Map({
             <div
               aria-label={venue.name}
               className={clsx(["w-10", "h-10", "hover:cursor-pointer"], {
-                "bg-red-500":
-                  isHighlighted(venue.id) && !venue.isOwnedByMe && !isDarkMode,
+                "bg-red-500": isHighlighted(venue.id) && !venue.isOwnedByMe,
                 "bg-amber-300": isHighlighted(venue.id) && venue.isOwnedByMe,
-                "bg-white": !isHighlighted(venue.id) && isDarkMode,
-                "bg-red-400": !isHighlighted(venue.id) && !isDarkMode,
+                "bg-white": !isHighlighted(venue.id),
                 "hover:bg-red-500": !venue.isOwnedByMe,
                 "hover:bg-amber-300": venue.isOwnedByMe,
               })}
@@ -138,7 +133,7 @@ export default function Map({
         </Marker>
       </div>
     ));
-  }, [data, setHighlightedVenueId, isHighlighted, isDarkMode, setCardId]);
+  }, [data, setHighlightedVenueId, isHighlighted, setCardId]);
 
   const calculateMapBounds = useCallback(() => {
     if (mapRef.current) {
@@ -202,11 +197,7 @@ export default function Map({
         onLoad={calculateMapBounds}
         minZoom={10}
         maxZoom={15}
-        mapStyle={
-          isDarkMode
-            ? "mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
-            : "mapbox://styles/mapbox/navigation-day-v1"
-        }
+        mapStyle="mapbox://styles/leighhalliday/ckhjaksxg0x2v19s1ovps41ef"
         ref={mapRef}
       >
         {pins}

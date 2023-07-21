@@ -10,7 +10,6 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { lazy, Suspense, useCallback } from "react";
 import { Country } from "react-phone-number-input";
-import { useDarkMode } from "usehooks-ts";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
@@ -39,7 +38,6 @@ export default function AddVenuePage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { addVenue, result } = useAddVenue();
   const router = useRouter();
-  const { isDarkMode } = useDarkMode();
 
   const onSubmit = useCallback(
     async (values: VenueFormValues) => {
@@ -57,11 +55,8 @@ export default function AddVenuePage({
       <Head>
         <title>Add Venue</title>
       </Head>
-      <div
-        className={`${isDarkMode && "dark"}`}
-        style={{ height: "calc(100vh - 64px)" }}
-      >
-        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+      <div style={{ height: "calc(100vh - 64px)" }}>
+        <div className="h-full bg-gray-900 pt-10">
           <Suspense fallback={<Spinner />}>
             <VenueForm
               initialValues={{

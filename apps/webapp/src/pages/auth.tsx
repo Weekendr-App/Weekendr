@@ -6,7 +6,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { lazy, Suspense, useEffect } from "react";
-import { useDarkMode } from "usehooks-ts";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
@@ -44,7 +43,6 @@ export default function Auth() {
       await login(values.email, values.password);
     },
   });
-  const { isDarkMode } = useDarkMode();
 
   if (user) {
     router.push("/");
@@ -69,10 +67,9 @@ export default function Auth() {
         <title>Login</title>
       </Head>
       <div
-        className={`${isDarkMode && "dark"}`}
         style={{ height: "calc(100vh - 64px)" }}
       >
-        <div className="h-full dark:bg-gray-900 bg-gray-200 pt-10">
+        <div className="h-full bg-gray-900 pt-10">
           <Suspense fallback={<Spinner />}>
             <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
               <h1 className="text-2xl font-bold">Login</h1>

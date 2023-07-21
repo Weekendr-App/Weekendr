@@ -1,11 +1,12 @@
 import { Spinner } from "@diplomski/components/Spinner";
 import { VenueStatus } from "@diplomski/gql/graphql";
 import useVenue from "@diplomski/hooks/useVenue";
+import clsx from "clsx";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { lazy, Suspense } from "react";
-import { useDarkMode } from "usehooks-ts";
+import { useMediaQuery } from "usehooks-ts";
 
 const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
 const VenueNavigation = lazy(
@@ -19,7 +20,7 @@ const EventListItem = lazy(
 export default function VenuePage() {
   const { venue, fetching, error } = useVenue();
   const router = useRouter();
-  const { isDarkMode } = useDarkMode();
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
 
   if (error && !fetching) {
     router.push("/404");
@@ -35,8 +36,9 @@ export default function VenuePage() {
         <title>{venue.name} Profile Page</title>
       </Head>
       <Suspense fallback={<Spinner />}>
-        <div className={`sm:flex ${isDarkMode && 'dark'}`}>
-          <div className="p-3 w-full sm:w-1/2 dark:bg-gray-900 bg-gray-200 dark:text-white">
+        {/* TODO fix layout on mobile devices */}
+        <div className="sm:flex">
+          <div className="p-3 w-full sm:w-1/2 bg-gray-900 text-white">
             <VenueNavigation venue={venue} />
             {venue.status !== VenueStatus.Active && (
               <p className="text-xl border-2 border-red-500 rounded-2xl p-3 my-2 text-center">
@@ -60,7 +62,7 @@ export default function VenuePage() {
               </a>
             </p>
             <Image
-              className="rounded-2xl"
+              className={clsx(["rounded-2xl"], { "w-full": isSmallScreen })}
               src={venue.picture}
               alt={venue.name}
               width={500}
