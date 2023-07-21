@@ -1,6 +1,6 @@
 import { useEffectOnce, useLocalStorage } from "usehooks-ts";
 import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
-import { lazy, useCallback, useMemo, useRef, useState } from "react";
+import { lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMapGl, {
   ViewState,
   Marker,
@@ -182,6 +182,10 @@ export default function Map({ setCardId }: Props) {
       );
     }
   });
+
+  useEffect(() => {
+    calculateMapBounds();
+  }, [calculateMapBounds, viewport]);
 
   return (
     <div className="text-black relative">
