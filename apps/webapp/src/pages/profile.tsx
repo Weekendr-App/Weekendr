@@ -70,8 +70,8 @@ export default function Profile() {
     if (role === Role.Owner) {
       return (
         <>
-          <h2 className="text-2xl font-bold my-2">My venues</h2>
-          <div className="flex flex-col">
+          <h2 className="text-2xl font-bold">My venues</h2>
+          <div className="grid justify-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {data.me.venues.length > 0 ? (
               data.me.venues.map((venue) => (
                 <VenueListItem key={venue.id} venue={venue} />

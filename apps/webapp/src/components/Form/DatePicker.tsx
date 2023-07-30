@@ -21,7 +21,7 @@ const DatePicker: FC<Props> = ({
   disabled,
 }) => {
   return (
-    <div className="dark:text-black flex flex-col sm:w-full lg:w-60">
+    <div className="text-black flex flex-col sm:w-full lg:w-60">
       {label && (
         <label htmlFor={name} className="font-bold text-white">
           {label}

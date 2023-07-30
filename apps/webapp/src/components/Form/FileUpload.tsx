@@ -1,3 +1,4 @@
+import cropImage from "@diplomski/utils/cropImage";
 import {
   getStorage,
   ref,
@@ -6,6 +7,8 @@ import {
 } from "@firebase/storage";
 import Image from "next/image";
 import { FC, useCallback, useRef, useState } from "react";
+import Cropper, { Area } from "react-easy-crop";
+import ReactModal from "react-modal";
 import { Spinner } from "../Spinner";
 import Button from "./Button";
 
@@ -28,84 +31,164 @@ const FileUpload: FC<Props> = ({
   error,
   onError,
 }) => {
+  const [open, setOpen] = useState(false);
+  const [file, setFile] = useState<File | undefined>();
+  const onCloseModal = () => setOpen(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedImage, setCroppedImage] = useState<Area | undefined>();
+  const [croppedImageUrl, setCroppedImageUrl] = useState<
+    string | ArrayBuffer | null
+  >(null);
   const [isUploading, setIsUploading] = useState(false);
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedImage(croppedAreaPixels);
+    },
+    []
+  );
+
+  const cropPhoto = useCallback(async () => {
+    cropImage(croppedImageUrl, croppedImage as Area)
+      .then(async (file) => {
+        if (typeof file !== "string") {
+          setIsUploading(true);
+          const storage = getStorage();
+          if (!file) {
+            setIsUploading(false);
+            return;
+          }
+
+          try {
+            const storageRef = ref(storage, `images/${file.size}`);
+            const uploaded = await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(uploaded.ref);
+
+            onChange({
+              target: {
+                name,
+                value: url,
+              },
+            } as React.ChangeEvent<HTMLInputElement>);
+
+            setOpen(false);
+          } catch (error: unknown) {
+            const message =
+              (error as Error).message ?? "An unknown error occured";
+            onError(name, message);
+          } finally {
+            setIsUploading(false);
+          }
+        }
+      })
+      .catch(console.error);
+  }, [croppedImage, croppedImageUrl, name, onChange, onError]);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const openFileUpload = useCallback(() => {
     inputRef.current?.click();
   }, [inputRef]);
 
-  const handleFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      setIsUploading(true);
-      const storage = getStorage();
-      const file = e.target.files?.[0];
-      if (!file) {
-        setIsUploading(false);
-        return;
-      }
-
-      try {
-        const storageRef = ref(storage, `images/${file.name}`);
-        const uploaded = await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(uploaded.ref);
-
-        onChange({
-          target: {
-            name,
-            value: url,
-          },
-        } as React.ChangeEvent<HTMLInputElement>);
-      } catch (error: unknown) {
-        const message = (error as Error).message ?? "An unknown error occured";
-        onError(name, message);
-      } finally {
-        setIsUploading(false);
-      }
-    },
-    [name, onChange, onError]
-  );
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOpen(true);
+    setFile(e.target.files?.[0]);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataURL = reader.result;
+      setCroppedImageUrl(dataURL);
+    };
+    reader.readAsDataURL(e.target.files?.[0] as Blob);
+  };
 
   return (
-    <div className="flex flex-col">
-      {label && (
-        <label htmlFor={name} className="font-bold">
-          {label}
-        </label>
-      )}
-      <div className="mb-2">
-        {isUploading ? (
-          <Spinner />
-        ) : (
-          value && (
-            <Image
-              src={value}
-              className="rounded"
-              alt="Venue"
-              width={128}
-              height={128}
-            />
-          )
-        )}
-        {error && <span className="mt-2 text-red-500 italic">{error}</span>}
-      </div>
-      <Button
-        type="button"
-        loading={isUploading}
-        disabled={isUploading || disabled}
-        onClick={openFileUpload}
+    <>
+      <ReactModal
+        ariaHideApp={false}
+        isOpen={open}
+        style={{
+          overlay: { position: "absolute", top: "4rem" },
+          content: { background: "#888" },
+        }}
+        onRequestClose={onCloseModal}
       >
-        Upload
-      </Button>
-      <input
-        ref={inputRef}
-        type="file"
-        className="hidden"
-        name={name}
-        id={name}
-        onChange={handleFileChange}
-      />
-    </div>
+        <div>
+          {file && croppedImageUrl && (
+            <Cropper
+              image={croppedImageUrl as string}
+              crop={crop}
+              zoom={zoom}
+              aspect={3 / 4}
+              onCropChange={setCrop}
+              onCropComplete={onCropComplete}
+              onZoomChange={setZoom}
+            />
+          )}
+        </div>
+        <div className="controls">
+          <input
+            type="range"
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            aria-labelledby="Zoom"
+            onChange={(e) => {
+              setZoom(Number(e.target.value));
+            }}
+            className="zoom-range"
+          />
+          <div className="flex gap-5">
+            <Button disabled={isUploading} onClick={onCloseModal}>
+              Cancel
+            </Button>
+            <Button disabled={isUploading} onClick={cropPhoto}>
+              Crop
+            </Button>
+          </div>
+        </div>
+      </ReactModal>
+      <div className="flex flex-col">
+        {label && (
+          <label htmlFor={name} className="font-bold">
+            {label}
+          </label>
+        )}
+        <div className="mb-2">
+          {isUploading ? (
+            <Spinner />
+          ) : (
+            value && (
+              <Image
+                src={value}
+                className="rounded"
+                alt="Venue"
+                width={128}
+                height={128}
+              />
+            )
+          )}
+          {error && <span className="mt-2 text-red-500 italic">{error}</span>}
+        </div>
+        <Button
+          type="button"
+          loading={isUploading}
+          disabled={isUploading || disabled}
+          onClick={openFileUpload}
+        >
+          Upload
+        </Button>
+        <input
+          ref={inputRef}
+          type="file"
+          className="hidden"
+          name={name}
+          id={name}
+          onChange={handleFileChange}
+          accept="image/*"
+        />
+      </div>
+    </>
   );
 };
 

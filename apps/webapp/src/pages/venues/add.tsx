@@ -8,8 +8,11 @@ import {
 } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { lazy, Suspense, useCallback } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
+import Cropper, { Area } from "react-easy-crop";
 import { Country } from "react-phone-number-input";
+import Modal from "react-modal";
+import Button from "@diplomski/components/Form/Button";
 
 const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
 
@@ -36,6 +39,19 @@ export const getServerSideProps: GetServerSideProps<{
 export default function AddVenuePage({
   countryCode,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const onCropComplete = useCallback(
+    (croppedArea: Area, croppedAreaPixels: Area) => {
+      console.log({ croppedArea, croppedAreaPixels });
+    },
+    []
+  );
+
+  const [open, setOpen] = useState(false);
+
+  const onCloseModal = () => setOpen(false);
+  const cropPhoto = () => {};
   const { addVenue, result } = useAddVenue();
   const router = useRouter();
 
@@ -55,8 +71,46 @@ export default function AddVenuePage({
       <Head>
         <title>Add Venue</title>
       </Head>
+      <Modal
+        isOpen={open}
+        style={{
+          overlay: { position: "absolute", top: "4rem" },
+          content: { background: "#888" },
+        }}
+        onRequestClose={onCloseModal}
+      >
+        <div>
+          <Cropper
+            image="/icons/apple-splash-1170-2532.jpg"
+            crop={crop}
+            zoom={zoom}
+            aspect={3 / 4}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+            onZoomChange={setZoom}
+          />
+        </div>
+        <div className="controls">
+          <input
+            type="range"
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            aria-labelledby="Zoom"
+            onChange={(e) => {
+              setZoom(Number(e.target.value));
+            }}
+            className="zoom-range"
+          />
+          <div className="flex gap-5">
+            <Button onClick={onCloseModal}>Cancel</Button>
+            <Button onClick={cropPhoto}>Crop</Button>
+          </div>
+        </div>
+      </Modal>
       <div style={{ height: "calc(100vh - 64px)" }}>
-        <div className="h-full bg-gray-900 pt-10">
+        <div className="pt-10">
           <Suspense fallback={<Spinner />}>
             <VenueForm
               initialValues={{

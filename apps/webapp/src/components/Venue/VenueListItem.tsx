@@ -39,6 +39,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
           "rounded-3xl",
           "justify-center",
           "relative",
+          "mt-10",
         ],
         {
           grayscale: venue.status === VenueStatus.Draft,
