@@ -70,7 +70,7 @@ export default function Profile() {
     if (role === Role.Owner) {
       return (
         <>
-          <h2 className="text-2xl font-bold">My venues</h2>
+          <h2 className="text-2xl font-bold text-white">My venues</h2>
           <div className="grid justify-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {data.me.venues.length > 0 ? (
               data.me.venues.map((venue) => (
@@ -149,8 +149,8 @@ export default function Profile() {
         <title>Profile</title>
       </Head>
       <div style={{ height: "calc(100vh - 64px)" }}>
-        <div className={`flex flex-col p-3 text-white bg-gray-900 h-full`}>
-          <h1 className="text-4xl font-bold ">Profile</h1>
+        <div className={`flex flex-col p-3 h-full`}>
+          <h1 className="text-white text-4xl font-bold ">Profile</h1>
           <hr className="my-3" />
           <div className="flex flex-col">
             <Suspense fallback={<Spinner />}>{profileSection}</Suspense>

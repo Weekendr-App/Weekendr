@@ -2,7 +2,7 @@ import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
   const isPhone = useMediaQuery("(pointer: coarse)");
-  const isSmallScreen = useMediaQuery("(max-width: 640px)")
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
 
   const name = useMemo(() => {
     if (venue.status === VenueStatus.Draft) {
@@ -24,56 +24,76 @@ const VenueListItem: FC<Props> = ({ venue }) => {
     return venue.name;
   }, [venue]);
 
+  const frontRef = useRef<HTMLImageElement | null>(null);
+  const backTextRef = useRef<HTMLParagraphElement | null>(null);
+  const [backTextHeight, setBackTextHeight] = useState<number | null>(null);
+
+  const onHover = useCallback(() => {
+    if (frontRef.current) {
+      frontRef.current.style.transform = `translateY(-${backTextHeight}px)`;
+    }
+  }, [backTextHeight]);
+  const onLeave = useCallback(() => {
+    if (frontRef.current) {
+      frontRef.current.style.transform = `translateY(0)`;
+    }
+  }, []);
+
+  // we use venue inside the dependency array because otherwise this useEffect won't run after we click or tap on a Marker on the map
+  useEffect(() => {
+    if (backTextRef.current) {
+      setBackTextHeight(backTextRef.current.offsetHeight);
+    }
+  }, [venue]);
+
+  // on mobile devices we don't want to have to tap & hold the screen to trigger onMouseEnter so we just run that code automatically if the user is on a mobile device
+  useEffect(() => {
+    isPhone && onHover();
+  }, [onHover, isPhone]);
+
   return (
     <div
-      data-content={name}
+      className={clsx(["mt-10", "relative"], {
+        grayscale: venue.status === VenueStatus.Draft,
+        "w-36 h-48": isSmallScreen,
+        "w-48 h-64": !isSmallScreen,
+      })}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
       onClick={() =>
         venue.status === VenueStatus.Active &&
         router.push(`/venues/${venue.id}`)
       }
-      className={clsx(
-        [
-          "card",
-          "bg-white",
-          "flex",
-          "rounded-3xl",
-          "justify-center",
-          "relative",
-          "mt-10",
-        ],
-        {
-          grayscale: venue.status === VenueStatus.Draft,
-          "w-40": isSmallScreen,
-          "h-56": isSmallScreen,
-          "w-48": !isSmallScreen,
-          "h-64": !isSmallScreen,
-        }
-      )}
     >
-      <div
+      <Image
         className={clsx(
-          [
-            "flex",
-            "justify-center",
-            "items-center",
-            "rounded-3xl",
-            "cursor-pointer",
-            "z-10",
-            "transform",
-            "hover:-translate-y-8",
-          ],
-          { "-translate-y-8": isPhone, "rounded-b-none": isPhone }
+          ["z-10", "cursor-pointer", "rounded-3xl", "transition-transform"],
+          {
+            "w-36 h-48": isSmallScreen,
+            "w-48 h-64": !isSmallScreen,
+            "rounded-b-none": isPhone,
+          }
         )}
-        style={{
-          backgroundImage: `url(${venue.picture})`,
-        }}
+        ref={frontRef}
+        src={venue.picture}
+        alt={name}
+        fill
+      />
+      <div
+        className={clsx(["bg-white", "break-words", "rounded-3xl"], {
+          "w-36 h-48": isSmallScreen,
+          "w-48 h-64": !isSmallScreen,
+        })}
       >
-        <Image
-          src={venue.picture}
-          alt={name}
-          width={isSmallScreen ? 160 : 192}
-          height={isSmallScreen ? 224 : 256}
-        />
+        <p
+          ref={backTextRef}
+          className={clsx(
+            ["tracking-widest", "absolute", "bottom-0", "py-0", "p-5"],
+            { "max-w-[192px]": !isSmallScreen, "max-w-[144px]": isSmallScreen }
+          )}
+        >
+          {name}
+        </p>
       </div>
     </div>
   );

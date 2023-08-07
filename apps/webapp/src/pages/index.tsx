@@ -20,10 +20,7 @@ export default function Home() {
       <Suspense fallback={<Spinner />}>
         <>
           <Map setCardId={setCardId} />
-          <div
-            className="fixed bottom-10 left-1/2"
-            style={{ transform: "translateX(-50%)" }}
-          >
+          <div className="fixed bottom-10 left-1/2 -translate-x-1/2">
             {venue && <VenueListItem venue={venue} />}
           </div>
         </>
