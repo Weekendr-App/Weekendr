@@ -88,9 +88,18 @@ const VenueListItem: FC<Props> = ({ venue }) => {
         <p
           ref={backTextRef}
           className={clsx(
-            ["tracking-widest", "absolute", "bottom-0", "py-0", "p-5"],
+            [
+              "tracking-widest",
+              "absolute",
+              "bottom-0",
+              "py-1",
+              "p-5",
+              "font-bold",
+              "text-gray-800",
+            ],
             { "max-w-[192px]": !isSmallScreen, "max-w-[144px]": isSmallScreen }
           )}
+          style={{ fontSize: "0.8em" }}
         >
           {name}
         </p>
