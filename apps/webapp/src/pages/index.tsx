@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Spinner } from "@diplomski/components/Spinner";
 import useVenue from "@diplomski/hooks/useVenue";
 import { clsxm } from "@diplomski/utils/clsxm";
@@ -13,17 +13,6 @@ const VenueListItem = lazy(
 export default function Home() {
   const [cardId, setCardId] = useState<string | undefined>();
   const { venue, fetching } = useVenue(cardId);
-
-  const toggleCard = useCallback(
-    (id: string) => {
-      if (cardId === id) {
-        setCardId(undefined);
-      } else {
-        setCardId(id);
-      }
-    },
-    [cardId]
-  );
 
   const cardVenue = useDebounce(venue, 500);
 
@@ -46,7 +35,7 @@ export default function Home() {
       </Head>
       <Suspense fallback={<Spinner />}>
         <>
-          <Map setCardId={toggleCard} />
+          <Map setCardId={setCardId} />
           <div
             className={clsxm(
               [
