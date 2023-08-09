@@ -164,6 +164,14 @@ export default function Map({ setCardId }: Props) {
     [setViewport]
   );
 
+  const height = useMemo(() => {
+    if (CSS.supports("height", "calc(100dvh - 64px)")) {
+      return "calc(100dvh - 64px)";
+    }
+
+    return "calc(100vh - 64px)";
+  }, []);
+
   useEffectOnce(() => {
     const localViewport = localStorage.getItem("viewport");
 
@@ -193,7 +201,7 @@ export default function Map({ setCardId }: Props) {
         {...viewport}
         style={{
           width: "100%",
-          height: "calc(100vh - 64px)",
+          height,
           cursor: "grab",
         }}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}

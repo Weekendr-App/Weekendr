@@ -44,12 +44,15 @@ const VenueListItem: FC<Props> = ({ venue }) => {
 
   return (
     <div
-      className={clsxm(["mt-10", "relative", "hover:mt-14", "transition-all"], {
-        grayscale: venue.status === VenueStatus.Draft,
-        "w-36 h-48": isSmallScreen,
-        "w-48 h-64": !isSmallScreen,
-        "mt-14": isPhone,
-      })}
+      className={clsxm(
+        ["mt-10", "relative", "hover:mt-14", "transition-all", "duration-500"],
+        {
+          grayscale: venue.status === VenueStatus.Draft,
+          "w-36 h-48": isSmallScreen,
+          "w-48 h-64": !isSmallScreen,
+          "mt-14": isPhone,
+        }
+      )}
       onClick={() =>
         venue.status === VenueStatus.Active &&
         router.push(`/venues/${venue.id}`)
