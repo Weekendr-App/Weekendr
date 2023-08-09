@@ -1,4 +1,5 @@
 import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
+import { clsxm } from "@diplomski/utils/clsxm";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -43,10 +44,11 @@ const VenueListItem: FC<Props> = ({ venue }) => {
 
   return (
     <div
-      className={clsx(["mt-10", "relative", "hover:mt-14", "transition-all"], {
+      className={clsxm(["mt-10", "relative", "hover:mt-14", "transition-all"], {
         grayscale: venue.status === VenueStatus.Draft,
         "w-36 h-48": isSmallScreen,
         "w-48 h-64": !isSmallScreen,
+        "mt-14": isPhone,
       })}
       onClick={() =>
         venue.status === VenueStatus.Active &&
