@@ -43,7 +43,7 @@ const VenueListItem: FC<Props> = ({ venue }) => {
 
   return (
     <div
-      className={clsx(["mt-14", "relative"], {
+      className={clsx(["mt-10", "relative", "hover:mt-14", "transition-all"], {
         grayscale: venue.status === VenueStatus.Draft,
         "w-36 h-48": isSmallScreen,
         "w-48 h-64": !isSmallScreen,
