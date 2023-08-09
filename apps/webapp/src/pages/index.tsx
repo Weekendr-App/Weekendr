@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { Spinner } from "@diplomski/components/Spinner";
 import useVenue from "@diplomski/hooks/useVenue";
 
@@ -12,6 +12,17 @@ export default function Home() {
   const [cardId, setCardId] = useState<string | undefined>();
   const { venue } = useVenue(cardId);
 
+  const toggleCard = useCallback(
+    (id: string) => {
+      if (cardId === id) {
+        setCardId(undefined);
+      } else {
+        setCardId(id);
+      }
+    },
+    [cardId]
+  );
+
   return (
     <>
       <Head>
@@ -19,9 +30,9 @@ export default function Home() {
       </Head>
       <Suspense fallback={<Spinner />}>
         <>
-          <Map setCardId={setCardId} />
+          <Map setCardId={toggleCard} />
           <div className="fixed bottom-10 left-1/2 -translate-x-1/2">
-            {venue && <VenueListItem venue={venue} />}
+            {venue && <VenueListItem venue={venue} isShown={!!cardId} />}
           </div>
         </>
       </Suspense>
