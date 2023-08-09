@@ -1,16 +1,21 @@
-import useCategories from "@diplomski/hooks/useCategories";
-import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
+import useCategories from "@weekendr/src/hooks/useCategories";
+import { DEFAULT_FORM_CLASSNAME } from "@weekendr/src/utils/form";
 import { isAfter } from "date-fns";
 import { useFormik } from "formik";
 import { isEmpty } from "ramda";
-import { lazy, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useMemo, useState } from "react";
 import * as Yup from "yup";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
-const Input = lazy(() => import("@diplomski/components/Form/Input"));
-const DatePicker = lazy(() => import("@diplomski/components/Form/DatePicker"));
-const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
-const Select = lazy(() => import("@diplomski/components/Form/Select"));
+const Input = lazy(() => import("@weekendr/src/components/Form/Input"));
+const DatePicker = lazy(
+  () => import("@weekendr/src/components/Form/DatePicker")
+);
+const FileUpload = lazy(
+  () => import("@weekendr/src/components/Form/FileUpload")
+);
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
+const Select = lazy(() => import("@weekendr/src/components/Form/Select"));
 
 export interface EventFormValues {
   name: string;
@@ -114,94 +119,96 @@ export default function EventForm({
   }, [isPriceHidden, handleChange]);
 
   return (
-    <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <Input
-        name="name"
-        label="Name"
-        value={values.name}
-        onChange={handleChange}
-        error={errors.name}
-        disabled={isSubmitting}
-        placeholder="Event name"
-      />
-      <Input
-        name="description"
-        label="Description (optional)"
-        value={values.description}
-        onChange={handleChange}
-        error={errors.description}
-        placeholder="Event description"
-        disabled={isSubmitting}
-        multiline
-      />
-      <Input
-        hidden={isPriceHidden}
-        name="price"
-        label="Price of admission (€)"
-        value={values.price}
-        onChange={handleChange}
-        type="number"
-        error={errors.price}
-        disabled={isSubmitting}
-        placeholder="Event price in €"
-      />
-      <Button disabled={isSubmitting} onClick={handlePriceButtonClick}>
-        {isPriceHidden ? "Add price" : "Remove price"}
-      </Button>
-
-      <FileUpload
-        name="picture"
-        label="Picture (optional)"
-        value={values.picture}
-        onChange={handleChange}
-        onError={setFieldError}
-        error={errors.picture}
-        disabled={isSubmitting}
-      />
-
-      <div className="flex justify-between gap-4 flex-wrap">
-        <DatePicker
-          name="startDate"
-          label="Start date"
-          value={values.startDate}
-          error={errors.startDate}
+    <Suspense fallback={<Spinner />}>
+      <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <Input
+          name="name"
+          label="Name"
+          value={values.name}
+          onChange={handleChange}
+          error={errors.name}
           disabled={isSubmitting}
-          onChange={(date: Date) =>
-            handleChange({ target: { name: "startDate", value: date } })
-          }
+          placeholder="Event name"
         />
-        <DatePicker
-          name="endDate"
-          label="End date"
-          value={values.endDate}
-          error={errors.endDate}
+        <Input
+          name="description"
+          label="Description (optional)"
+          value={values.description}
+          onChange={handleChange}
+          error={errors.description}
+          placeholder="Event description"
           disabled={isSubmitting}
-          onChange={(date: Date) =>
-            handleChange({ target: { name: "endDate", value: date } })
-          }
+          multiline
         />
-      </div>
+        <Input
+          hidden={isPriceHidden}
+          name="price"
+          label="Price of admission (€)"
+          value={values.price}
+          onChange={handleChange}
+          type="number"
+          error={errors.price}
+          disabled={isSubmitting}
+          placeholder="Event price in €"
+        />
+        <Button disabled={isSubmitting} onClick={handlePriceButtonClick}>
+          {isPriceHidden ? "Add price" : "Remove price"}
+        </Button>
 
-      <Select
-        value={values.categoryId}
-        onChange={(value) =>
-          handleChange({ target: { name: "categoryId", value } })
-        }
-        options={categories.map((c) => ({ value: c.id, label: c.name }))}
-        name="categoryId"
-        label="Event category"
-        placeholder="Select category"
-        error={errors.categoryId}
-        disabled={isSubmitting || isEmpty(categories)}
-      />
-      <Button
-        loading={isSubmitting}
-        disabled={!isValid || isSubmitting || !dirty}
-        onClick={handleSubmit}
-      >
-        {buttonText}
-      </Button>
-    </form>
+        <FileUpload
+          name="picture"
+          label="Picture (optional)"
+          value={values.picture}
+          onChange={handleChange}
+          onError={setFieldError}
+          error={errors.picture}
+          disabled={isSubmitting}
+        />
+
+        <div className="flex justify-between gap-4 flex-wrap">
+          <DatePicker
+            name="startDate"
+            label="Start date"
+            value={values.startDate}
+            error={errors.startDate}
+            disabled={isSubmitting}
+            onChange={(date: Date) =>
+              handleChange({ target: { name: "startDate", value: date } })
+            }
+          />
+          <DatePicker
+            name="endDate"
+            label="End date"
+            value={values.endDate}
+            error={errors.endDate}
+            disabled={isSubmitting}
+            onChange={(date: Date) =>
+              handleChange({ target: { name: "endDate", value: date } })
+            }
+          />
+        </div>
+
+        <Select
+          value={values.categoryId}
+          onChange={(value) =>
+            handleChange({ target: { name: "categoryId", value } })
+          }
+          options={categories.map((c) => ({ value: c.id, label: c.name }))}
+          name="categoryId"
+          label="Event category"
+          placeholder="Select category"
+          error={errors.categoryId}
+          disabled={isSubmitting || isEmpty(categories)}
+        />
+        <Button
+          loading={isSubmitting}
+          disabled={!isValid || isSubmitting || !dirty}
+          onClick={handleSubmit}
+        >
+          {buttonText}
+        </Button>
+      </form>
+    </Suspense>
   );
 }

@@ -2,16 +2,18 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
 import { lazy, Suspense, useEffect } from "react";
-import useSignUp from "@diplomski/hooks/useSignUp";
+import useSignUp from "@weekendr/src/hooks/useSignUp";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import Link from "next/link";
-import { Spinner } from "@diplomski/components/Spinner";
-import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import { AuthState, useAuth } from "@weekendr/src/hooks/useAuth";
 
-const Input = lazy(() => import("@diplomski/components/Form/Input"));
-const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const Input = lazy(() => import("@weekendr/src/components/Form/Input"));
+const FileUpload = lazy(
+  () => import("@weekendr/src/components/Form/FileUpload")
+);
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -74,9 +76,7 @@ export default function SignUpPage() {
       <Head>
         <title>Sign Up</title>
       </Head>
-      <div
-        style={{ height: "calc(100vh - 64px)" }}
-      >
+      <div style={{ height: "calc(100vh - 64px)" }}>
         <div className="h-full bg-gray-900 pt-10">
           <Suspense fallback={<Spinner />}>
             <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>

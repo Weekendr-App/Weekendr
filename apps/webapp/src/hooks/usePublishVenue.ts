@@ -1,4 +1,4 @@
-import { MutationPublishVenueArgs } from "@diplomski/gql/graphql";
+import { MutationPublishVenueArgs } from "@weekendr/src/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const PUBLISH_VENUE_MUTATION = gql`

@@ -1,13 +1,13 @@
 import Head from "next/head";
 import { lazy, Suspense, useMemo, useState } from "react";
-import { Spinner } from "@diplomski/components/Spinner";
-import useVenue from "@diplomski/hooks/useVenue";
-import { clsxm } from "@diplomski/utils/clsxm";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import useVenue from "@weekendr/src/hooks/useVenue";
+import { clsxm } from "@weekendr/src/utils/clsxm";
 import { useDebounce } from "usehooks-ts";
 
-const Map = lazy(() => import("@diplomski/components/Map"));
+const Map = lazy(() => import("@weekendr/src/components/Map"));
 const VenueListItem = lazy(
-  () => import("@diplomski/components/Venue/VenueListItem")
+  () => import("@weekendr/src/components/Venue/VenueListItem")
 );
 
 export default function Home() {

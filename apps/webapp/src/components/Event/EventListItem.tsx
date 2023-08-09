@@ -1,20 +1,22 @@
-import { Event } from "@diplomski/gql/graphql";
+import { Event } from "@weekendr/src/gql/graphql";
 import { format } from "date-fns";
 import Image from "next/image";
-import { FC, useMemo, useState } from "react";
+import { FC, lazy, Suspense, useMemo, useState } from "react";
 import { clsx } from "clsx";
-import Button from "../Form/Button";
-import useCancelEvent from "@diplomski/hooks/useCancelEvent";
-import useVenue from "@diplomski/hooks/useVenue";
-import Dialog from "../Dialog";
+import useCancelEvent from "@weekendr/src/hooks/useCancelEvent";
+import useVenue from "@weekendr/src/hooks/useVenue";
 import { toast } from "react-hot-toast";
-import { renderCategory } from "@diplomski/utils/category";
+import { renderCategory } from "@weekendr/src/utils/category";
 import { useMediaQuery } from "usehooks-ts";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
 interface Props {
   event: Event;
   fallbackPicture: string;
 }
+
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
+const Dialog = lazy(() => import("@weekendr/src/components/Dialog"));
 
 const getDate = (date: number) => {
   return format(date, "dd.MM.yyyy HH:mm");
@@ -84,27 +86,29 @@ const EventListItem: FC<Props> = ({ event, fallbackPicture }: Props) => {
             <span>Category: </span>
             {renderCategory(event.category)}
           </div>
-          {venue?.isOwnedByMe && (
-            <Button
-              disabled={loading}
-              onClick={() =>
-                toast((t) => (
-                  <Dialog
-                    onConfirm={async () => {
-                      await cancelEvent(Number(event.id));
-                      toast.dismiss(t.id);
-                    }}
-                    title="Are you sure you want to proceed with canceling the event?"
-                    message="Pressing OK will cancel the event"
-                    type="warning"
-                    id={t.id}
-                  />
-                ))
-              }
-            >
-              Cancel Event
-            </Button>
-          )}
+          <Suspense fallback={<Spinner />}>
+            {venue?.isOwnedByMe && (
+              <Button
+                disabled={loading}
+                onClick={() =>
+                  toast((t) => (
+                    <Dialog
+                      onConfirm={async () => {
+                        await cancelEvent(Number(event.id));
+                        toast.dismiss(t.id);
+                      }}
+                      title="Are you sure you want to proceed with canceling the event?"
+                      message="Pressing OK will cancel the event"
+                      type="warning"
+                      id={t.id}
+                    />
+                  ))
+                }
+              >
+                Cancel Event
+              </Button>
+            )}
+          </Suspense>
         </div>
       </div>
     </div>

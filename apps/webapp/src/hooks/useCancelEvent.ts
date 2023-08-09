@@ -1,4 +1,4 @@
-import { Event, MutationCancelEventArgs } from "@diplomski/gql/graphql";
+import { Event, MutationCancelEventArgs } from "@weekendr/src/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const CANCEL_EVENT_MUTATION = gql`

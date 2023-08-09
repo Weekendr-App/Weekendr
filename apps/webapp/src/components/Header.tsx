@@ -1,10 +1,10 @@
 import { FC, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../public/undraw_beer_xg5f.svg";
-import { useAuth } from "@diplomski/hooks/useAuth";
+import logo from "@weekendr/public/undraw_beer_xg5f.svg";
+import { useAuth } from "@weekendr/src/hooks/useAuth";
 import { gql, useQuery } from "urql";
-import { NavbarMeQuery, Role } from "@diplomski/gql/graphql";
+import { NavbarMeQuery, Role } from "@weekendr/src/gql/graphql";
 import { useRouter } from "next/router";
 
 const query = gql`

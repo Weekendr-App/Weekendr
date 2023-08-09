@@ -1,11 +1,14 @@
-import EventForm, {
-  EventFormValues,
-} from "@diplomski/components/Event/EventForm";
-import useAddEvent from "@diplomski/hooks/useAddEvent";
-import useVenue from "@diplomski/hooks/useVenue";
+import { EventFormValues } from "@weekendr/src/components/Event/EventForm";
+import useAddEvent from "@weekendr/src/hooks/useAddEvent";
+import useVenue from "@weekendr/src/hooks/useVenue";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { lazy, Suspense, useCallback } from "react";
+import { Spinner } from "@weekendr/src/components/Spinner";
+
+const EventForm = lazy(
+  () => import("@weekendr/src/components/Event/EventForm")
+);
 
 export default function AddEventPage() {
   const { addEvent, result } = useAddEvent();
@@ -38,11 +41,13 @@ export default function AddEventPage() {
       </Head>
       <div style={{ height: "calc(100vh - 64px)" }}>
         <div className="h-full bg-gray-900 pt-10">
-          <EventForm
-            title="Add an event"
-            buttonText="Add"
-            onSubmit={onSubmit}
-          />
+          <Suspense fallback={<Spinner />}>
+            <EventForm
+              title="Add an event"
+              buttonText="Add"
+              onSubmit={onSubmit}
+            />
+          </Suspense>
         </div>
       </div>
     </>

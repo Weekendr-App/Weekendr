@@ -1,9 +1,9 @@
 import Head from "next/head";
 import { lazy, Suspense, useCallback } from "react";
-import { Spinner } from "@diplomski/components/Spinner";
-import useEditVenue from "@diplomski/hooks/useEditVenue";
-import useVenue from "@diplomski/hooks/useVenue";
-import { VenueFormValues } from "@diplomski/components/Venue/VenueForm";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import useEditVenue from "@weekendr/src/hooks/useEditVenue";
+import useVenue from "@weekendr/src/hooks/useVenue";
+import { VenueFormValues } from "@weekendr/src/components/Venue/VenueForm";
 import { useRouter } from "next/router";
 import {
   GetServerSideProps,
@@ -12,7 +12,9 @@ import {
 } from "next";
 import { Country } from "react-phone-number-input";
 
-const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
+const VenueForm = lazy(
+  () => import("@weekendr/src/components/Venue/VenueForm")
+);
 
 export const getServerSideProps: GetServerSideProps<{
   countryCode: Country;

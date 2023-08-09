@@ -2,7 +2,7 @@ import {
   CreateVenueInput,
   MutationCreateVenueArgs,
   Venue,
-} from "@diplomski/gql/graphql";
+} from "@weekendr/src/gql/graphql";
 import { pick } from "ramda";
 import { gql, useMutation } from "urql";
 

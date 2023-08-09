@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import Input, { Value, Country } from "react-phone-number-input";
-import { Props } from "./Input";
+import { Props } from "@weekendr/src/components/Form/Input";
 
 interface PhoneProps extends Partial<Omit<Props, "onChange" | "type">> {
   onChange: (value: Value | undefined) => void;

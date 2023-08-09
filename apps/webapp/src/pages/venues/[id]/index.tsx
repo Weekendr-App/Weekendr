@@ -1,6 +1,6 @@
-import { Spinner } from "@diplomski/components/Spinner";
-import { VenueStatus } from "@diplomski/gql/graphql";
-import useVenue from "@diplomski/hooks/useVenue";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import { VenueStatus } from "@weekendr/src/gql/graphql";
+import useVenue from "@weekendr/src/hooks/useVenue";
 import clsx from "clsx";
 import Head from "next/head";
 import Image from "next/image";
@@ -8,13 +8,13 @@ import { useRouter } from "next/router";
 import { lazy, Suspense } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
-const StaticMap = lazy(() => import("@diplomski/components/StaticMap"));
+const StaticMap = lazy(() => import("@weekendr/src/components/StaticMap"));
 const VenueNavigation = lazy(
-  () => import("@diplomski/components/Venue/VenueNavigation")
+  () => import("@weekendr/src/components/Venue/VenueNavigation")
 );
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
 const EventListItem = lazy(
-  () => import("@diplomski/components/Event/EventListItem")
+  () => import("@weekendr/src/components/Event/EventListItem")
 );
 
 export default function VenuePage() {
@@ -86,24 +86,22 @@ export default function VenuePage() {
             </Button>
           </div>
           <div className="w-full sm:w-1/2">
-            <Suspense fallback={<Spinner />}>
-              <StaticMap
-                viewport={{
-                  latitude: venue.latitude,
-                  longitude: venue.longitude,
-                  zoom: 15,
-                  bearing: 0,
-                  pitch: 30,
-                  padding: {
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                  },
-                }}
-                venues={[venue]}
-              />
-            </Suspense>
+            <StaticMap
+              viewport={{
+                latitude: venue.latitude,
+                longitude: venue.longitude,
+                zoom: 15,
+                bearing: 0,
+                pitch: 30,
+                padding: {
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                },
+              }}
+              venues={[venue]}
+            />
           </div>
         </div>
       </Suspense>
