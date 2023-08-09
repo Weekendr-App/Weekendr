@@ -1,8 +1,9 @@
 import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
+import { clsxm } from "@diplomski/utils/clsxm";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 interface Props {
@@ -14,7 +15,8 @@ interface Props {
 const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
   const isPhone = useMediaQuery("(pointer: coarse)");
-  const isSmallScreen = useMediaQuery("(max-width: 640px)")
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
+  const id = `venue-image-${venue.id}`;
 
   const name = useMemo(() => {
     if (venue.status === VenueStatus.Draft) {
@@ -24,56 +26,73 @@ const VenueListItem: FC<Props> = ({ venue }) => {
     return venue.name;
   }, [venue]);
 
+  const nameRef = useCallback(
+    (node: HTMLParagraphElement | null) => {
+      if (node !== null) {
+        document.styleSheets[0].insertRule(
+          `#${id}${isPhone ? "" : ":hover"} {
+            transform: translateY(-${node.clientHeight}px);
+          }`,
+          0
+        );
+      } else {
+        document.styleSheets[0].deleteRule(0);
+      }
+    },
+    [id, isPhone]
+  );
+
   return (
     <div
-      data-content={name}
+      className={clsxm(["mt-10", "relative", "hover:mt-14", "transition-all"], {
+        grayscale: venue.status === VenueStatus.Draft,
+        "w-36 h-48": isSmallScreen,
+        "w-48 h-64": !isSmallScreen,
+        "mt-14": isPhone,
+      })}
       onClick={() =>
         venue.status === VenueStatus.Active &&
         router.push(`/venues/${venue.id}`)
       }
-      className={clsx(
-        [
-          "card",
-          "bg-white",
-          "flex",
-          "rounded-3xl",
-          "justify-center",
-          "relative",
-          "mt-10",
-        ],
-        {
-          grayscale: venue.status === VenueStatus.Draft,
-          "w-40": isSmallScreen,
-          "h-56": isSmallScreen,
-          "w-48": !isSmallScreen,
-          "h-64": !isSmallScreen,
-        }
-      )}
     >
-      <div
+      <Image
+        id={id}
         className={clsx(
-          [
-            "flex",
-            "justify-center",
-            "items-center",
-            "rounded-3xl",
-            "cursor-pointer",
-            "z-10",
-            "transform",
-            "hover:-translate-y-8",
-          ],
-          { "-translate-y-8": isPhone, "rounded-b-none": isPhone }
+          ["z-10", "cursor-pointer", "rounded-3xl", "transition-transform"],
+          {
+            "w-36 h-48": isSmallScreen,
+            "w-48 h-64": !isSmallScreen,
+            "rounded-b-none": isPhone,
+          }
         )}
-        style={{
-          backgroundImage: `url(${venue.picture})`,
-        }}
+        src={venue.picture}
+        alt={name}
+        fill
+      />
+      <div
+        className={clsx(["bg-white", "break-words", "rounded-3xl"], {
+          "w-36 h-48": isSmallScreen,
+          "w-48 h-64": !isSmallScreen,
+        })}
       >
-        <Image
-          src={venue.picture}
-          alt={name}
-          width={isSmallScreen ? 160 : 192}
-          height={isSmallScreen ? 224 : 256}
-        />
+        <p
+          ref={nameRef}
+          className={clsx(
+            [
+              "tracking-widest",
+              "absolute",
+              "bottom-0",
+              "py-1",
+              "p-5",
+              "font-bold",
+              "text-gray-800",
+              "text-sm",
+            ],
+            { "max-w-[192px]": !isSmallScreen, "max-w-[144px]": isSmallScreen }
+          )}
+        >
+          {name}
+        </p>
       </div>
     </div>
   );
