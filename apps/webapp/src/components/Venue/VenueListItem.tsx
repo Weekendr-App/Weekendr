@@ -10,10 +10,9 @@ interface Props {
   venue: Pick<Venue, "id" | "name" | "picture" | "address" | "status"> & {
     events?: Pick<Event, "id" | "category">[] | null;
   };
-  isShown?: boolean;
 }
 
-const VenueListItem: FC<Props> = ({ venue, isShown = true }) => {
+const VenueListItem: FC<Props> = ({ venue }) => {
   const router = useRouter();
   const isPhone = useMediaQuery("(pointer: coarse)");
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
@@ -46,20 +45,12 @@ const VenueListItem: FC<Props> = ({ venue, isShown = true }) => {
   return (
     <div
       className={clsxm(
-        [
-          "mt-10",
-          "relative",
-          "hover:mt-14",
-          "transition-all",
-          "duration-500",
-          "opacity-1",
-        ],
+        ["mt-10", "relative", "hover:mt-14", "transition-all", "duration-500"],
         {
           grayscale: venue.status === VenueStatus.Draft,
           "w-36 h-48": isSmallScreen,
           "w-48 h-64": !isSmallScreen,
           "mt-14": isPhone,
-          "opacity-0": !isShown,
         }
       )}
       onClick={() =>
