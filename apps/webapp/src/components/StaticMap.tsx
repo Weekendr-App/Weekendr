@@ -3,9 +3,9 @@ import clsx from "clsx";
 import { sync } from "postcss-js";
 import { FC, useMemo } from "react";
 import ReactMapGl, { Marker, ViewState } from "react-map-gl";
-import Pin from "../../public/pin.png";
+import Pin from "@weekendr/public/pin.png";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Venue } from "@diplomski/gql/graphql";
+import { Venue } from "@weekendr/src/gql/graphql";
 import { useMediaQuery } from "usehooks-ts";
 
 interface Props {

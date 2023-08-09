@@ -1,5 +1,5 @@
-import { Event, Venue, VenueStatus } from "@diplomski/gql/graphql";
-import { clsxm } from "@diplomski/utils/clsxm";
+import { Event, Venue, VenueStatus } from "@weekendr/src/gql/graphql";
+import { clsxm } from "@weekendr/src/utils/clsxm";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";

@@ -1,6 +1,6 @@
-import { Spinner } from "@diplomski/components/Spinner";
-import { VenueFormValues } from "@diplomski/components/Venue/VenueForm";
-import useAddVenue from "@diplomski/hooks/useAddVenue";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import { VenueFormValues } from "@weekendr/src/components/Venue/VenueForm";
+import useAddVenue from "@weekendr/src/hooks/useAddVenue";
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -12,9 +12,12 @@ import { lazy, Suspense, useCallback, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { Country } from "react-phone-number-input";
 import Modal from "react-modal";
-import Button from "@diplomski/components/Form/Button";
 
-const VenueForm = lazy(() => import("@diplomski/components/Venue/VenueForm"));
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
+
+const VenueForm = lazy(
+  () => import("@weekendr/src/components/Venue/VenueForm")
+);
 
 export const getServerSideProps: GetServerSideProps<{
   countryCode: Country;
@@ -104,8 +107,10 @@ export default function AddVenuePage({
             className="zoom-range"
           />
           <div className="flex gap-5">
-            <Button onClick={onCloseModal}>Cancel</Button>
-            <Button onClick={cropPhoto}>Crop</Button>
+            <Suspense fallback={<Spinner />}>
+              <Button onClick={onCloseModal}>Cancel</Button>
+              <Button onClick={cropPhoto}>Crop</Button>
+            </Suspense>
           </div>
         </div>
       </Modal>

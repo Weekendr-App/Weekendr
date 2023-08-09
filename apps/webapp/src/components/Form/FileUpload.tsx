@@ -1,4 +1,4 @@
-import cropImage from "@diplomski/utils/cropImage";
+import cropImage from "@weekendr/src/utils/cropImage";
 import {
   getStorage,
   ref,
@@ -6,11 +6,10 @@ import {
   getDownloadURL,
 } from "@firebase/storage";
 import Image from "next/image";
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, lazy, Suspense, useCallback, useRef, useState } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import ReactModal from "react-modal";
-import { Spinner } from "../Spinner";
-import Button from "./Button";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
 interface Props {
   name: string;
@@ -21,6 +20,8 @@ interface Props {
   error?: string;
   disabled?: boolean;
 }
+
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
 
 const FileUpload: FC<Props> = ({
   name,
@@ -42,7 +43,7 @@ const FileUpload: FC<Props> = ({
   >(null);
   const [isUploading, setIsUploading] = useState(false);
   const onCropComplete = useCallback(
-    (croppedArea: Area, croppedAreaPixels: Area) => {
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedImage(croppedAreaPixels);
     },
     []
@@ -139,12 +140,16 @@ const FileUpload: FC<Props> = ({
             className="zoom-range"
           />
           <div className="flex gap-5">
-            <Button disabled={isUploading} onClick={onCloseModal}>
-              Cancel
-            </Button>
-            <Button disabled={isUploading} onClick={cropPhoto}>
-              Crop
-            </Button>
+            <Suspense fallback={<Spinner />}>
+              <Button disabled={isUploading} onClick={onCloseModal}>
+                Cancel
+              </Button>
+            </Suspense>
+            <Suspense fallback={<Spinner />}>
+              <Button disabled={isUploading} onClick={cropPhoto}>
+                Crop
+              </Button>
+            </Suspense>
           </div>
         </div>
       </ReactModal>
@@ -170,14 +175,16 @@ const FileUpload: FC<Props> = ({
           )}
           {error && <span className="mt-2 text-red-500 italic">{error}</span>}
         </div>
-        <Button
-          type="button"
-          loading={isUploading}
-          disabled={isUploading || disabled}
-          onClick={openFileUpload}
-        >
-          Upload
-        </Button>
+        <Suspense fallback={<Spinner />}>
+          <Button
+            type="button"
+            loading={isUploading}
+            disabled={isUploading || disabled}
+            onClick={openFileUpload}
+          >
+            Upload
+          </Button>
+        </Suspense>
         <input
           ref={inputRef}
           type="file"

@@ -1,4 +1,4 @@
-import { FIREBASE_CONFIG } from "@diplomski/config/firebase.config";
+import { FIREBASE_CONFIG } from "@weekendr/src/config/firebase.config";
 import { initializeApp } from "@firebase/app";
 import { getAuth } from "@firebase/auth";
 

@@ -1,6 +1,6 @@
-import { Spinner } from "@diplomski/components/Spinner";
-import { AuthState, useAuth } from "@diplomski/hooks/useAuth";
-import { DEFAULT_FORM_CLASSNAME } from "@diplomski/utils/form";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import { AuthState, useAuth } from "@weekendr/src/hooks/useAuth";
+import { DEFAULT_FORM_CLASSNAME } from "@weekendr/src/utils/form";
 import { useFormik } from "formik";
 import Head from "next/head";
 import Link from "next/link";
@@ -18,8 +18,8 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
 });
 
-const Input = lazy(() => import("@diplomski/components/Form/Input"));
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const Input = lazy(() => import("@weekendr/src/components/Form/Input"));
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
 
 export default function Auth() {
   const { authState, user, login } = useAuth();
@@ -66,9 +66,7 @@ export default function Auth() {
       <Head>
         <title>Login</title>
       </Head>
-      <div
-        style={{ height: "calc(100vh - 64px)" }}
-      >
+      <div style={{ height: "calc(100vh - 64px)" }}>
         <div className="h-full bg-gray-900 pt-10">
           <Suspense fallback={<Spinner />}>
             <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>

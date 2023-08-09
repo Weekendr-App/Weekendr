@@ -1,12 +1,13 @@
-import { AuthProvider } from "@diplomski/hooks/useAuth";
-import { MapHoverProvider } from "@diplomski/hooks/useMapHover";
-import "@diplomski/styles/globals.css";
-import { UrqlProvider } from "@diplomski/utils/urql";
+import { AuthProvider } from "@weekendr/src/hooks/useAuth";
+import { MapHoverProvider } from "@weekendr/src/hooks/useMapHover";
+import "@weekendr/src/styles/globals.css";
+import { UrqlProvider } from "@weekendr/src/utils/urql";
 import type { AppProps } from "next/app";
-import { lazy, useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
-const Header = lazy(() => import("@diplomski/components/Header"));
+const Header = lazy(() => import("@weekendr/src/components/Header"));
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -21,7 +22,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
       <UrqlProvider>
         <MapHoverProvider>
-          <Header />
+          <Suspense fallback={<Spinner />}>
+            <Header />
+          </Suspense>
           <Component {...pageProps} />
           <Toaster />
         </MapHoverProvider>

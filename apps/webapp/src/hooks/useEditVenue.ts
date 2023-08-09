@@ -3,7 +3,7 @@ import {
   MutationUpdateVenueArgs,
   UpdateVenueInput,
   Venue,
-} from "@diplomski/gql/graphql";
+} from "@weekendr/src/gql/graphql";
 import { pick } from "ramda";
 
 const EDIT_VENUE_MUTATION = gql`

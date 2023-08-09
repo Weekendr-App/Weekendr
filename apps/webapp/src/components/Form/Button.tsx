@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { FC, PropsWithChildren } from "react";
-import { Spinner } from "../Spinner";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
 interface Props {
   type?: "submit" | "button";
@@ -16,7 +16,7 @@ const Button: FC<PropsWithChildren<Props>> = ({
   disabled,
   loading,
   onClick,
-  hidden = false
+  hidden = false,
 }) => {
   return (
     <button

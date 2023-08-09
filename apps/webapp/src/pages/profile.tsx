@@ -1,18 +1,17 @@
-import { Spinner } from "@diplomski/components/Spinner";
+import { Spinner } from "@weekendr/src/components/Spinner";
 import {
   DraftVenuesQuery,
   ProfileMeQuery,
   Role,
   VenueStatus,
-} from "@diplomski/gql/graphql";
-import { useAuth } from "@diplomski/hooks/useAuth";
+} from "@weekendr/src/gql/graphql";
+import { useAuth } from "@weekendr/src/hooks/useAuth";
 import Head from "next/head";
 import Link from "next/link";
 import { lazy, Suspense, useMemo } from "react";
 import { gql, useQuery } from "urql";
 import { toast } from "react-hot-toast";
-import Dialog from "@diplomski/components/Dialog";
-import usePublishVenue from "@diplomski/hooks/usePublishVenue";
+import usePublishVenue from "@weekendr/src/hooks/usePublishVenue";
 
 const query = gql`
   query ProfileMe {
@@ -45,9 +44,10 @@ const draftVenues = gql`
   }
 `;
 
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
+const Dialog = lazy(() => import("@weekendr/src/components/Dialog"));
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
 const VenueListItem = lazy(
-  () => import("@diplomski/components/Venue/VenueListItem")
+  () => import("@weekendr/src/components/Venue/VenueListItem")
 );
 
 export default function Profile() {

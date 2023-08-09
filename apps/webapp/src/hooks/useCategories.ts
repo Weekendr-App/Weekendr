@@ -1,4 +1,4 @@
-import { Category } from "@diplomski/gql/graphql";
+import { Category } from "@weekendr/src/gql/graphql";
 import { gql, useQuery } from "urql";
 
 const query = gql`

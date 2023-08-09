@@ -1,6 +1,14 @@
 import { useEffectOnce, useLocalStorage } from "usehooks-ts";
-import { VenuesInRangeQuery } from "@diplomski/gql/graphql";
-import { lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { VenuesInRangeQuery } from "@weekendr/src/gql/graphql";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import ReactMapGl, {
   ViewState,
   Marker,
@@ -9,18 +17,20 @@ import ReactMapGl, {
   ViewStateChangeEvent,
 } from "react-map-gl";
 import { gql, useQuery } from "urql";
-import SearchBox from "./SearchBox";
 import { useDebounce } from "usehooks-ts";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Pin from "../../public/pin.png";
+import Pin from "@weekendr/public/pin.png";
 import clsx from "clsx";
-import { useMapHover } from "@diplomski/hooks/useMapHover";
+import { useMapHover } from "@weekendr/src/hooks/useMapHover";
 import { sync } from "postcss-js";
 import autoprefixer from "autoprefixer";
 import Image from "next/image";
-import useCategories from "@diplomski/hooks/useCategories";
+import useCategories from "@weekendr/src/hooks/useCategories";
 
-const Select = lazy(() => import("@diplomski/components/Form/Select"));
+import { Spinner } from "@weekendr/src/components/Spinner";
+
+const SearchBox = lazy(() => import("@weekendr/src/components/SearchBox"));
+const Select = lazy(() => import("@weekendr/src/components/Form/Select"));
 
 const DEFAULT_DEBOUNCE_TIME = 500;
 
@@ -214,17 +224,21 @@ export default function Map({ setCardId }: Props) {
       >
         {pins}
         <div className="flex justify-between absolute top-0 w-full z-20 p-4">
-          <Select
-            value={categoryId}
-            options={categories.map((c) => ({ value: c.id, label: c.name }))}
-            onChange={(categoryId) => setCategoryId(categoryId)}
-            placeholder="Filter by category"
-          />
-          <SearchBox
-            name="search"
-            placeholder={"Search for an address"}
-            onSelectAddress={onSelectAddress}
-          />
+          <Suspense fallback={<Spinner />}>
+            <Select
+              value={categoryId}
+              options={categories.map((c) => ({ value: c.id, label: c.name }))}
+              onChange={(categoryId) => setCategoryId(categoryId)}
+              placeholder="Filter by category"
+            />
+          </Suspense>
+          <Suspense fallback={<Spinner />}>
+            <SearchBox
+              name="search"
+              placeholder={"Search for an address"}
+              onSelectAddress={onSelectAddress}
+            />
+          </Suspense>
         </div>
       </ReactMapGl>
     </div>

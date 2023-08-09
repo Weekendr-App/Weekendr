@@ -1,4 +1,4 @@
-import { Category } from "@diplomski/gql/graphql";
+import { Category } from "@weekendr/src/gql/graphql";
 import Image from "next/image";
 
 const CATEGORY_ICON_SIZE = 24;

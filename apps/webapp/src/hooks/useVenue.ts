@@ -1,4 +1,4 @@
-import { Venue } from "@diplomski/gql/graphql";
+import { Venue } from "@weekendr/src/gql/graphql";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { gql, useQuery } from "urql";

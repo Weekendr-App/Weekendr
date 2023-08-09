@@ -1,6 +1,6 @@
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Props as InputProps } from "@diplomski/components/Form/Input";
+import { Props as InputProps } from "@weekendr/src/components/Form/Input";
 import { FC } from "react";
 import { FormikErrors } from "formik";
 import clsx from "clsx";

@@ -1,4 +1,4 @@
-import { useAuth } from "@diplomski/hooks/useAuth";
+import { useAuth } from "@weekendr/src/hooks/useAuth";
 import { FC, ReactNode, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import {

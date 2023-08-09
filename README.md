@@ -1,4 +1,4 @@
-# Diplomski
+# Weekndr 
 
 # Pre-requisites
 - Node
@@ -6,9 +6,10 @@
 
 # Development
 1. `pnpm i`
-2. Configure Prisma in `apps/api` and run the migrations
-3. Run `pnpm codegen` in `apps/webapp`
-4. Run `pnpm dev` in root
+2. Configure Prisma in `apps/api/.env` and run the migrations
+3. Configure the environment in `apps/webapp/.env.local`
+4. Run `pnpm codegen` in `apps/webapp`
+5. Run `pnpm dev` in root
 
 NOTE: After changing urql queries/mutations don't forget to run codegen
 

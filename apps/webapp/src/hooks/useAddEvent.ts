@@ -2,7 +2,7 @@ import {
   CreateEventInput,
   Event,
   MutationCreateEventArgs,
-} from "@diplomski/gql/graphql";
+} from "@weekendr/src/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const mutation = gql`

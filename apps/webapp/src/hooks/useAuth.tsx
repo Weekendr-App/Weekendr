@@ -1,5 +1,5 @@
-import { Spinner } from "@diplomski/components/Spinner";
-import { auth } from "@diplomski/utils/firebase";
+import { Spinner } from "@weekendr/src/components/Spinner";
+import { auth } from "@weekendr/src/utils/firebase";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,

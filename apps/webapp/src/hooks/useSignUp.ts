@@ -2,7 +2,7 @@ import {
   MutationRegisterUserArgs,
   RegisterUserInput,
   RegisterUserResponse,
-} from "@diplomski/gql/graphql";
+} from "@weekendr/src/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const SIGN_UP_MUTATION = gql`

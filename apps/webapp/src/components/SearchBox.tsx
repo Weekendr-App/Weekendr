@@ -12,7 +12,7 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
-import { Props } from "./Form/Input";
+import { Props } from "@weekendr/src/components/Form/Input";
 import clsx from "clsx";
 
 interface SearchBoxProps extends Partial<Omit<Props, "type" | "onChange">> {

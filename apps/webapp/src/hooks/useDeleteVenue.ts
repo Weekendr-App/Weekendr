@@ -1,4 +1,4 @@
-import { MutationDeleteVenueArgs, Venue } from "@diplomski/gql/graphql";
+import { MutationDeleteVenueArgs, Venue } from "@weekendr/src/gql/graphql";
 import { gql, useMutation } from "urql";
 
 const DELETE_VENUE_MUTATION = gql`

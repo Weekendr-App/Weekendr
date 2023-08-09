@@ -1,16 +1,21 @@
-import { lazy, useCallback, useEffect, useMemo } from "react";
-import { DEFAULT_FORM_CLASSNAME } from "src/utils/form";
+import { lazy, Suspense, useCallback, useEffect, useMemo } from "react";
+import { DEFAULT_FORM_CLASSNAME } from "@weekendr/src/utils/form";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Country, Value } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import "yup-phone-lite";
+import { Spinner } from "@weekendr/src/components/Spinner";
 
-const Input = lazy(() => import("@diplomski/components/Form/Input"));
-const FileUpload = lazy(() => import("@diplomski/components/Form/FileUpload"));
-const SearchBox = lazy(() => import("@diplomski/components/SearchBox"));
-const Button = lazy(() => import("@diplomski/components/Form/Button"));
-const PhoneInput = lazy(() => import("@diplomski/components/Form/PhoneInput"));
+const Input = lazy(() => import("@weekendr/src/components/Form/Input"));
+const FileUpload = lazy(
+  () => import("@weekendr/src/components/Form/FileUpload")
+);
+const SearchBox = lazy(() => import("@weekendr/src/components/SearchBox"));
+const Button = lazy(() => import("@weekendr/src/components/Form/Button"));
+const PhoneInput = lazy(
+  () => import("@weekendr/src/components/Form/PhoneInput")
+);
 
 const DEFAULT_COORDINATE_MESSAGE =
   "We could not get coordinates for the following address. Please try again.";
@@ -155,49 +160,51 @@ export default function VenueForm({
   }, [values.address, values.latitude, values.longitude, validateField, dirty]);
 
   return (
-    <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <Input
-        name="name"
-        label="Name"
-        value={values.name}
-        onChange={handleChange}
-        error={errors.name}
-        placeholder="Venue name"
-      />
-      <FileUpload
-        name="picture"
-        label="Picture"
-        value={values.picture}
-        onChange={handleChange}
-        onError={setFieldError}
-        error={errors.picture}
-      />
-      <SearchBox
-        name="address"
-        label="Address"
-        placeholder="Venue address"
-        value={values.address}
-        error={errors.address || errors.latitude || errors.longitude}
-        onSelectAddress={onSelectAddress}
-      />
-      <PhoneInput
-        name="phone"
-        label="Phone Number"
-        error={errors.phone || errors.countryCode}
-        placeholder="Venue phone number"
-        value={values.phone}
-        onChange={onPhoneChange}
-        defaultCountry={values.countryCode}
-        onCountryChange={onCountryChange}
-      />
-      <Button
-        loading={isSubmitting}
-        disabled={!isValid || isSubmitting || !dirty}
-        onClick={handleSubmit}
-      >
-        {buttonText}
-      </Button>
-    </form>
+    <Suspense fallback={<Spinner />}>
+      <form onSubmit={handleSubmit} className={DEFAULT_FORM_CLASSNAME}>
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <Input
+          name="name"
+          label="Name"
+          value={values.name}
+          onChange={handleChange}
+          error={errors.name}
+          placeholder="Venue name"
+        />
+        <FileUpload
+          name="picture"
+          label="Picture"
+          value={values.picture}
+          onChange={handleChange}
+          onError={setFieldError}
+          error={errors.picture}
+        />
+        <SearchBox
+          name="address"
+          label="Address"
+          placeholder="Venue address"
+          value={values.address}
+          error={errors.address || errors.latitude || errors.longitude}
+          onSelectAddress={onSelectAddress}
+        />
+        <PhoneInput
+          name="phone"
+          label="Phone Number"
+          error={errors.phone || errors.countryCode}
+          placeholder="Venue phone number"
+          value={values.phone}
+          onChange={onPhoneChange}
+          defaultCountry={values.countryCode}
+          onCountryChange={onCountryChange}
+        />
+        <Button
+          loading={isSubmitting}
+          disabled={!isValid || isSubmitting || !dirty}
+          onClick={handleSubmit}
+        >
+          {buttonText}
+        </Button>
+      </form>
+    </Suspense>
   );
 }
