@@ -1,10 +1,15 @@
-# Weekndr 
+# Weekendr: Easy-To-Use Night Club/Party Finder 🪩 🎉 🥳
+**Weekendr** is the ultimate tool for finding night clubs in your area. Whether you're into Techno, Hip-Hop, Metal (or whatever genre of music for that matter) *doesn't matter*. 
 
-# Pre-requisites
+Use the *music genre filter* to find the music you want to listen to on the weekend with your friends.
+
+## 🚀 Quick Start
+
+### Pre-requisites
 - Node
 - Docker
 
-# Development
+### Development
 1. `pnpm i`
 2. Configure Prisma in `apps/api/.env` and run the migrations
 3. Configure the environment in `apps/webapp/.env.local`
